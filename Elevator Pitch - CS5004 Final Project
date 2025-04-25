@@ -1,0 +1,39 @@
+Elevator Pitch - CS5004 Final Project
+
+Project Name: TBD
+
+Team: Nikhil Trivedi
+
+- Problem
+    - Many of you are wearing an Apple Watch, an Oura Ring, a Fitbit, etc. - 
+    - though these devices provide wonderful analytics about the users health, I find that users aren’t able to extract much value out of the interface (charts, plots) because they either 
+        a) find the information too overwhleming 
+        b) aren’t understanding what the metrics mean
+- Solution
+    - Develop a chat interface for users to get a summary of their sleep in the context of health expert’s opinion on how to improve or optimize said metric 
+    - this way users can also try to understand trends without trying to interpret plots on different windows without fully understanding
+- Implementation
+    - (Python) RAG Model - referring specifically to information in documents to provide a response
+        - this will contain data from the wearables (via API)
+        - as well as podcast transcripts (from Andrew Huberman for PoC)
+    - (Java)
+        - GUI - render chat interface with conversation memory provided
+        - User Input → age, gender, etc.
+        - Wearables.Wearables Input → Oura Ring, Apple Watch, Fitbit, etc.
+            - create Wearables.Wearables Interface - with abstract class for shared methods
+        - RAG Input
+            - send chat text input over to the RAG Model + wearables data + individuals data
+
+- Class List (Estimated)
+    - Java
+        - UserProfile
+        - Wearable (Interface)
+            - AppleWatch
+            - Wearables.OuraRing
+        - GUI
+        - QueryResponse (HTTP)
+        - ChatHistory
+
+- Challenges
+    - getting java GUI to send information to Python application 
+    - fine tuning the RAG model to the point where insights are valuable
