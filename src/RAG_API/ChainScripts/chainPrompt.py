@@ -3,15 +3,8 @@ from langchain.prompts import PromptTemplate
 from DataSources.ouraDataAggregation import OuraData
 
 
-class Prompt:
+class PromptChain:
     def __init__(self, ouraData):
-        # self.summary = "Your name is Pulsey and you are an AI that is meant to help users understand and extract value from their wearable device data." \
-        #                 "Under weable data you will see the users data for sleep and stress from the Oura Ring along with contributing factors - use this data if a user asks for specific values" \
-        #                 "Additionally you are equipped with a series of Documents that are transcripts directly from Andrew Huberman's youtube channel - use these insights to supplement your answer and always be sure to cite the information when used" \
-        #                 " It is completely ok to not know the answer - if you don't have enough information let the user know. Provide a succinct and structured response - remember these users are coming to you because they do not understand their wearable data"\
-        #                 " Given the wearable data information provided and the context documents provided - answer the question by presenting the numerical data first, and then walk the user through the answer"
-
-
         # TODO: Add instructions or definitions for each of the metric variables
         self.summary = ("Your name is Pulsey and you are a special AI advisor meant to help users understand and extract value from data derived from their wearable devices"
                         "Provided to you are several pieces of context that you should use when answering the users question - be clear, concise and keep your respones under 100 words"
@@ -25,7 +18,9 @@ class Prompt:
         self.prompt = PromptTemplate(template = self.template, input_variables = ["question", "documents", "userData"])
         self.ouraData = ouraData
 
-    def getPrompt(self, question, documents):
+    def getPrompt(self, dbResponse: dict):
+        question = dbResponse["query"]
+        documents = dbResponse["documents"]
         ouraDataForm = self.getOuraUserData(self.ouraData, question)
         return self.prompt.format(question  = question, documents = documents, userData = ouraDataForm)
     
@@ -63,8 +58,6 @@ class Prompt:
         else:
             return ""
     
-
-
     def getSleepSummary(self, ouraDat: OuraData):
         sleepSummary = []
         # Create arrays to store specifics of the sleep scores for formatting

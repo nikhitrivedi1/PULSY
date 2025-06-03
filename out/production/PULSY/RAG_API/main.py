@@ -26,6 +26,7 @@ def getResponse(query: str, descriptions: str):
     # initialize the LLM upon running the instance
     # Pass in the query body to get a response
     startTime = time.time()
+    # res = llm.chat(query, descriptions)
     res = chain.invoke(query)
     endTime = time.time()
     # Time: 34.1s 
