@@ -17,7 +17,8 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-Python_API_Framework-005571?style=for-the-badge&logo=fastapi&logoColor=white)
 ![LangChain](https://img.shields.io/badge/LangChain-RAG_Framework-005571?style=for-the-badge)
 ![Ollama](https://img.shields.io/badge/Ollama-Local_Inference_Framework-8A2BE2?style=for-the-badge)
-![Llama_3.2](https://img.shields.io/badge/Llama_3.2-Transformer_Model-purple?style=for-the-badge)
+![Llama_3.2](https://img.shields.io/badge/Llama_3.2-Generator_Model-purple?style=for-the-badge)
+![llama-text-embed-v2](https://img.shields.io/badge/llama_text_embed_v2-Retriever_Model-purple?style=for-the-badge)
 ![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-6A1B9A?style=for-the-badge)
 ![Oura_API](https://img.shields.io/badge/Oura_API-Wearable_Data-black?style=for-the-badge)
 
