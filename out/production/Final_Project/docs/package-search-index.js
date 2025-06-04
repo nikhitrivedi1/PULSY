@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ApiHandling"},{"l":"Controller"},{"l":"ENUMS"},{"l":"Model"},{"l":"View"},{"l":"Wearables"}];updateSearchResults();
