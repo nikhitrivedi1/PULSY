@@ -28,7 +28,6 @@
 * **Huberman-Inspired:** Evidence-based tips for sleep, stress, and performance.
 * **Local AI:** Powered by Ollama (Llama 3.1) for private and efficient analysis.
 * **Desktop Native:** Built with Java Swing for a responsive experience.
-* **Visual Tracking:** Monitor your progress with clear charts.
 
 ## Download Instructions
 The Java portion of this application can be run on an IDE and Java compiler of your choice. However, in order to utilize the LLM capabilities locally please follow the below instructions.
@@ -43,7 +42,7 @@ git clone [replace with link upon releasing to public]
 2. Install pip dependencies for the RAG_API Package using the following command: 
 
 ```
-cd src/RAG_API
+cd backend/
 ```
 ```
 pip install -r requirements.txt
@@ -55,9 +54,9 @@ ollama pull llama3.2
 
 3. Next you will be able to set up the REST API to run locally on your laptop using the following cmd:
 ```
-uvicorn main:app --reload
+uvicorn main:app
 ```
-4. From here - you can start the Java Application by going to AppController.java and running it
+4. From here - you can start the Java Application by going to frontend/Controller/AppController.java and running it
 
 ## In Progress 🚀
 1. **LLM Function Calling** Add function calling capabilites to tune the quality of the responses provided by Pulsy
