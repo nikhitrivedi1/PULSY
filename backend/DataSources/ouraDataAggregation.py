@@ -1,65 +1,83 @@
 # Data Aggregation Script - Oura Ring
 # PROOF OF CONCEPT - FOCUS ON SLEEP, HEART RATE, STRESS
 
-
 # Constants
-APIKEY = "UNEWV6S7AQ4F3FHYKJZW2SBXN5N2YRDJ"
 BASEURL = "https://api.ouraring.com/v2/"
 SLEEPURL = "usercollection/daily_sleep"
 STRESSURL = "usercollection/daily_stress"
 HRURL = "usercollection/heartrate"
+MAXRETRY = 3
 
 # Libraries
 import requests
 from datetime import datetime
 from requests.exceptions import RequestException, HTTPError, ConnectionError, Timeout
 
+from DataSources.httpGETClass import HttpGETDevice
+from DataSources.deviceENUM import Device
 
+# Class for the Oura Ring Device
+# startDate: current Date - 3 days (to be modified to be more flexible)
+# endDate: current Date
+# Key: API Key from user
 class OuraData:
-    def __init__(self, startDate, endDate):
+    def __init__(self, startDate, endDate, key):
+        # 3 Day Data Retrieval
         self.startDate = startDate
         self.endDate = endDate
-        self.params = {
-            'start_date': startDate,
-            'end_date': endDate
-        }
+
+        # Initialize HTTP GET Request Object
+        self.httpReq = HttpGETDevice(Device.OURA_RING)
+
         # Create Header
-        self.header = {'Authorization': f'Bearer {APIKEY}'}
-        self.sleepData = self.queryExecution(SLEEPURL)
-        self.stressData = self.queryExecution(STRESSURL)
-        self.hearRateData = self.queryExecution(HRURL)
+        self.header = {'Authorization': f'Bearer {key}'}
 
+        # get data response from the past 3 days
+        resultData = self.queryExecution()
 
-    def queryExecution(self, uniqueURL):
-        # Create Query details
-        url = BASEURL + uniqueURL
+        # Assign retrieved data to objects
+        self.sleepData = resultData[0]
+        self.stressData = resultData[1]
+        self.hearRateData = resultData[2]
 
-        try:
-            if(uniqueURL != HRURL):
-                response = requests.request('GET', url, headers=self.header, params = self.params)
+    # Execute Query to extract Sleep, Stress, and Heart Rate Data
+    def queryExecution(self):
+        executionStrings = [SLEEPURL, STRESSURL, HRURL]
+        resultData = []
+
+        for uniqueURL in executionStrings:
+            # Create url variations based on the data being loaded
+            url = BASEURL + uniqueURL
+
+            # unique format for HR Call
+            if(uniqueURL != HRURL): 
+                params = {
+                    'start_date': self.startDate,
+                    'end_date': self.endDate
+                }
             else:
-                # Need to update dtype params for the heart rate query
-                # format YYYY-MM-DD
                 format = "%Y-%m-%d"
                 params = {
                     'start_datetime': datetime.strptime(self.startDate, format),
                     'end_datetime': datetime.strptime(self.endDate, format)
-                }
-                response = requests.request('GET', url, headers=self.header, params = self.params)
+            }
 
-        except ConnectionError as e:
-            print(e)
-        except TimeoutError as t:
-            # handle
-            print(t)
-        except HTTPError as h:
-            print(h)
-        except RequestException as r:
-            print(r)
-        finally:
-            print("Request Successfully Excecuted")
+            # success (bool) -> indicator for whether request succeeded or failed
+            success, content = self.httpReq.sendRequest(url, params, self.header)
 
-        return response.json()['data']
+            if not success: 
+                # retry call 3 times
+                attempt = 1
+                while(attempt < MAXRETRY and not success):
+                    success, content = self.httpReq.sendRequest(url, params, self.header)
+                    if(success): break
+                    attempt+=1
+                
+                if(not success):
+                    raise RuntimeError(content)
+            
+            resultData.append(content)
+        return resultData
 
 
 

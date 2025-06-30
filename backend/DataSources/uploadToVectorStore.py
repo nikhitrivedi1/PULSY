@@ -7,17 +7,21 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 
 # Constants
-APIKEY = 'pcsk_3sDCPS_57sis6H1dsGDzkpEoQ8dJzDLHTzcL9eQM7a5o1VCNEpWMqGX4kh6guFnZCwemBH'
 INDEX = 'podcastTranscripts'
 
 
 class PineconeClass:
-    def __init__(self):
-        # Initialize Pinecone client
-        self.pc = Pinecone(api_key = APIKEY)
-        self.index = self.pc.Index(host = "https://ourahuberman-2qajcgl.svc.aped-4627-b74a.pinecone.io")
-        self.embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/bert-large-nli-stsb-mean-tokens')
-        self.vectorStore = PineconeVectorStore(embedding = self.embeddings, index = self.index)
+    def __init__(self, key):
+        try:
+            # Initialize Pinecone client
+            self.pc = Pinecone(api_key = key)
+            self.index = self.pc.Index(host = "https://ourahuberman-2qajcgl.svc.aped-4627-b74a.pinecone.io")
+            self.embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/bert-large-nli-stsb-mean-tokens')
+            self.vectorStore = PineconeVectorStore(embedding = self.embeddings, index = self.index)
+        except RuntimeError as r:
+            # This is an internal endpoint - users do not need to provide any information
+            # Build out further exceptions to handle connection errors, etc.
+            raise RuntimeError("Pinecone Server Error")
 
     def insert(self, docs):
         _ = self.vectorStore.add_documents(namespace = INDEX,documents = docs)
@@ -27,7 +31,6 @@ class PineconeClass:
 
         # Convert query to vector space using embeddings model
         queryVec = self.embeddings.embed_query(query)
-        # print(queryVec)
 
         self.results = index.query(
             namespace = INDEX,

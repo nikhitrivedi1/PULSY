@@ -10,7 +10,7 @@ from uploadToVectorStore import PineconeClass
 import os
 
 # Constants
-PINECONE = 'pcsk_3sDCPS_57sis6H1dsGDzkpEoQ8dJzDLHTzcL9eQM7a5o1VCNEpWMqGX4kh6guFnZCwemBH'
+# PINECONE = 'pcsk_3sDCPS_57sis6H1dsGDzkpEoQ8dJzDLHTzcL9eQM7a5o1VCNEpWMqGX4kh6guFnZCwemBH'
 BASEURL = 'https://www.hubermanlab.com/newsletter/'
 TESTURLS = ["improve-your-sleep", "your-top-questions-on-sleep-answered","breathwork-protocols-for-health-focus-stress", "foundational-fitness-protocol"]
 CLEANUP_WORDS = ['Stay Connected', 'Subscribe', '\n']

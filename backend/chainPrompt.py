@@ -13,7 +13,6 @@ class PromptChain:
                         "It is completely ok to not know the answer - if you don't have enough information let the user know "
                         "Your responses should be structures as follows: Present the numerical data from the device - explain what it means - use the Huberman podcast transcripts to provide insight")
         
-
         self.template = self.summary + "\n" + "Wearble Data: {userData}" + "\n" + "Documents:" + "\n"  "{documents}" + "\n\n" + "Question: {question}" + "\n"  
         self.prompt = PromptTemplate(template = self.template, input_variables = ["question", "documents", "userData"])
         self.ouraData = ouraData

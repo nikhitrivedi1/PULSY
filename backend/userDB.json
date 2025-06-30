@@ -1,0 +1,10 @@
+{
+    "Nikhil" : {
+        "password": "1234",
+        "ouraKeys": "UNEWV6S7AQ4F3FHYKJZW2SBXN5N2YRDJ"
+    }, 
+    "OuraTestUser": {
+        "password": "1234",
+        "ouraKeys": "DummyKeysForTest"
+    }
+}
