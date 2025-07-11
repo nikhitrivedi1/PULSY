@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
 import numpy as np
-from ragChain import RAGChain
-import time
+from RAG.rag_chain import RAGChain
 
 # Error Messages 
 INIT_ERROR_MESSAGE = "ERROR: Please ensure your device keys are properly documented"
@@ -15,7 +14,7 @@ class Query(BaseModel):
 
 # Initialize Globals
 app = FastAPI()
-chainObj = RAGChain()
+chain_obj = RAGChain()
 app.state.initializationComplete = False # Initialization Complete Flag
 
 # GET METHODS
@@ -27,12 +26,10 @@ app.state.initializationComplete = False # Initialization Complete Flag
 # password (str)
 @app.get("/login/")
 async def login(username:str, password:str):
-    success, message = chainObj.initPersonal(username, password)
-
+    success, message = chain_obj.init_personal(username, password)
     if success: 
         app.state.initializationComplete = True
         return "Success"
-
     return message
 
 
@@ -42,7 +39,7 @@ async def login(username:str, password:str):
 # returns LLM response to the invoked query
 # if initialization fails -> the initialization error message will be returned
 @app.post("/query/")
-async def postQuery(
+async def post_query(
     query: Query
 ):
     # Check Initialization
@@ -51,7 +48,7 @@ async def postQuery(
 
     # initialize the LLM upon running the instance
     # Pass in the query body to get a response
-    chain = chainObj.createChain()
+    chain = chain_obj.create_chain()
     res = chain.invoke(query.query)
     return res
 

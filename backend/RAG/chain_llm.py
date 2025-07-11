@@ -5,9 +5,6 @@
 from ollama import chat
 from ollama import ChatResponse
 
-#Pinecone and LangChain Libraries
-from chainPrompt import PromptChain
-
 # MISC
 import markdown
 
@@ -16,12 +13,12 @@ class LLMChain():
     def __init__(self):
          # Model name
         # 3.2b params
-        self.modelName = 'llama3.2'
+        self.model_name = 'llama3.2'
 
 
     def chat(self, prompt):
         response: ChatResponse = chat(
-            model = self.modelName,
+            model = self.model_name,
             messages = [
                 {
                     'role': 'user',
@@ -31,15 +28,15 @@ class LLMChain():
         )
         return response
 
-    def format(self, response):
+    def format_response(self, response):
         # TODO: NEED GENERIC WAY TO FORMAT - this is ANNOYING
-        unformattedRespose = response['message']['content']
-        unformattedRespose = unformattedRespose.replace("\n", "<br>")
-        print(unformattedRespose)
+        unformatted_response = response['message']['content']
+        unformatted_response = unformatted_response.replace("\n", "<br>")
+        print(unformatted_response)
 
         # Format to remove the \n
-        htmlResponse = markdown.markdown(unformattedRespose)
-        return htmlResponse
+        html_response = markdown.markdown(unformatted_response)
+        return html_response
 
 
 

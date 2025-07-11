@@ -1,0 +1,22 @@
+# Database files
+*.json
+
+# Pinecone Operation Files
+# Huberman Files
+backend/DataSources/Huberman/
+backend/DataSources/content_aggregation.py
+
+
+# Pycache
+backend/__pycache__/
+backend/DataSources/__pycache__/
+backend/RAG/__pycache__/
+
+# IntelliJ
+.idea/
+frontend/.idea/
+frontend/out
+
+# Ignored Files - in progress
+backend/Agentic_RAG/
+frontend_Agent/

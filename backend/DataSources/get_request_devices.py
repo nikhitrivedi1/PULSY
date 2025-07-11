@@ -2,8 +2,8 @@
 
 # Libraries
 import requests
-from DataSources.deviceENUM import Device
-from requests.exceptions import RequestException, HTTPError, ConnectionError, TimeoutError
+from DataSources.device_enum import Device
+from requests.exceptions import RequestException, HTTPError, ConnectionError
 
 # HttpGETDevice Class
 # Developed for all GET requests sent to API device endpoints
@@ -16,9 +16,13 @@ class HttpGETDevice():
     # URL (str): url endpoint for the GET call
     # Params (dict): parameter component of the GET Request
     # Headers (dict): contains authentication information - {"Authorization": key}
-    def sendRequest(self, URL: str, params: dict, header: dict):
+    def send_request(self, URL: str, params: dict, header: dict):
         try:
-            response = requests.request('GET', URL, headers = header, params = params)
+            response = requests.get(
+                URL, 
+                headers = header, 
+                params = params
+            )
             response.raise_for_status()
             return True, response.json()['data']
         except ConnectionError as e:
@@ -42,7 +46,7 @@ class HttpGETDevice():
                 resString = f"Unexpected Error: {http_error}"
                 return False, resString
         except RequestException as r:
-            return False, str(http_error)
+            return False, str(r)
 
 
 
