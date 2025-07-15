@@ -1,10 +1,10 @@
 # Libraires
 from langchain.prompts import PromptTemplate
-from DataSources.ouraDataAggregation import OuraData
+from DataSources.oura_data_aggregation import OuraData
 
 
 class PromptChain:
-    def __init__(self, ouraData):
+    def __init__(self, oura_data):
         # TODO: Add instructions or definitions for each of the metric variables
         self.summary = ("Your name is Pulsey and you are a special AI advisor meant to help users understand and extract value from data derived from their wearable devices"
                         "Provided to you are several pieces of context that you should use when answering the users question - be clear, concise and keep your respones under 100 words"
@@ -13,18 +13,17 @@ class PromptChain:
                         "It is completely ok to not know the answer - if you don't have enough information let the user know "
                         "Your responses should be structures as follows: Present the numerical data from the device - explain what it means - use the Huberman podcast transcripts to provide insight")
         
+        self.template = self.summary + "\n" + "Wearble Data: {user_data}" + "\n" + "Documents:" + "\n"  "{documents}" + "\n\n" + "Question: {question}" + "\n"  
+        self.prompt = PromptTemplate(template = self.template, input_variables = ["question", "documents", "user_data"])
+        self.oura_data = oura_data
 
-        self.template = self.summary + "\n" + "Wearble Data: {userData}" + "\n" + "Documents:" + "\n"  "{documents}" + "\n\n" + "Question: {question}" + "\n"  
-        self.prompt = PromptTemplate(template = self.template, input_variables = ["question", "documents", "userData"])
-        self.ouraData = ouraData
-
-    def getPrompt(self, dbResponse: dict):
-        question = dbResponse["query"]
-        documents = dbResponse["documents"]
-        ouraDataForm = self.getOuraUserData(self.ouraData, question)
-        return self.prompt.format(question  = question, documents = documents, userData = ouraDataForm)
+    def get_prompt(self, db_response: dict):
+        question = db_response["query"]
+        documents = db_response["documents"]
+        oura_data_form = self.get_oura_user_data(self.oura_data, question)
+        return self.prompt.format(question  = question, documents = documents, user_data = oura_data_form)
     
-    def getOuraUserData(self, ouraDat: OuraData, question):
+    def get_oura_user_data(self, oura_data: OuraData, question):
         # Sleep Scores
             #         {
             #   "data": [
@@ -50,31 +49,31 @@ class PromptChain:
         # Based on the Question - check for inclusion of stress - sleep as well as stress and sleep
 
         if 'sleep' in question and 'stress' in question:
-            return "Sleep Scores: \n" + self.getSleepSummary(ouraDat) + "\n Stress Scores:" + self.getStressSummary(ouraDat)
+            return "Sleep Scores: \n" + self.get_sleep_summary(oura_data) + "\n Stress Scores:" + self.get_stress_summary(oura_data)
         elif 'sleep' in question:
-            return "Sleep Scores: \n" + self.getSleepSummary(ouraDat)
+            return "Sleep Scores: \n" + self.get_sleep_summary(oura_data)
         elif 'stress' in question:
-            return "Stress Scores:" + self.getStressSummary(ouraDat)
+            return "Stress Scores:" + self.get_stress_summary(oura_data)
         else:
             return ""
     
-    def getSleepSummary(self, ouraDat: OuraData):
-        sleepSummary = []
+    def get_sleep_summary(self, oura_data: OuraData):
+        sleep_summary = []
         # Create arrays to store specifics of the sleep scores for formatting
-        for data in ouraDat.sleepData:
+        for data in oura_data.sleep_data:
             # format the information 
-            sleepSummary.append(f"Date: {data['day']} | Sleep Score: {data['score']} | Contributors: Deep Sleep: {data['contributors']['deep_sleep']} Efficiency: {data['contributors']['efficiency']} Latency: {data['contributors']['latency']} REM:{data['contributors']['rem_sleep']} Restfulness: {data['contributors']['restfulness']} Timing: {data['contributors']['timing']} Total Sleep: {data['contributors']['total_sleep']}")
+            sleep_summary.append(f"Date: {data['day']} | Sleep Score: {data['score']} | Contributors: Deep Sleep: {data['contributors']['deep_sleep']} Efficiency: {data['contributors']['efficiency']} Latency: {data['contributors']['latency']} REM:{data['contributors']['rem_sleep']} Restfulness: {data['contributors']['restfulness']} Timing: {data['contributors']['timing']} Total Sleep: {data['contributors']['total_sleep']}")
 
         # join the sleep summary chunks into a format
-        sleepFormattedSummary = "\n".join(sleepSummary)
-        return sleepFormattedSummary
+        sleep_formatted_summary = "\n".join(sleep_summary)
+        return sleep_formatted_summary
 
-    def getStressSummary(self, ouraDat: OuraData):
-        stressSummary = []
+    def get_stress_summary(self, oura_data: OuraData):
+        stress_summary = []
         # Stress Scores
-        for data in ouraDat.stressData:
+        for data in oura_data.stress_data:
             # format the information
-            stressSummary.append(f"Date: {data['day']} | Max Stress Value: {data['stress_high']} | Recovery Max Value: {data['recovery_high']} | Day Summary: {data['day_summary']}")
-        stressFormattedSummary = "\n".join(stressSummary)
-        return stressFormattedSummary
+            stress_summary.append(f"Date: {data['day']} | Max Stress Value: {data['stress_high']} | Recovery Max Value: {data['recovery_high']} | Day Summary: {data['day_summary']}")
+        stress_formatted_summary = "\n".join(stress_summary)
+        return stress_formatted_summary
 
