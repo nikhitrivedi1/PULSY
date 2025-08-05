@@ -42,15 +42,14 @@ class OuraData:
         # get data response from the past 3 days
         try:
             result_data = self.query_execution()
+            # Assign retrieved data to objects
+            sleep_data = result_data[0]
+            stress_data = result_data[1]
+            heart_rate_data = result_data[2]
+
+            return sleep_data, stress_data, heart_rate_data
         except APICallError as e:
             raise APICallError(str(e))
-
-        # Assign retrieved data to objects
-        sleep_data = result_data[0]
-        stress_data = result_data[1]
-        heart_rate_data = result_data[2]
-        return sleep_data, stress_data, heart_rate_data
-
 
     # Execute Query to extract Sleep, Stress, and Heart Rate Data
     def query_execution(self):

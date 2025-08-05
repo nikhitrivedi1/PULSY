@@ -58,13 +58,9 @@ uvicorn main:app
 ```
 4. From here - you can start the Java Application by going to frontend/Controller/AppController.java and running it
 
-## In Progress 🚀
-1. **LLM Function Calling** Add function calling capabilites to tune the quality of the responses provided by Pulsy
-2. **Exploration of Agentic Frameworks** for graph formulation and more autonomous function calling
-3. **Prod Infrastructure** to be hosted as web-based app with user handling and privacy features
-
-## Open-Dev Work 🚀
-1. **User storage and handling** add new devices + add user profile + save user attributes
-2. **Store conversation history** for prior context to the LLM - enhance user interaction
-
+## TODO
+- [ ] Add the average for the heart rate data (user_tools.py)
+- [ ] Add the provisions for other devices (user_tools.py) 
+- [ ] Narrow the scope only to the previous day (user_tools.py)
+- [ ] Come up with DB to retrieve relevant API Keys - current implementation uses file, long term should store in web service (rag_chain.py)
 ---

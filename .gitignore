@@ -6,17 +6,14 @@
 backend/DataSources/Huberman/
 backend/DataSources/content_aggregation.py
 
-
 # Pycache
 backend/__pycache__/
 backend/DataSources/__pycache__/
 backend/RAG/__pycache__/
 
-# IntelliJ
-.idea/
-frontend/.idea/
-frontend/out
+# Node Modules
+node_modules/
 
-# Ignored Files - in progress
-backend/Agentic_RAG/
-frontend_Agent/
+# Shared DB
+shared/user_state.json
+shared/config.json
