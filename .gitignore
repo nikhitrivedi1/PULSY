@@ -1,19 +1,26 @@
-# Database files
-*.json
-
 # Pinecone Operation Files
 # Huberman Files
-backend/DataSources/Huberman/
-backend/DataSources/content_aggregation.py
+agentic_interface/DataSources/Huberman/
+agentic_interface/DataSources/content_aggregation.py
+
+# Data Sources Files
+agentic_interface/DataSources/retriever_ops.py
 
 # Pycache
-backend/__pycache__/
-backend/DataSources/__pycache__/
-backend/RAG/__pycache__/
+agentic_interface/__pycache__/
+agentic_interface/DataSources/__pycache__/
+agentic_interface/Agentic_RAG/__pycache__/
+agentic_interface/RAG/__pycache__/
+
+# RAG Version
+agentic_interface/main.py
+agentic_interface/RAG/*
 
 # Node Modules
 node_modules/
 
+# Config
+config/config.yaml
+
 # Shared DB
 shared/user_state.json
-shared/config.json

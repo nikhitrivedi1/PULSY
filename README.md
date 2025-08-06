@@ -1,66 +1,63 @@
-# Pulsy - AI-Powered Wearable Insights 🧠⌚️
+# Pulsy - Your AI Advisor for your Wearable Devices 🧠⌚️
 
-![Puley App Icon](src/assets/Pulsey_Icon.png)
 
-**Understand your wearable data like never before with Puley. Get personalized, actionable insights inspired by experts like Andrew Huberman, powered by local AI.**
+**Transform your health data into actionable insights with Pulsy - an AI advisor that utilizes context from your Oura Ring data and documents from health experts (Andrew Huberman Labs) to provide you with ways to optimize your day**
 
 ---
 
-## How It Works ⚙️
+## Overview 🌟
+Pulsy combines a web interface with and Agentic RAG framework to help users gain insights from their health and wellness data. Key features include:
+- **Pulsy - your Agent**: can retrieve relevant wearable data based on the question you ask it - this approach provides a generalizable process for your needs/questions
 
-1.  **Connect:** Link your compatible wearable device - currently supports the Oura RIng
-2.  **Analyze:** Puley's local AI backend crunches your data with insights from Andrew Huberman
-3.  **Learn:** Get easy-to-understand insights and recommendations.
+- **Goal-Based Workflow**: agentic capability to document, update and summarize your progress towards reaching your goals
 
-## 🛠 Tech Stack
-![Java_Swing](https://img.shields.io/badge/Java_Swing-Desktop_GUI-orange?style=for-the-badge)
+- **Vector-Based Knowledge Retrieval**: RAG implementation using state-of-the-art embedding models to extract semantically relevant insights from documents
+
+## System Architecture ⚙️
+
+![System Architecture](readme_assets/Architecture_Diagram.png)
+
+
+
+## Tech Stack 🛠
+
+![Node.js](https://img.shields.io/badge/Node.js-Web_Framework-orange?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Python_API_Framework-005571?style=for-the-badge&logo=fastapi&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-RAG_Framework-005571?style=for-the-badge)
-![Ollama](https://img.shields.io/badge/Ollama-Local_Inference_Framework-8A2BE2?style=for-the-badge)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_RAG_Framework-005571?style=for-the-badge)
+![GPT_4.1](https://img.shields.io/badge/GPT4.1-LLM-8A2BE2?style=for-the-badge)
 ![Llama_3.2](https://img.shields.io/badge/Llama_3.2-Generator_Model-purple?style=for-the-badge)
-![llama-text-embed-v2](https://img.shields.io/badge/llama_text_embed_v2-Retriever_Model-purple?style=for-the-badge)
+![llama-text-embed-v2](https://img.shields.io/badge/llama_text_embed_v2-Embedding_Model-purple?style=for-the-badge)
 ![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-6A1B9A?style=for-the-badge)
 ![Oura_API](https://img.shields.io/badge/Oura_API-Wearable_Data-black?style=for-the-badge)
 
-## Highlights ✨
 
-* **Smart Analysis:** AI-driven insights from your HRV, sleep, activity, and more.
-* **Huberman-Inspired:** Evidence-based tips for sleep, stress, and performance.
-* **Local AI:** Powered by Ollama (Llama 3.1) for private and efficient analysis.
-* **Desktop Native:** Built with Java Swing for a responsive experience.
-
-## Download Instructions
-The Java portion of this application can be run on an IDE and Java compiler of your choice. However, in order to utilize the LLM capabilities locally please follow the below instructions.
-**Note this will download an LLM locally to your laptop so be aware of memory implications**
-
-1. Clone the repository 
-```
-git clone [replace with link upon releasing to public]
-```
+## Demo Video 🎥
+<video width="100%" controls>
+  <source src="readme_assets/Pulsy_Demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 
-2. Install pip dependencies for the RAG_API Package using the following command: 
-
-```
-cd backend/
-```
-```
-pip install -r requirements.txt
-```
-2. Configure Ollama to pull and download a Llama 3.2 using (this download will take a while): 
-```
-ollama pull llama3.2
-```
-
-3. Next you will be able to set up the REST API to run locally on your laptop using the following cmd:
-```
-uvicorn main:app
-```
-4. From here - you can start the Java Application by going to frontend/Controller/AppController.java and running it
-
-## TODO
-- [ ] Add the average for the heart rate data (user_tools.py)
-- [ ] Add the provisions for other devices (user_tools.py) 
-- [ ] Narrow the scope only to the previous day (user_tools.py)
-- [ ] Come up with DB to retrieve relevant API Keys - current implementation uses file, long term should store in web service (rag_chain.py)
 ---
+## Getting Started 🚀
+
+
+---
+### ToDo's For The Repo
+**AI Backend**
+
+☐ Add proper 400 - 500 error code handling and raising for API interfaces
+
+☐ Error handling - for FileNotFound type errors when accessing shared user_state.json and config.yaml
+
+☐ Look into Pydantic methods to parse the response of the Oura Ring related tools - https://python.langchain.com/api_reference/core/output_parsers/langchain_core.output_parsers.openai_tools.PydanticToolsParser.html
+
+
+**Web App**
+
+☐ Refresh Chat page after Goal Creation to show the new goal element for user reference
+
+**Overall**
+
+☐ Host this application on the web
+☐ Integrate GPT-OSS

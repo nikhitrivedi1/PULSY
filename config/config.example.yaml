@@ -1,0 +1,12 @@
+
+# API Keys
+OPENAI_API_KEY: "YOUR_OPENAI_API_KEY"
+PINECONE_API_KEY: "YOUR_PINECONE_API_KEY"
+PINECONE_HOST: "YOUR_PINECONE_HOST"
+PINECONE_INDEX: "YOUR_PINECONE_INDEX"
+PINECONE_EMBEDDING_MODEL: "YOUR_PINECONE_EMBEDDING_MODEL"
+
+# Directories
+directories:
+  backend: "agentic_interface/main_agent.py"
+  frontend: "web/server.js"
