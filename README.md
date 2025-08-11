@@ -1,21 +1,32 @@
 # Pulsy - Your AI Advisor for your Wearable Devices 🧠⌚️
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
 
-**Transform your health data into actionable insights with Pulsy - an AI advisor that utilizes context from your Oura Ring data and documents from health experts (Andrew Huberman Labs) to provide you with ways to optimize your day**
+Pulsy turns your wearable data into **personalized, expert-backed insights** — powered by agentic AI workflows and curated health knowledge from voices like *Andrew Huberman*.
+---
+
+### 🚀 What Pulsy Does
+
+- 📊 **Wearable Integration**  
+  Pulls sleep, stress, and heart rate data from your **Oura Ring**.
+
+- 🔍 **Smart Retrieval**  
+  Uses **RAG (Retrieval-Augmented Generation)** to surface semantically relevant insights from a vector database.
+
+
+- 🎯 **Goal Tracking**  
+  Creates, manages, and documents progress toward your personal health goals.
 
 ---
 
-## Overview 🌟
-Pulsy combines a web interface with and Agentic RAG framework to help users gain insights from their health and wellness data. Key features include:
-- **Pulsy - your Agent**: can retrieve relevant wearable data based on the question you ask it - this approach provides a generalizable process for your needs/questions
+> 💡 *Pulsy bridges the gap between raw health metrics and actionable, science-driven insights.*
 
-- **Goal-Based Workflow**: agentic capability to document, update and summarize your progress towards reaching your goals
 
-- **Vector-Based Knowledge Retrieval**: RAG implementation using state-of-the-art embedding models to extract semantically relevant insights from documents
-
-## System Architecture ⚙️
-
-![System Architecture](readme_assets/Architecture_Diagram.png)
+## Demo 🎥 🎬
+<video width="100%" controls>
+  <source src="readme_assets/Pulsy_Demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 
 
@@ -25,39 +36,79 @@ Pulsy combines a web interface with and Agentic RAG framework to help users gain
 ![FastAPI](https://img.shields.io/badge/FastAPI-Python_API_Framework-005571?style=for-the-badge&logo=fastapi&logoColor=white)
 ![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_RAG_Framework-005571?style=for-the-badge)
 ![GPT_4.1](https://img.shields.io/badge/GPT4.1-LLM-8A2BE2?style=for-the-badge)
-![Llama_3.2](https://img.shields.io/badge/Llama_3.2-Generator_Model-purple?style=for-the-badge)
-![llama-text-embed-v2](https://img.shields.io/badge/llama_text_embed_v2-Embedding_Model-purple?style=for-the-badge)
+![bert-large-nli-stsb-mean-tokens](https://img.shields.io/badge/bert_large_nli_stsb-Embedding_Model-purple?style=for-the-badge)
 ![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-6A1B9A?style=for-the-badge)
 ![Oura_API](https://img.shields.io/badge/Oura_API-Wearable_Data-black?style=for-the-badge)
-
-
-## Demo Video 🎥
-<video width="100%" controls>
-  <source src="readme_assets/Pulsy_Demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
+## System Architecture ⚙️
+*Local JSON DB subject to change in next hosted version*
+<p align="center">
+  <img src="readme_assets/Architecture_Diagram.png" alt="System Architecture">
+</p>
 
 ---
 ## Getting Started 🚀
+### Prerequisites
+- Python 3.9+
+- Node.js
+- npm
+- API Keys for: Oura Ring, Pinecone, OpenAI
 
+### Installation Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/nikhitrivedi1/PULSY.git
+   cd Pulsy
+   ```
+
+2. Install Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Install Node.js dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Configure API Keys:
+   - Copy `config/config.example.yaml` to `config.yaml`
+   - Update the following values in `config.yaml` 
+     ```yaml
+     OPENAI_API_KEY: "YOUR_OPENAI_API_KEY"  # OpenAI API key for LLM functionality
+     PINECONE_API_KEY: "YOUR_PINECONE_API_KEY"  # Pinecone API key for vector storage
+     PINECONE_HOST: "YOUR_PINECONE_HOST"  # Your Pinecone host URL
+     PINECONE_INDEX: "YOUR_PINECONE_INDEX"  # Name of your Pinecone index
+     PINECONE_EMBEDDING_MODEL: "YOUR_PINECONE_EMBEDDING_MODEL"  # Embedding model name
+     ```
+     *Note that you will need to provide your own documents via Pinecone for this version (upgrade will come in the next version)*
+
+5. Navigate to the web directory:
+   ```bash
+   cd web
+   ```
+
+6. Start the web server:
+   ```bash
+   ./run.sh
+   ```
+
+7. In a new terminal, navigate to the agent interface:
+   ```bash
+   cd agentic_interface
+   ```
+
+8. Start the agent server:
+   ```bash
+   ./run_agent.sh
+   ```
+
+9. Access the application:
+   - Open your browser and navigate to `http://localhost:3000/`
+   - Click the "Create Profile" button to set up your account
+   - Start exploring your health insights!
+
+### *Note: Make sure both terminal windows remain open while using the application. The web server and agent server need to run simultaneously for full functionality*
 
 ---
-### ToDo's For The Repo
-**AI Backend**
-
-☐ Add proper 400 - 500 error code handling and raising for API interfaces
-
-☐ Error handling - for FileNotFound type errors when accessing shared user_state.json and config.yaml
-
-☐ Look into Pydantic methods to parse the response of the Oura Ring related tools - https://python.langchain.com/api_reference/core/output_parsers/langchain_core.output_parsers.openai_tools.PydanticToolsParser.html
-
-
-**Web App**
-
-☐ Refresh Chat page after Goal Creation to show the new goal element for user reference
-
-**Overall**
-
-☐ Host this application on the web
-☐ Integrate GPT-OSS
+## Coming Soon! 🚀
+✨ Hosted Agentic RAG service - Stay tuned 🌟
