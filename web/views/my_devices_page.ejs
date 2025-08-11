@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Devices - AI Wearables Advisor</title>
+    <link rel="stylesheet" href="chatPage.css">
+    <style>
+        /* Modern styling updates */
+        body {
+            font-family: "Aeonik", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #E8E1D7;
+            color: #1a1a1a;
+            display: flex;
+            overflow-x: hidden;
+            justify-content: center;
+        }
+
+        .devices-container {
+            margin: 80px auto 0;
+            max-width: 1200px;
+            padding: 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .devices-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .devices-title {
+            font-size: 2rem;
+            color: #0B365B;
+            font-weight: 600;
+        }
+
+        .add-device-btn {
+            padding: 12px 28px;
+            border: 2px solid #0B365B;
+            border-radius: 24px;
+            background: #0B365B;
+            color: #E8E1D7;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        .add-device-btn:hover {
+            background: transparent;
+            color: #0B365B;
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            justify-items: center;
+        }
+
+        .device-card {
+            background: #F5F1EB;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 300px;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .device-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-active {
+            background: #34C759;
+        }
+
+        .device-image {
+            width: 80%;
+            height: 160px;
+            object-fit: contain;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        .device-info {
+            width: 100%;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .device-info p {
+            margin: 0.5rem 0;
+            color: #0B365B;
+        }
+
+        .remove-device-btn {
+            padding: 8px 16px;
+            border: 2px solid #FF3B30;
+            border-radius: 24px;
+            background: #FF3B30;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .remove-device-btn:hover {
+            background: transparent;
+            color: #FF3B30;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #F5F1EB;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #0B365B;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #D4CEC4;
+            border-radius: 12px;
+            background: #fff;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials_header.ejs') %>
+
+    <!-- Main Content -->
+    <div class="devices-container">
+        <div class="devices-header">
+            <h1 class="devices-title">My Devices</h1>
+            <button class="add-device-btn" onclick="openAddDeviceModal()">
+                <i class="fas fa-plus"></i> Add New Device
+            </button>
+        </div>
+
+        <div class="device-grid">
+            <% if (typeof user_devices !== 'undefined' && user_devices && user_devices.length > 0) { %>
+                <% user_devices.forEach(function(device) { %>
+                    <div class="device-card">
+                        <div class="device-image-container">
+                            <img src="/assets/oura_ring.png" alt="<%= device.device_type %>" class="device-image">
+                            <div class="device-image-overlay">
+                                <div class="pulse-ring"></div>
+                            </div>
+                        </div>
+                        <div class="device-header">
+                            <div class="status-dot status-active"></div>
+                            <h2><%= device.device_name %></h2>
+                        </div>
+                        <div class="device-info">
+                            <p><strong>Device Type:</strong> <%= device.device_type %></p>
+                            <p><strong>Status:</strong> Active</p>
+                        </div>
+                        <form action="/my_devices/action" method="POST" style="display:inline;">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="device_name" value="<%= device.device_name %>">
+                            <button type="submit" class="remove-device-btn">Remove Device</button>
+                        </form>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div style="grid-column: 1/-1; text-align: center;">
+                    <p>No devices found. Add a device to get started!</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Add Device Modal -->
+    <div id="addDeviceModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #0B365B; margin-bottom: 1.5rem;">Add New Device</h2>
+            <form id="addDeviceForm" method="POST" action="/my_devices/action">
+                <div class="form-group">
+                    <label for="deviceName">Device Name</label>
+                    <input type="text" id="deviceName" name="device_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="deviceType">Device Type</label>
+                    <select id="deviceType" name="device_type" required>
+                        <option value="Oura Ring">Oura Ring</option>
+                        <option value="fitbit">Fitbit</option>
+                        <option value="apple_watch">Apple Watch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="apiKey">API Key</label>
+                    <input type="password" id="apiKey" name="api_key" required>
+                </div>
+                <input type="hidden" name="action" value="add">
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" class="add-device-btn" style="background: transparent;" onclick="closeAddDeviceModal()">Cancel</button>
+                    <button type="submit" class="add-device-btn">Add Device</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <script>
+        function openAddDeviceModal() {
+            document.getElementById('addDeviceModal').style.display = 'flex';
+        }
+
+        function closeAddDeviceModal() {
+            document.getElementById('addDeviceModal').style.display = 'none';
+        }
+
+        document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            try {
+                const response = await fetch('/my_devices/action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formObject)
+                });
+
+                if(response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to add device. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error adding device:', error);
+                alert('An error occurred while adding the device.');
+            }
+        });
+    </script>
+</body>
+</html>

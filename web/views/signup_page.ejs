@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pulsy - Sign Up</title>
+    <style>
+        body {
+            font-family: "Aeonik", -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: auto;
+            color: #1a1a1a;
+            background: #E8E1D7;
+        }
+
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding: 2rem 0;
+        }
+
+        .signup-box {
+            background: #F5F1EB;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid #D4CEC4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #0B365B;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #D4CEC4;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #F5F1EB;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            color: #1a1a1a;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0B365B;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #D4CEC4;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #F5F1EB;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            color: #1a1a1a;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #0B365B;
+        }
+
+        .signup-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #0B365B;
+            color: #E8E1D7;
+            border: 2px solid #0B365B;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .signup-button:hover {
+            background-color: transparent;
+            color: #0B365B;
+        }
+
+        .success-message {
+            color: #34C759;
+            margin-bottom: 1rem;
+            text-align: center;
+            min-height: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .checkmark {
+            color: #34C759;
+            font-size: 2rem;
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-box">
+            <h1 class="app-title">PULSY</h1>
+            <p class="app-subtitle">Create Your Account</p>
+
+            <form id="signupForm" method="post" class="form-group">
+                <div class="form-group">
+                    <label for="newUsername">Username</label>
+                    <input type="text" id="newUsername" name="newUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Password</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" required min="1" max="120">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="height">Height (ft/in)</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="number" id="height_ft" name="height_ft" required min="1" max="8" placeholder="feet">
+                        <input type="number" id="height_in" name="height_in" required min="0" max="11" placeholder="inches">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Weight (lbs)</label>
+                    <input type="number" id="weight" name="weight" required min="1" max="1000">
+                </div>
+                <div class="form-group">
+                    <label for="health_conditions">Health Conditions</label>
+                    <textarea id="health_conditions" name="health_conditions" placeholder="Please list any health conditions you have, separated by commas"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="preferences">App Preferences</label>
+                    <textarea id="preferences" name="preferences" placeholder="Please list your app preferences (e.g. daily notifications, weekly reports, fitness tracking)"></textarea>
+                </div>
+                <button type="submit" class="signup-button">Create Account</button>
+            </form>
+
+            <% if (locals.successMessage) { %>
+                <script>
+                    document.getElementById('signupForm').style.display = 'none';
+                </script>
+                <div class="checkmark" id="successCheckmark" style="display: block; color: green; font-size: 24px;">✓</div>
+                <div class="success-message" id="successMessage" style="color: green;"><%= successMessage %></div>
+                <a href="/" class="login-button" style="display: block; width: 100%; padding: 10px; margin-top: 10px; background-color: #0B365B; color: white; text-decoration: none; text-align: center; border-radius: 5px;">Go to Login</a>
+            <% } %>
+            <% if (locals.errorMessage) { %>
+                <div class="error-message" style="color: red;"><%= errorMessage %></div>
+            <% } %>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="/" style="color: #0B365B; text-decoration: none; cursor: pointer;">Already have an account? Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
