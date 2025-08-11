@@ -3,6 +3,7 @@
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 
 Pulsy turns your wearable data into **personalized, expert-backed insights** — powered by agentic AI workflows and curated health knowledge from voices like *Andrew Huberman*.
+
 ---
 
 ### 🚀 What Pulsy Does
@@ -103,7 +104,7 @@ Pulsy turns your wearable data into **personalized, expert-backed insights** —
    - Click the "Create Profile" button to set up your account
    - Start exploring your health insights!
 
-### *Note: Make sure both terminal windows remain open while using the application. The web server and agent server need to run simultaneously for full functionality*
+*Note: Make sure both terminal windows remain open while using the application. The web server and agent server need to run simultaneously for full functionality*
 
 ---
 ## Coming Soon! 🚀
