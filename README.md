@@ -23,10 +23,8 @@ Pulsy turns your wearable data into **personalized, expert-backed insights** —
 
 
 ## Demo 🎥 🎬
-<video width="100%" controls>
-  <source src="readme_assets/Pulsy_Demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+▶️ [Watch the Pulsy Demo Video](https://raw.githubusercontent.com/nikhitrivedi1/PULSY/main/readme_assets/Pulsy_Demo.mp4)
+
 
 
 
