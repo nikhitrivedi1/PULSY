@@ -13,7 +13,6 @@ from datetime import datetime
 
 from DataSources.get_request_devices import HttpGETDevice
 from DataSources.device_enum import Device
-from DataSources.custom_api_key_error import APICallError
 from datetime import datetime, timedelta
 from fastapi import HTTPException
 
