@@ -248,7 +248,11 @@
             <% } else { %>
                 <div class="metric-block">
                     <div class="metric-content">
-                        <h3>No metrics available</h3>
+                        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                            <h3><%= errorMessage %></h3>
+                        <% } else { %>
+                            <h3>No metrics available</h3>
+                        <% } %>
                     </div>
                 </div>
             <% } %>

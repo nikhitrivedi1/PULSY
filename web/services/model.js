@@ -91,8 +91,12 @@ class Model {
             body: JSON.stringify({device_type: device_object["device_type"], device_name: device_object["device_name"], api_key: device_object["api_key"]})
         });
 
-        let data = await response.json();
-        return data;
+        if (response.status == 200){
+            let data = await response.json();
+            return data;
+        }
+        let error_message = await response.json()
+        throw new Error("Status: " + response.status + " Error: " + error_message["detail"])
     }
 
     /**

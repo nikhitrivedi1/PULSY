@@ -1,5 +1,5 @@
 # Libraries
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
 
@@ -33,7 +33,7 @@ agent = AgenticRAG()
 # device_name: str - the name of the device to load
 # api_key: str - api key for accessing current device data
 # Returns: dict[str, str] - the result of the device loading
-# Error Handling: Returns {"Error": "Error Message"} if error occurs
+# Error Handling: HTTPException raised by load_user_devices_service
 @app.post("/load_user_devices/")
 async def load_user_devices(load_user_devices_body: LoadUserDevicesBody) -> dict[str, str|int|float]:
     result_data = await load_user_devices_service(load_user_devices_body.model_dump())
@@ -42,7 +42,6 @@ async def load_user_devices(load_user_devices_body: LoadUserDevicesBody) -> dict
 # Endpoint Agreement:
 # user_id: str - the id of the user
 # Returns: dict[str, str] - the result of the user goals loading
-# Error Handling: Returns {"Error": "Error Message"} if error occurs
 @app.get("/load_user_goals/{user_id}")
 async def load_user_goals(user_id: str) -> dict[str, dict[str, str|list[dict]]]:
     result_data = await load_user_goals_service(user_id)

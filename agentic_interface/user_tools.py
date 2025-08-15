@@ -5,6 +5,7 @@ from DataSources.oura_data_aggregation import OuraData
 from datetime import datetime, timedelta
 import json
 import os
+from fastapi import HTTPException
 
 # Work ToDo
 # TODO: Add the average for the heart rate data - over the course of the day
@@ -17,17 +18,25 @@ MAIN_DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),"../shared
 # Load Consolidated User Data from previous day
 # Compatability: Oura Ring
 # Returns: dict[str, str|int|float] - the result of the device loading
-# Error Handling: Returns {"Error": "Error Message"} if error occurs
+# Error Handling:
+# 400 or 500 error from Device API -> dict["detail"] = "Error Message"
+# Device type not supported -> raised 400 error here
 async def load_user_devices_service(device: dict) -> dict[str, str|int|float]:
     device_type = device["device_type"]
     result_data = {}
-    try:
-        if device_type == "Oura Ring":
-            # Create OuraRing Object
-            start_date = datetime.today() - timedelta(days=1)
-            end_date = datetime.today()
-            oura_ring = OuraData(device["api_key"], str(start_date).split(" ")[0], str(end_date).split(" ")[0])
-            sleep_data, stress_data, heart_rate_data = oura_ring.pre_load_user_data()
+
+    if device_type == "Oura Ring":
+        # Create OuraRing Object
+        start_date = datetime.today() - timedelta(days=1)
+        end_date = datetime.today()
+        oura_ring = OuraData(device["api_key"], str(start_date).split(" ")[0], str(end_date).split(" ")[0])
+        data_result = oura_ring.pre_load_user_data()
+        if "detail" in data_result.keys():
+            result_data["Error"] = data_result["detail"]
+        else:
+            sleep_data = data_result["sleep_data"]
+            stress_data = data_result["stress_data"]
+            heart_rate_data = data_result["heart_rate_data"]
 
             # Main Metrics Consolidation
             if sleep_data:
@@ -36,11 +45,8 @@ async def load_user_devices_service(device: dict) -> dict[str, str|int|float]:
                 result_data["stress_score"] = stress_data[0]["stress_high"]
             if heart_rate_data:
                 result_data["heart_rate_data"] = heart_rate_data[0]["bpm"] # Just take the first value for now -> replace with an average later
-        else:
-            raise ValueError(f"Device type {device_type} not supported")
-    except Exception as e:
-        print(f"Error: {e}")
-        result_data["Error"] = str(e)
+    else:
+        raise HTTPException(status_code=400, detail=f"Device type {device_type} not supported")
     return result_data
 
 # Load the user's goals from the database - for goal element in chat_page.ejs

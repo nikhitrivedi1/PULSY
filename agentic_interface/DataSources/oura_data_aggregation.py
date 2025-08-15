@@ -15,6 +15,7 @@ from DataSources.get_request_devices import HttpGETDevice
 from DataSources.device_enum import Device
 from DataSources.custom_api_key_error import APICallError
 from datetime import datetime, timedelta
+from fastapi import HTTPException
 
 # Class for the Oura Ring Device
 # startDate: current Date - 3 days (to be modified to be more flexible)
@@ -35,28 +36,34 @@ class OuraData:
         self.heart_rate_data = None
 
 
-    def pre_load_user_data(self):
+    def pre_load_user_data(self) -> dict:
         # Initialize HTTP GET Request Object
         self.httpReq = HttpGETDevice(Device.OURA_RING)
 
         # get data response from the past 3 days
-        try:
-            result_data = self.query_execution()
+        result_data = self.query_execution()
+        if "detail" not in result_data.keys():
             # Assign retrieved data to objects
-            sleep_data = result_data[0]
-            stress_data = result_data[1]
-            heart_rate_data = result_data[2]
+            sleep_data = result_data["sleep_data"]
+            stress_data = result_data["stress_data"]
+            heart_rate_data = result_data["heart_rate_data"]
+            return {"sleep_data": sleep_data, "stress_data": stress_data, "heart_rate_data": heart_rate_data}
+        else:
+            return result_data
 
-            return sleep_data, stress_data, heart_rate_data
-        except APICallError as e:
-            raise APICallError(str(e))
+
+    # Error Handling Update: 
+    # 1. If the request fails, retry 3 times
+    # 2. If the request fails after 3 retries, raise the error
+    # 3. If the request returns a non-HTTPException, return the data
 
     # Execute Query to extract Sleep, Stress, and Heart Rate Data
-    def query_execution(self):
+    def query_execution(self) -> dict:
         execution_strings = [SLEEPURL, STRESSURL, HRURL]
-        result_data = []
+        response_keys = ["sleep_data", "stress_data", "heart_rate_data"]
+        result_data = {}
 
-        for unique_url in execution_strings:
+        for index, unique_url in enumerate(execution_strings):
             # Create url variations based on the data being loaded
             url = BASEURL + unique_url
 
@@ -73,19 +80,18 @@ class OuraData:
                     'end_datetime': datetime.strptime(self.end_date, format)
             }
 
-            # success (bool) -> indicator for whether request succeeded or failed
-            success, content = self.httpReq.send_request(url, params, self.header)
+            # content (dict) -> indicator for whether request succeeded or failed
+            content = self.httpReq.send_request(url, params, self.header)
 
-            if not success: 
+            if isinstance(content, HTTPException):
                 # retry call 3 times
                 for _ in range(MAXRETRY):
-                    success, content = self.httpReq.send_request(url, params, self.header)
-                    if success: break
-
-                if not success:
-                    raise APICallError(content)
-            
-            result_data.append(content)
+                    content = self.httpReq.send_request(url, params, self.header)
+                    if not isinstance(content, HTTPException):
+                        break
+                if isinstance(content, HTTPException):
+                    raise content
+            result_data[response_keys[index]] = content
         return result_data
 
 

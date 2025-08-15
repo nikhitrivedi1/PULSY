@@ -2,8 +2,9 @@
 
 # Libraries
 import requests
-from requests.exceptions import RequestException, HTTPError, ConnectionError
+from requests.exceptions import HTTPError
 from DataSources.device_enum import Device
+from fastapi import HTTPException
 
 
 # HttpGETDevice Class
@@ -17,7 +18,7 @@ class HttpGETDevice():
     # URL (str): url endpoint for the GET call
     # Params (dict): parameter component of the GET Request
     # Headers (dict): contains authentication information - {"Authorization": key}
-    def send_request(self, URL: str, params: dict, header: dict):
+    def send_request(self, URL: str, params: dict, header: dict) -> dict:
         try:
             response = requests.get(
                 URL, 
@@ -25,29 +26,21 @@ class HttpGETDevice():
                 params = params
             )
             response.raise_for_status()
-            return True, response.json()['data']
-        except ConnectionError as e:
-            # Couldn't connect with the server at all
-            # Retry
-            return False, str(e)
-        except TimeoutError as t:
-            # No response recieved within the timeout window
-            # Retry
-            return False, str(t)
+            return response.json()['data']
         except HTTPError as http_error: 
-            if response.status_code in {400, 401, 403, 422, 429}:
+            if response.status_code in {400,401, 403, 422, 429}:
                 # Client-Side Error Responses from Oura Ring API
                 # Handle expected client-side errors
-                resString = f"{self.deviceType.value} API Client Error {response.status_code}: {response.text}"
-                return False, resString
-            elif response.status_code >= 500 and response.status_code < 600: 
+                resString = f"{self.deviceType.value} API Client Error {response.status_code}: {response.json()['message']}"
+                raise HTTPException(status_code=response.status_code, detail=resString)
+            elif response.status_code >= 500 and response.status_code < 600:
+                # For internal server errors - don't send back details of the error message as this is internal 
                 resString = f"{self.deviceType.value} API Server Error {response.status_code}: Try again later."
-                return False, resString
+                raise HTTPException(status_code=response.status_code, detail=resString)
             else:
+                # General Error Code
                 resString = f"Unexpected Error: {http_error}"
-                return False, resString
-        except RequestException as r:
-            return False, str(r)
+                raise HTTPException(status_code=500, detail=resString)
 
 
 
