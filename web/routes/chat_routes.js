@@ -34,18 +34,25 @@ export default (controller) => {
             req.session.visited = true;
     
             // Load the user's metrics from the database
-            const user_metrics = await controller.loadUserMetrics(req.session.username);
-            req.session.user_metrics = user_metrics;
-    
-            // Load the user's goals from the database
-            const user_goals = await controller.loadUserGoals(req.session.username);
-            req.session.user_goals = user_goals;
-    
-            req.session.query_history = [];
-            req.session.response_history = [];
-    
-            // Render the chat page
-            res.render("chat_page.ejs", { user_metrics: user_metrics, user_goals: user_goals });
+            try{
+                let user_metrics = await controller.loadUserMetrics(req.session.username);
+                req.session.user_metrics = user_metrics;
+            } catch (error) {
+                console.log(error)
+                let user_metrics = {};
+                req.session.user_metrics = user_metrics;
+                req.session.device_error_message = error.message;
+            }finally{
+                // Load the user's goals from the database
+                let user_goals = await controller.loadUserGoals(req.session.username);
+                req.session.user_goals = user_goals;
+        
+                req.session.query_history = [];
+                req.session.response_history = [];
+        
+                // Render the chat page
+                res.render("chat_page.ejs", { user_metrics: req.session.user_metrics, user_goals: user_goals, errorMessage: req.session.device_error_message });
+            }
         } else {
             res.render("loginPage.ejs", { errorMessage: "Invalid username or password" });
         }

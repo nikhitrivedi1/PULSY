@@ -15,6 +15,7 @@ agentic_interface/RAG/__pycache__/
 # RAG Version
 agentic_interface/main.py
 agentic_interface/RAG/*
+agentic_interface/DataSources/custom_api_key_error.py
 
 # Node Modules
 node_modules/
