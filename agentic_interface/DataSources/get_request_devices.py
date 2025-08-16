@@ -28,7 +28,7 @@ class HttpGETDevice():
             response.raise_for_status()
             return response.json()['data']
         except HTTPError as http_error: 
-            if response.status_code in {400,401, 403, 422, 429}:
+            if response.status_code in {400, 401, 403, 422, 429}:
                 # Client-Side Error Responses from Oura Ring API
                 # Handle expected client-side errors
                 resString = f"{self.deviceType.value} API Client Error {response.status_code}: {response.json()['message']}"

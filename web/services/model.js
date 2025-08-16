@@ -44,7 +44,7 @@ class Model {
             profile: profile,
             goals: {},
             preferences: [preferences],
-            devices: {}
+            devices: []
         };
 
         try {

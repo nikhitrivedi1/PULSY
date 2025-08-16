@@ -31,20 +31,18 @@ async def load_user_devices_service(device: dict) -> dict[str, str|int|float]:
         end_date = datetime.today()
         oura_ring = OuraData(device["api_key"], str(start_date).split(" ")[0], str(end_date).split(" ")[0])
         data_result = oura_ring.pre_load_user_data()
-        if "detail" in data_result.keys():
-            result_data["Error"] = data_result["detail"]
-        else:
-            sleep_data = data_result["sleep_data"]
-            stress_data = data_result["stress_data"]
-            heart_rate_data = data_result["heart_rate_data"]
 
-            # Main Metrics Consolidation
-            if sleep_data:
-                result_data["sleep_score"] = sleep_data[0]["score"]
-            if stress_data:
-                result_data["stress_score"] = stress_data[0]["stress_high"]
-            if heart_rate_data:
-                result_data["heart_rate_data"] = heart_rate_data[0]["bpm"] # Just take the first value for now -> replace with an average later
+        sleep_data = data_result["sleep_data"]
+        stress_data = data_result["stress_data"]
+        heart_rate_data = data_result["heart_rate_data"]
+
+        # Main Metrics Consolidation
+        if sleep_data:
+            result_data["sleep_score"] = sleep_data[0]["score"]
+        if stress_data:
+            result_data["stress_score"] = stress_data[0]["stress_high"]
+        if heart_rate_data:
+            result_data["heart_rate_data"] = heart_rate_data[0]["bpm"] # Just take the first value for now -> replace with an average later
     else:
         raise HTTPException(status_code=400, detail=f"Device type {device_type} not supported")
     return result_data

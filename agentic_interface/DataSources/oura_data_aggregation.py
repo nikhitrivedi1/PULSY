@@ -38,17 +38,10 @@ class OuraData:
     def pre_load_user_data(self) -> dict:
         # Initialize HTTP GET Request Object
         self.httpReq = HttpGETDevice(Device.OURA_RING)
-
         # get data response from the past 3 days
         result_data = self.query_execution()
-        if "detail" not in result_data.keys():
-            # Assign retrieved data to objects
-            sleep_data = result_data["sleep_data"]
-            stress_data = result_data["stress_data"]
-            heart_rate_data = result_data["heart_rate_data"]
-            return {"sleep_data": sleep_data, "stress_data": stress_data, "heart_rate_data": heart_rate_data}
-        else:
-            return result_data
+        return result_data
+
 
 
     # Error Handling Update: 
@@ -81,15 +74,6 @@ class OuraData:
 
             # content (dict) -> indicator for whether request succeeded or failed
             content = self.httpReq.send_request(url, params, self.header)
-
-            if isinstance(content, HTTPException):
-                # retry call 3 times
-                for _ in range(MAXRETRY):
-                    content = self.httpReq.send_request(url, params, self.header)
-                    if not isinstance(content, HTTPException):
-                        break
-                if isinstance(content, HTTPException):
-                    raise content
             result_data[response_keys[index]] = content
         return result_data
 
