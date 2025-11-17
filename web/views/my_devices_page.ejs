@@ -4,7 +4,6 @@
     <title>My Devices - AI Wearables Advisor</title>
     <link rel="stylesheet" href="chatPage.css">
     <style>
-        /* Modern styling updates */
         body {
             font-family: "Aeonik", -apple-system, BlinkMacSystemFont, sans-serif;
             background: #E8E1D7;
@@ -190,26 +189,93 @@
         </div>
 
         <div class="device-grid">
-            <% if (typeof user_devices !== 'undefined' && user_devices && user_devices.length > 0) { %>
-                <% user_devices.forEach(function(device) { %>
+            <% if (typeof user_devices !== 'undefined' && user_devices && Object.keys(user_devices).length > 0) { %>
+                <% Object.entries(user_devices).forEach(function([rawDeviceType, api_key]) { 
+                    // rawDeviceType is like '{"Oura Ring"}'
+                    let device_type = rawDeviceType;
+                    // Remove wrapping {" and "} (or any outer curly braces and quotes)
+                    device_type = device_type.replace(/^\{["']?/, '').replace(/["']?\}$/, '');
+                    
+                    // Lowercase for image switch
+                    let type_key = device_type.toLowerCase().replace(/\s/g, "_");
+                    let imageSrc = "/assets/oura_ring.png";
+                    if (type_key === "oura_ring") imageSrc = "/assets/oura_ring.png";
+                    else if (type_key === "fitbit") imageSrc = "/assets/fitbit.png";
+                    else if (type_key === "apple_watch") imageSrc = "/assets/apple_watch.png";
+                %>
                     <div class="device-card">
-                        <div class="device-image-container">
-                            <img src="/assets/oura_ring.png" alt="<%= device.device_type %>" class="device-image">
+                        <div class="device-image-container" style="position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 1rem;">
+                            <!-- "Glass orb" effect using clip-path, gradients, and shadow for a premium feel -->
+                            <div 
+                                style="
+                                    width: 110px;
+                                    height: 110px;
+                                    background: radial-gradient(circle at 70% 25%, #fff9, #d8e7fa 55%, #cee1f5 70%, #d5d9e6 100%);
+                                    box-shadow: 0 4px 12px 0 #b7c6dd3d, 0 0 0 8px #eaf4ff70 inset;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    overflow: hidden;
+                                    border: 2.5px solid #eaf1fd;
+                                    backdrop-filter: blur(2.5px);
+                                    position: relative;
+                                ">
+                                <img 
+                                    src="<%= imageSrc %>" 
+                                    alt="<%= device_type %>" 
+                                    class="device-image"
+                                    style="
+                                        width: 76px;
+                                        height: 76px;
+                                        object-fit: cover;
+                                        border-radius: 39% 61% 67% 33% / 50% 45% 55% 50%;
+                                        box-shadow:
+                                            0 2px 14px 0 #93b1ff1b,
+                                            0 0 0 2px #cfd8e6a0;
+                                        filter: saturate(1.15) drop-shadow(0 3px 8px #b8cbe5a3);
+                                        background: #f6fcff;
+                                        transition: box-shadow 0.22s;
+                                    "
+                                >
+                                <!-- reflective light-glare top-left -->
+                                <span style="
+                                    position: absolute;
+                                    top: 20px; left: 23px;
+                                    width: 41px; height: 19px;
+                                    background: linear-gradient(120deg, #fff9 75%, transparent 100%);
+                                    border-radius: 43% 63% 53% 39% / 57% 30% 60% 33%;
+                                    opacity: 0.48; pointer-events: none;
+                                    filter: blur(2.8px);
+                                    z-index: 1;
+                                "></span>
+                                <!-- bottom-right inner glow -->
+                                <span style="
+                                    position: absolute;
+                                    bottom: 14px; right: 20px;
+                                    width: 28px; height: 18px;
+                                    background: radial-gradient(circle, #ddf3ff7c 40%, transparent 100%);
+                                    border-radius: 60% 40% 44% 56% / 59% 41% 59% 41%;
+                                    opacity: 0.46; pointer-events: none;
+                                    z-index: 1;
+                                "></span>
+                            </div>
                             <div class="device-image-overlay">
                                 <div class="pulse-ring"></div>
                             </div>
                         </div>
                         <div class="device-header">
                             <div class="status-dot status-active"></div>
-                            <h2><%= device.device_name %></h2>
+                            <h2><%= device_type %></h2>
                         </div>
                         <div class="device-info">
-                            <p><strong>Device Type:</strong> <%= device.device_type %></p>
-                            <p><strong>Status:</strong> Active</p>
+                            <!-- Device type and Status removed as per instruction -->
+                            <!-- Optionally show API Key for admin/troubleshooting -->
+                            <!-- <p><strong>API Key:</strong> <%= api_key %></p> -->
                         </div>
                         <form action="/my_devices/action" method="POST" style="display:inline;">
                             <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="device_name" value="<%= device.device_name %>">
+                            <input type="hidden" name="device_type" value="<%= rawDeviceType %>">
                             <button type="submit" class="remove-device-btn">Remove Device</button>
                         </form>
                     </div>
@@ -228,20 +294,12 @@
             <h2 style="color: #0B365B; margin-bottom: 1.5rem;">Add New Device</h2>
             <form id="addDeviceForm" method="POST" action="/my_devices/action">
                 <div class="form-group">
-                    <label for="deviceName">Device Name</label>
-                    <input type="text" id="deviceName" name="device_name" required>
-                </div>
-                <div class="form-group">
                     <label for="deviceType">Device Type</label>
                     <select id="deviceType" name="device_type" required>
                         <option value="Oura Ring">Oura Ring</option>
                         <option value="fitbit">Fitbit</option>
                         <option value="apple_watch">Apple Watch</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="apiKey">API Key</label>
-                    <input type="password" id="apiKey" name="api_key" required>
                 </div>
                 <input type="hidden" name="action" value="add">
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -262,34 +320,34 @@
             document.getElementById('addDeviceModal').style.display = 'none';
         }
 
-        document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const formObject = {};
-            formData.forEach((value, key) => {
-                formObject[key] = value;
-            });
+        // document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
+        //     e.preventDefault();
 
-            try {
-                const response = await fetch('/my_devices/action', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(formObject)
-                });
+        //     const formData = new FormData(e.target);
+        //     const formObject = {};
+        //     formData.forEach((value, key) => {
+        //         formObject[key] = value;
+        //     });
 
-                if(response.ok) {
-                    window.location.reload();
-                } else {
-                    alert('Failed to add device. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error adding device:', error);
-                alert('An error occurred while adding the device.');
-            }
-        });
+        //     try {
+        //         const response = await fetch('/my_devices/action', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/x-www-form-urlencoded',
+        //             },
+        //             body: new URLSearchParams(formObject)
+        //         });
+
+        //         if(response.ok) {
+        //             window.location.reload();
+        //         } else {
+        //             alert('Failed to add device. Please try again.');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error adding device:', error);
+        //         alert('An error occurred while adding the device.');
+        //     }
+        // });
     </script>
 </body>
 </html>

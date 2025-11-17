@@ -32,24 +32,21 @@ export default (controller) => {
     
         // Build user profile object from form data
         var profile = {
-            age : req.body.age,
-            gender : req.body.gender,
-            height_ft : req.body.height_ft,
-            height_in : req.body.height_in,
-            weight : req.body.weight,
-            health_conditions : req.body.health_conditions
+            first_name : req.body.first_name,
+            last_name : req.body.last_name
         }
+
         // Get user preferences from form
         var preferences = req.body.preferences;
     
         // Attempt to create new user account
         var status = await controller.addUser(username, password, profile, preferences);
-        if (status) {
+        if (status.success) {
             // Render signup page with success message if user created
-            res.render("signup_page.ejs", { successMessage: "User created successfully", errorMessage: null });
+            res.render("signup_page.ejs", { successMessage: "User created successfully", errorMessage: null, id: status.id, username: status.username });
         } else {
             // Render signup page with error if creation failed
-            res.render("signup_page.ejs", { successMessage: null, errorMessage: "User creation failed" });
+            res.render("signup_page.ejs", { successMessage: null, errorMessage: status.error, id: null, username: null });
         }
     });
 

@@ -56,16 +56,7 @@ class Controller {
         }
         return device_metrics;
     }
-
-    /**
-     * Load user's health and fitness goals
-     * @param {string} username - User's username
-     * @returns {Promise<Object>} User's goals
-     */
-    async loadUserGoals(username) {
-        return await this.model.loadUserGoals(username);
-    }
-
+    
     /**
      * Retrieve user's profile information
      * @param {string} username - User's username
@@ -73,6 +64,14 @@ class Controller {
      */
     getUserProfile(username) {
         return this.model.getUserProfile(username);
+    }
+
+    addUserPreference(username, preference) {
+        return this.model.addUserPreference(username, preference);
+    }
+
+    deleteUserPreference(username, preference) {
+        return this.model.deleteUserPreference(username, preference);
     }
 
     /**
@@ -91,7 +90,9 @@ class Controller {
      * @param {string} username - User's username
      * @param {Array} user_history - History of user queries
      * @param {Array} ai_chat_history - History of AI responses
-     * @returns {Promise<string>} AI response to query
+     * @returns {Promise<Dictionary>} AI response to query
+     * @returns {string} AI response to query
+     * @returns {int} Log ID for the query
      */
     async chatQuery(query, username, user_history, ai_chat_history) {
         return await this.model.chatQuery(query, username, user_history, ai_chat_history);
@@ -106,6 +107,10 @@ class Controller {
         return this.model.getUserDevices(username);
     }
 
+    testUserDevices(device_type, api_key) {
+        return this.model.testUserDevices(device_type, api_key);
+    }
+
     /**
      * Add a new device to user's account
      * @param {string} username - User's username
@@ -114,8 +119,8 @@ class Controller {
      * @param {string} api_key - API key for device
      * @returns {Promise<boolean>} Device addition success status
      */
-    async addDevice(username, device_type, device_name, api_key) {
-        return await this.model.addDevice(username, device_type, device_name, api_key);
+    async addDevice(username, device_type, api_key) {
+        return await this.model.addDevice(username, device_type, api_key);
     }
 
     /**
@@ -140,6 +145,27 @@ class Controller {
     editDevice(username, old_device_name, new_device_name, device_type, api_key) {
         return this.model.editDevice(username, old_device_name, new_device_name, device_type, api_key);
     }
+
+    authorizeOuraRingUser() {
+        return this.model.authorizeOuraRingUser();
+    }
+
+    getTokensOuraRing(code) {
+        return this.model.getTokensOuraRing(code);
+    }
+
+    updateTokensOuraRing(username, tokens) {
+        return this.model.updateTokensOuraRing(username, tokens);
+    }
+
+    refreshTokens(username) {
+        return this.model.refreshTokens(username);
+    }
+
+    addFeedback(log_id, feedback, comment) {
+        return this.model.addFeedback(log_id, feedback, comment);
+    }
+
 }
 
 export { Controller };
