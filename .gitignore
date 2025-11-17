@@ -1,16 +1,20 @@
 # Pinecone Operation Files
 # Huberman Files
 agentic_interface/DataSources/Huberman/
+agentic_interface/DataSources/Goggins/
+agentic_interface/DataSources/recent_papers_sleep_fitness_productivity.json
 agentic_interface/DataSources/content_aggregation.py
 
-# Data Sources Files
-agentic_interface/DataSources/retriever_ops.py
+# Test Views
+web/views/chat_page_2.ejs
 
 # Pycache
 agentic_interface/__pycache__/
 agentic_interface/DataSources/__pycache__/
 agentic_interface/Agentic_RAG/__pycache__/
 agentic_interface/RAG/__pycache__/
+agentic_interface/database/__pycache__/
+agentic_interface/config/__pycache__/
 
 # RAG Version
 agentic_interface/main.py
@@ -20,8 +24,16 @@ agentic_interface/DataSources/custom_api_key_error.py
 # Node Modules
 node_modules/
 
-# Config
-config/config.yaml
+# Config -> moved to env files
+config/*
 
 # Shared DB
 shared/user_state.json
+
+# env files
+agentic_interface/.env
+web/.env
+
+# Local Run Bashes
+agentic_interface/run_agent.sh
+web/start_web.sh

@@ -2,6 +2,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
+from config.settings import settings
 
 # Local Modules
 from Agentic_RAG.agent import AgenticRAG
@@ -53,10 +54,12 @@ async def load_user_goals(user_id: str) -> dict[str, dict[str, str|list[dict]]]:
 @app.post("/query/")
 async def post_query(
     query: QueryBody
-) -> str:
+) -> dict[str, str|int]:
     # initialize the LLM upon running the instance
     # Pass in the query body to get a response
     res = agent.run(query.query, query.username, query.user_history, query.ai_chat_history)
+    print(res)
+    # Dictionary will contain the response and the log_id
     return res
 
 # API ENDPOINT TEST ROUTE

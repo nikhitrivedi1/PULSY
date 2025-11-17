@@ -1,0 +1,24 @@
+# Antiquated RAG Files
+RAG/*
+main.py
+run_agent.sh
+
+# cache files
+__pycache__/
+Agentic_RAG/__pycache__
+DataSources/__pycache__
+database/__pycache__
+config/__pycache__
+
+# Raw Transcript files
+DataSources/Huberman/*
+DataSources/Goggins/*
+DataSources/content_aggregation.py
+DataSources/recent_papers_sleep_fitness_productivity.json
+
+# Git
+.git
+.gitignore
+
+# env
+.env

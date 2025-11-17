@@ -27,12 +27,17 @@ export default (controller) => {
      * @param {Object} req - Express request object containing session data
      * @param {Object} res - Express response object
      */
-    router.get('/my_devices', (req, res) => {
+    router.get('/my_devices', async (req, res) => {
         // Check if user has an active session
         if (req.session.visited) {
-            // Fetch user's devices list from database via controller
-            let user_devices = controller.getUserDevices(req.session.username);
-            res.render("my_devices_page.ejs", { user_devices: user_devices});
+            let status_user_devices = await controller.getUserDevices(req.session.username);
+            if (status_user_devices.success) {
+                let user_devices_array = status_user_devices.return_value.devices;
+                console.log("user_devices_array", user_devices_array)
+                res.render("my_devices_page.ejs", { user_devices: user_devices_array, successMessage: "Device Reloaded successfully", errorMessage: null });
+            } else {
+                res.render("my_devices_page.ejs", { successMessage: null, errorMessage: status_user_devices.return_value });
+            }
         } else {
             // Redirect to home if no active session
             res.redirect('/');
