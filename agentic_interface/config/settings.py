@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     USERNAME: str
     PASSWORD: str
     DB_PORT: int
+    INSTANCE_CONNECTION_NAME: str
 
     class Config:
         env_file = ".env"
