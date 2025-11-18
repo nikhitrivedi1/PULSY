@@ -70,6 +70,3 @@ async def post_query_test(
     print(query.query, query.username, query.user_history, query.ai_chat_history)
     return "Test"
 
-if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-
