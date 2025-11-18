@@ -30,7 +30,7 @@ class UserDbOperations:
         PORT = settings.DB_PORT # database port
 
         self.conn = connector.connect(
-            os.environ["INSTANCE_CONNECTION_NAME"],
+            settings.INSTANCE_CONNECTION_NAME,
             "psycopg",
             dbname=DATABASE_NAME,
             user=USERNAME,

@@ -32,7 +32,7 @@ SYSTEM_PROMPT = "Agentic_RAG/system_instructions.md"
 class AgenticRAG:
     def __init__(self):
         # LLM and Tools Initialization
-        self.llm = ChatOpenAI(model = 'gpt-4.1', streaming = True, api_key = settings.OPENAI_API_KEY)
+        self.llm = ChatOpenAI(model = 'gpt-4.1', streaming = True, openai_api_key = settings.OPENAI_API_KEY)
         self.tools = [get_heart_rate_data, get_sleep_data, get_stress_data, get_Andrew_Huberman_Insights]
         self.llm_with_tools = self.llm.bind_tools(self.tools)
 

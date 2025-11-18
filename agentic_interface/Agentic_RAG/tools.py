@@ -167,14 +167,14 @@ def get_Andrew_Huberman_Insights(query:str) -> str:
     try:
         # Initialize Pinecone client
         pc = Pinecone(api_key = settings.PINECONE_API_KEY)
-        index = pc.Index(host = settings.pinecone_host)
-        embeddings = HuggingFaceEmbeddings(model_name = settings.pinecone_embedding_model)
+        index = pc.Index(host = settings.PINECONE_HOST)
+        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
 
        # Convert query to vector space using embeddings model
         queryVec = embeddings.embed_query(query)
 
         results = index.query(
-            namespace = settings.pinecone_index,
+            namespace = settings.PINECONE_INDEX,
             vector = queryVec,
             top_k = 5,
             include_metadata = True
