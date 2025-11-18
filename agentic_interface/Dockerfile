@@ -30,6 +30,6 @@
     EXPOSE 8000
     
     # --- 10. Start server with Gunicorn + Uvicorn workers ---
-    CMD ["uvicorn", "main_agent:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+    CMD ["uvicorn", "main_agent:app", "--host", "0.0.0.0", "--port", "${PORT}", "--workers", "4"]
 
     
