@@ -1,10 +1,12 @@
 # Example GCP Call
+from google.cloud.sql.connector import Connector, IPTypes
 import psycopg
 from psycopg.types.json import Json
 import yaml
 from pydantic import BaseModel
 from logger import Logger
 from config.settings import settings
+import os
 # Create a GCP INSTANCE Class
 # Objectives - Operations
 # 1. Access Device List
@@ -19,6 +21,7 @@ class UserDbTyping(BaseModel):
 
 class UserDbOperations:
     def __init__(self):
+        connector = Connector()
 
         PUBLIC_IP = settings.PUBLIC_IP
         DATABASE_NAME = settings.DATABASE_NAME
@@ -26,12 +29,13 @@ class UserDbOperations:
         PASSWORD = settings.PASSWORD
         PORT = settings.DB_PORT # database port
 
-        self.conn = psycopg.connect(
-            host=PUBLIC_IP,
+        self.conn = connector.connect(
+            os.environ["INSTANCE_CONNECTION_NAME"],
+            "psycopg",
             dbname=DATABASE_NAME,
             user=USERNAME,
             password=PASSWORD,
-            port=PORT
+            ip_type=IPTypes.PUBLIC
         )
 
         self.cursor = self.conn.cursor()
