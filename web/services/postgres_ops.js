@@ -1,24 +1,32 @@
-import pkg from 'pg';
-const { Pool } = pkg;
 import argon2 from 'argon2';
-import yaml from 'js-yaml';
-import fs from 'fs';
+import Knex from 'knex';
+import {Connector} from '@google-cloud/cloud-sql-connector';
 
 // TODO: Need to add the config files for the call here 
 class UserDbOperations {
   constructor() {
-    // open up yaml file to get configuration
-    this.pool = new Pool({
-      host: process.env.PUBLIC_IP,
-      database: process.env.DATABASE_NAME,
-      user: process.env.USERNAME,
-      password: process.env.PASSWORD,
-      port: process.env.DB_PORT,
-      ssl: {
-        rejectUnauthorized: false // allow self-signed certs (for testing)
-      }
-    });
+    const connector = new Connector();
+  
+    this.pool = (async () => {
+      const clientOpts = await connector.getOptions({
+        instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME,
+        ipType: process.env.IP_TYPE,
+      });
+  
+      return Knex({
+        client: 'pg',
+        connection: {
+          ...clientOpts,
+          user: process.env.USERNAME,
+          password: process.env.PASSWORD,
+          database: process.env.DATABASE_NAME,
+        }
+      });
+    })();
+  
+    this.connector = connector;
   }
+  
 
   async hashPassword(password) {
     return await argon2.hash(password);
