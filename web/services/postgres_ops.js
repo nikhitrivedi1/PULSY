@@ -35,7 +35,8 @@ class UserDbOperations {
     const query = `
       SELECT password, id FROM users.users_staging WHERE username = $1
     `;
-    const res = await this.pool.raw(query, [username]);
+    const knex_res = await this.pool
+    const res = await knex_res.raw(query, [username]);
     if (res.rows.length === 0) return null;
     return await argon2.verify(res.rows[0].password, provided_password) ? res.rows[0].id : null;
   }
@@ -47,7 +48,8 @@ class UserDbOperations {
     const check_query = `
       SELECT id FROM users.users_staging WHERE username = $1
     `;
-    const check_res = await this.pool.raw(check_query, [username]);
+    const knex_res = await this.pool
+    const check_res = await knex_res.raw(check_query, [username]);
     if (check_res.rows.length > 0) return { success: false, error: "Username already exists" };
 
 
@@ -64,7 +66,8 @@ class UserDbOperations {
       last_name
     ];
     try {
-      let res = await this.pool.raw(query, values);
+      const knex_res = await this.pool
+      const res = await knex_res.raw(query, values);
       return { success: true, id: res.rows[0].id, username: res.rows[0].username };
     } catch (error) {
       console.error('Error uploading user data:', error);
@@ -80,7 +83,8 @@ class UserDbOperations {
       SELECT devices FROM users.users_staging WHERE username = $1
     `;
     try{
-      let res = await this.pool.raw(query, [username]);
+      const knex_res = await this.pool
+      const res = await knex_res.raw(query, [username]);
       console.log(res.rows);
       if (res.rows.length === 0) return { success: false, return_value: "No devices found" };
       return { success: true, return_value: res.rows[0]};
@@ -97,7 +101,8 @@ class UserDbOperations {
       SELECT preferences FROM users.users_staging WHERE username = $1
     `;
     try{
-    let res = await this.pool.raw(query, [username]);
+      const knex_res = await this.pool
+      const res = await knex_res.raw(query, [username]);
       if (res.rows.length === 0) return null;
       return res.rows[0].preferences;
     } catch (error) {
@@ -115,7 +120,8 @@ class UserDbOperations {
       WHERE username = $2 RETURNING preferences
     `;
     try{
-      let res = await this.pool.raw(query, [preference, username]);
+      const knex_res = await this.pool
+      const res = await knex_res.raw(query, [preference, username]);
       return { success: true, return_value: res.rows[0].preferences };
     } catch (error) {
       console.error('Error adding agentic preference:', error);
@@ -132,7 +138,8 @@ class UserDbOperations {
       WHERE username = $2 RETURNING preferences
     `;
     try{
-      let res = await this.pool.raw(query, [preference, username]);
+      const knex_res = await this.pool
+      const res = await knex_res.raw(query, [preference, username]);
       return { success: true, return_value: res.rows[0].preferences };
     } catch (error) {
       console.error('Error removing agentic preference:', error);
@@ -149,7 +156,8 @@ class UserDbOperations {
   `;
   
     try{
-      await this.pool.query(query, [device.device_type, device.api_key, username]);
+      const knex_res = await this.pool
+      await knex_res.raw(query, [device.device_type, device.api_key, username]);
       console.log("Device added successfully");
       return { success: true, return_value: "Device added successfully" };
     } catch (error) {
@@ -167,7 +175,8 @@ class UserDbOperations {
     `;
     console.log("Tokens: ", JSON.stringify(tokens));
     try{
-      await this.pool.query(query, [JSON.stringify(tokens), username]);
+      const knex_res = await this.pool
+      await knex_res.raw(query, [JSON.stringify(tokens), username]);
       return { success: true, return_value: "Tokens updated successfully" };
     } catch (error) {
       console.error('Error updating tokens:', error);
@@ -180,7 +189,8 @@ class UserDbOperations {
     const query = `
       SELECT devices->'Oura Ring'->>'refresh_token' FROM users.users_staging WHERE username = $1
     `;
-    const res = await this.pool.raw(query, [username]);
+    const knex_res = await this.pool
+    const res = await knex_res.raw(query, [username]);
     if (res.rows.length === 0) return { success: false, return_value: "No refresh token found" };
     const refresh_token = res.rows[0].refresh_token;
     return { success: true, return_value: refresh_token };
@@ -194,7 +204,8 @@ class UserDbOperations {
       WHERE username = $2
     `;
     try{
-      await this.pool.raw(query, [device_type, username]);
+      const knex_res = await this.pool
+      await knex_res.raw(query, [device_type, username]);
       return { success: true, return_value: "Device deleted successfully" };
     } catch (error) {
       console.error('Error deleting device:', error);
@@ -211,7 +222,8 @@ class UserDbOperations {
       WHERE id = $3
     `;
     try{
-      await this.pool.raw(query, [feedback, preferred_response, log_id]);
+      const knex_res = await this.pool
+      await knex_res.raw(query, [feedback, preferred_response, log_id]);
       return { success: true, return_value: "Feedback added successfully" };
     } catch (error) {
       console.error('Error adding feedback:', error);
@@ -221,7 +233,8 @@ class UserDbOperations {
 
   // Close connection pool
   async closeConnection() {
-    await this.pool.end();
+    const knex = await this.pool;
+    await knex.destroy();
   }
 }
 
