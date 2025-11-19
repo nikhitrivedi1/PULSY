@@ -4,26 +4,40 @@ import {Connector} from '@google-cloud/cloud-sql-connector';
 
 class UserDbOperations {
   constructor() {
-    const connector = new Connector();
-  
-    this.pool = (async () => {
-      const clientOpts = await connector.getOptions({
-        instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME,
-        ipType: process.env.IP_TYPE,
-      });
-  
-      return Knex({
+    if (process.env.LOCAL_MODE === 'true') {
+      console.log("Local mode enabled");
+      this.pool = Promise.resolve(Knex({
         client: 'pg',
         connection: {
-          ...clientOpts,
-          user: process.env.USERNAME,
+          host: process.env.PUBLIC_IP,
+          port: process.env.DB_PORT,
+          user: process.env.DB_USERNAME,
           password: process.env.PASSWORD,
-          database: process.env.DATABASE_NAME,
+          dbname: process.env.DATABASE_NAME,
+          ssl:{
+            rejectUnauthorized: false,
+          }
         }
-      });
-    })();
-  
-    this.connector = connector;
+      }));
+    }else{
+      const connector = new Connector();
+      this.pool = (async () => {
+        const clientOpts = await connector.getOptions({
+          instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME,
+          ipType: process.env.IP_TYPE,
+        });
+    
+        return Knex({
+          client: 'pg',
+          connection: {
+            ...clientOpts,
+            user: process.env.USERNAME,
+            password: process.env.PASSWORD,
+            database: process.env.DATABASE_NAME,
+          }
+        });
+      })();
+    }
   }
   
 
@@ -36,8 +50,9 @@ class UserDbOperations {
       SELECT password, id FROM users.users_staging WHERE username = ?`;
     const knex_res = await this.pool
     const res = await knex_res.raw(query, [username]);
+    console.log("res: ", res.rows)
     if (res.rows.length === 0) return null;
-    return await argon2.verify(res.rows[0].password, provided_password) ? res.rows[0].id : null;
+    return await argon2.verify(res.rows[0].password, provided_password);
   }
 
   // Upload User Data
@@ -64,7 +79,7 @@ class UserDbOperations {
       last_name
     ];
     try {
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       const res = await knex_res.raw(query, values);
       return { success: true, id: res.rows[0].id, username: res.rows[0].username };
     } catch (error) {
@@ -81,13 +96,55 @@ class UserDbOperations {
       SELECT devices FROM users.users_staging WHERE username = ?
     `;
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       const res = await knex_res.raw(query, [username]);
-      console.log(res.rows);
       if (res.rows.length === 0) return { success: false, return_value: "No devices found" };
       return { success: true, return_value: res.rows[0]};
     } catch (error) {
       console.error('Error getting device information:', error);
+      return { success: false, return_value: error.detail };
+    }
+  }
+
+  async storeState(state, username) {
+    const query = `
+    INSERT INTO users.state_to_username (state, username) VALUES (?, ?)
+    `;
+    try{
+      const knex_res = await this.pool;
+      await knex_res.raw(query, [state, username]);
+      return { success: true, return_value: "State stored successfully" };
+    } catch (error) {
+      console.error('Error storing state:', error);
+      return { success: false, return_value: error.detail };
+    }
+  }
+
+  async getSession(state) {
+    const query = `
+    SELECT username FROM users.state_to_username WHERE state = ?
+    `;
+    try{
+      const knex_res = await this.pool;
+      const res = await knex_res.raw(query, [state]);
+      console.log("res: ", res.rows);
+      return { success: true, return_value: res.rows[0] };
+    } catch (error) {
+      console.error('Error getting session:', error);
+      return { success: false, return_value: error.detail };
+    }
+  }
+
+  async deleteSession(state) {
+    const query = `
+    DELETE FROM users.state_to_username WHERE state = ?
+    `;
+    try{
+      const knex_res = await this.pool;
+      await knex_res.raw(query, [state]);
+      return { success: true, return_value: "Session deleted successfully" };
+    } catch (error) {
+      console.error('Error deleting session:', error);
       return { success: false, return_value: error.detail };
     }
   }
@@ -98,8 +155,9 @@ class UserDbOperations {
     const query = `
       SELECT preferences FROM users.users_staging WHERE username = ?
     `;
+    console.log("Username: ", username);
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       const res = await knex_res.raw(query, [username]);
       if (res.rows.length === 0) return null;
       return res.rows[0].preferences;
@@ -118,7 +176,7 @@ class UserDbOperations {
       WHERE username = ? RETURNING preferences
     `;
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       const res = await knex_res.raw(query, [preference, username]);
       return { success: true, return_value: res.rows[0].preferences };
     } catch (error) {
@@ -136,7 +194,7 @@ class UserDbOperations {
       WHERE username = ? RETURNING preferences
     `;
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       const res = await knex_res.raw(query, [preference, username]);
       return { success: true, return_value: res.rows[0].preferences };
     } catch (error) {
@@ -152,9 +210,9 @@ class UserDbOperations {
     SET devices = devices || jsonb_build_object(?, ?)
     WHERE username = ?
   `;
-  
+  console.log("query: ", device);
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       await knex_res.raw(query, [device.device_type, device.api_key, username]);
       console.log("Device added successfully");
       return { success: true, return_value: "Device added successfully" };
@@ -169,11 +227,10 @@ class UserDbOperations {
     const query = `
       UPDATE users.users_staging
       SET devices = jsonb_set(devices, '{Oura Ring}', ?)
-      WHERE username = $2
+      WHERE username = ?
     `;
-    console.log("Tokens: ", JSON.stringify(tokens));
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       await knex_res.raw(query, [JSON.stringify(tokens), username]);
       return { success: true, return_value: "Tokens updated successfully" };
     } catch (error) {
@@ -187,7 +244,7 @@ class UserDbOperations {
     const query = `
       SELECT devices->'Oura Ring'->>'refresh_token' FROM users.users_staging WHERE username = ?
     `;
-    const knex_res = await this.pool
+    const knex_res = await this.pool;
     const res = await knex_res.raw(query, [username]);
     if (res.rows.length === 0) return { success: false, return_value: "No refresh token found" };
     const refresh_token = res.rows[0].refresh_token;
@@ -202,7 +259,7 @@ class UserDbOperations {
       WHERE username = ?
     `;
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       await knex_res.raw(query, [device_type, username]);
       return { success: true, return_value: "Device deleted successfully" };
     } catch (error) {
@@ -220,7 +277,7 @@ class UserDbOperations {
       WHERE id = ?
     `;
     try{
-      const knex_res = await this.pool
+      const knex_res = await this.pool;
       await knex_res.raw(query, [feedback, preferred_response, log_id]);
       return { success: true, return_value: "Feedback added successfully" };
     } catch (error) {

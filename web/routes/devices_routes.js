@@ -9,14 +9,34 @@ export default (controller) => {
     const router = express.Router();
 
     router.get('/authorize_oura_ring', async (req, res) => {
+        console.log("req.session: ", req.session)
         // This is the redirect route for the Oura Ring authorization
         console.log("Authorizing Oura Ring");
         const code = req.query.code;
-        console.log("Code: ", code);
-
         // Get the tokens from the acces code
         let tokens = await controller.getTokensOuraRing(code);
-        console.log("Tokens: ", tokens.access_token, tokens.refresh_token);
+
+        // Get the sesssion from the database
+        let session = await controller.getSession(req.query.state);
+        if (session.success) {
+            req.session.username = session.return_value.username.username;
+            req.session.visited = session.return_value.username.visited;
+            req.session.user_devices = session.return_value.username.user_devices;
+            req.session.user_metrics = session.return_value.username.user_metrics;
+            req.session.response_history = session.return_value.username.response_history;
+            req.session.query_history = session.return_value.username.query_history;
+            req.session.device_error_message = session.return_value.username.device_error_message;
+        } else {
+            return res.redirect('/');
+        }
+
+        // Delete the session from the database
+        const status_delete_session = await controller.deleteSession(req.query.state);
+        if (status_delete_session.success) {
+            console.log("Session deleted successfully");
+        } else {
+            console.log("Session deletion failed: ", status_delete_session.return_value);
+        }
 
         // Update the tokens in the database
         const status = await controller.updateTokensOuraRing(req.session.username, tokens);
@@ -38,9 +58,9 @@ export default (controller) => {
             console.log("Adding device");
             const device_type = req.body.device_type;
             const api_key = req.body.api_key;
-            status = await controller.addDevice(req.session.username, device_type, api_key);
+            // status = await controller.addDevice(req.session.username, device_type, api_key);
             if (device_type == "Oura Ring"){
-                let auth_url = controller.authorizeOuraRingUser();
+                let auth_url = await controller.authorizeOuraRingUser(req.session);
                 return res.redirect(auth_url);
             }            
         } 

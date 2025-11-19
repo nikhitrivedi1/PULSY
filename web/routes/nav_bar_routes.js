@@ -17,7 +17,7 @@ export default (controller) => {
      */
     router.get('/logout', (req, res) => {
         console.log("Logging out");
-        req.session.destroy();
+        req.session = null;
         res.redirect('/');
     });
     
@@ -28,6 +28,7 @@ export default (controller) => {
      * @param {Object} res - Express response object
      */
     router.get('/my_devices', async (req, res) => {
+        console.log("Request Session MY DEVICES: ", req.session)
         // Check if user has an active session
         if (req.session.visited) {
             let status_user_devices = await controller.getUserDevices(req.session.username);

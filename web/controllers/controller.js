@@ -63,6 +63,7 @@ class Controller {
      * @returns {Object} User profile data
      */
     getUserProfile(username) {
+        console.log("Controller - Username: ", username);
         return this.model.getUserProfile(username);
     }
 
@@ -146,8 +147,8 @@ class Controller {
         return this.model.editDevice(username, old_device_name, new_device_name, device_type, api_key);
     }
 
-    authorizeOuraRingUser() {
-        return this.model.authorizeOuraRingUser();
+    authorizeOuraRingUser(session) {
+        return this.model.authorizeOuraRingUser(session);
     }
 
     getTokensOuraRing(code) {
@@ -164,6 +165,14 @@ class Controller {
 
     addFeedback(log_id, feedback, comment) {
         return this.model.addFeedback(log_id, feedback, comment);
+    }
+
+    getSession(state) {
+        return this.model.getSession(state);
+    }
+
+    deleteSession(state) {
+        return this.model.deleteSession(state);
     }
 
 }

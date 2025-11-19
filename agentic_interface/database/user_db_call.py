@@ -5,7 +5,7 @@ import yaml
 from pydantic import BaseModel
 from logger import Logger
 from config.settings import settings
-import os
+import json
 # Create a GCP INSTANCE Class
 # Objectives - Operations
 # 1. Access Device List
@@ -20,22 +20,30 @@ class UserDbTyping(BaseModel):
 
 class UserDbOperations:
     def __init__(self):
-        connector = Connector()
+        # Crearte a local version 
+        if settings.LOCAL_MODE == "true":
+            self.conn = pg8000.connect(
+                host=settings.PUBLIC_IP,
+                port=settings.DB_PORT,
+                user=settings.USERNAME,
+                password=settings.PASSWORD,
+                database=settings.DATABASE_NAME
+            )
+        else:
+            connector = Connector()
 
-        PUBLIC_IP = settings.PUBLIC_IP
-        DATABASE_NAME = settings.DATABASE_NAME
-        USERNAME = settings.USERNAME
-        PASSWORD = settings.PASSWORD
-        PORT = settings.DB_PORT # database port
+            DATABASE_NAME = settings.DATABASE_NAME
+            USERNAME = settings.USERNAME
+            PASSWORD = settings.PASSWORD
 
-        self.conn = connector.connect(
-            settings.INSTANCE_CONNECTION_NAME,
-            "pg8000",
-            db=DATABASE_NAME,
-            user=USERNAME,
-            password=PASSWORD,
-            ip_type=IPTypes.PUBLIC
-        )
+            self.conn = connector.connect(
+                settings.INSTANCE_CONNECTION_NAME,
+                "pg8000",
+                db=DATABASE_NAME,
+                user=USERNAME,
+                password=PASSWORD,
+                ip_type=IPTypes.PUBLIC
+            )
 
         self.cursor = self.conn.cursor()
         self.logger_table = "logging.logger_final"
@@ -50,34 +58,35 @@ class UserDbOperations:
     def get_device_information(self,username: str) -> tuple[dict[str,str]]:
         # Device Information is stored in the useres table as a dictionary device_type: apikey
         # There should only be one username in the database, so we can use a simple fetchall
-        self.cursor.execute("SELECT device_type, api_key FROM users.users_staging WHERE username = :1", [username])
+        self.cursor.execute("SELECT device_type, api_key FROM users.users_staging WHERE username = $1", [username])
         device_information = self.cursor.fetchall()
         return device_information
 
     
     def get_agentic_preferences(self,username: str) -> tuple[list[str]]:
+        print("Getting agentic preferences for username: ", username)
         # Preferences will be stored as a list of strings
-        self.cursor.execute("SELECT preferences FROM users.users_staging WHERE username = :1", [username])
+        self.cursor.execute("SELECT preferences FROM users.users_staging WHERE username = $1", [username])
         preferences = self.cursor.fetchone()
         return preferences
 
     def add_agentic_preference(self,username: str, preference: str) -> str:
         # Preferences will be stored as a list of strings
         # it would be a preference list - so we need to add it to the list
-        self.cursor.execute("UPDATE users.users_staging SET preferences = preferences || :1 WHERE username = :2", [preference, username])
+        self.cursor.execute("UPDATE users.users_staging SET preferences = preferences || $1 WHERE username = $2", [preference, username])
         self.conn.commit()
         return "Preference added successfully"
 
     def remove_agentic_preference(self,username: str, preference: str) -> str:
         # Preferences will be stored as a list of strings
         # it would be a preference list - so we need to remove it from the list
-        self.cursor.execute("UPDATE users.users_staging SET preferences = array_remove(preferences,:1) WHERE username = :2", [preference, username])
+        self.cursor.execute("UPDATE users.users_staging SET preferences = array_remove(preferences,$1) WHERE username = $2", [preference, username])
         self.conn.commit()
         return "Preference removed successfully"
 
     def get_api_key(self, user_id: str, device_type: str) -> str:
         # Get the API key for the user - query via the user_db_call class
-        self.cursor.execute("SELECT devices->:1->>'access_token' FROM users.users_staging WHERE username = :2", [device_type, user_id])
+        self.cursor.execute("SELECT devices->$1->>'access_token' FROM users.users_staging WHERE username = $2", [device_type, user_id])
         access_token = self.cursor.fetchone()
         return access_token[0]
 
@@ -85,7 +94,8 @@ class UserDbOperations:
         # Log the message to the database
         # need to convert all message history into json
         # json_history = [json.dumps(message) for message in logger.message_history]
-        self.cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9) RETURNING id", [logger.timestamp, logger.inference_time, logger.prompt, logger.response, logger.response_metadata, logger.feedback, logger.preferred_response, logger.message_history, logger.system_prompt])
+        print(logger.prompt)
+        self.cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [logger.timestamp, logger.inference_time, json.dumps(logger.prompt), json.dumps(logger.response), json.dumps(logger.response_metadata), logger.feedback, logger.preferred_response, json.dumps(logger.message_history), logger.system_prompt])
         self.conn.commit()
         return self.cursor.fetchone() # return the id of the logged message for feedback column population
 
@@ -94,7 +104,7 @@ class UserDbOperations:
         self.conn.close()
 
 
-# DEV TOOL - ONLY USED FOR TABLE INIT
+# DEV TOOL - ONLY USED FOR TABLE INIT   
 def create_user_db_tables():
     with open('../config/gcp_db.yaml', 'r') as file:
         config = yaml.safe_load(file)

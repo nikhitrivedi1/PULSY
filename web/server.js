@@ -26,18 +26,18 @@ const controller = new Controller(null, null);
 
 /** Configure Express settings and middleware */
 app.set('view engine', 'ejs');
-app.use(express.json()); // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true }));
 app.use(
     cookieSession({
         name: 'session',
         keys: [process.env.SESSION_SECRET],
         httpOnly: true,
-        secure: true,      // Cloud Run requires HTTPS → always true in production
+        secure: false,      // Cloud Run requires HTTPS → always true in production
         sameSite: 'lax',   // CSRF protection
-        maxAge: undefined, // Session cookie → deleted when browser closes
+        maxAge: 60 * 60 * 24 * 1000,
       })
 );
+app.use(express.json()); // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true }));
 
 /** Serve static assets */
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
