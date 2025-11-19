@@ -33,8 +33,7 @@ class UserDbOperations {
 
   async verifyPassword(provided_password, username) {
     const query = `
-      SELECT password, id FROM users.users_staging WHERE username = $1
-    `;
+      SELECT password, id FROM users.users_staging WHERE username = ?`;
     const knex_res = await this.pool
     const res = await knex_res.raw(query, [username]);
     if (res.rows.length === 0) return null;
@@ -46,16 +45,15 @@ class UserDbOperations {
     const {username, password, preferences, devices, first_name, last_name } = userData;
     // Check to see if username already exists
     const check_query = `
-      SELECT id FROM users.users_staging WHERE username = $1
+      SELECT id FROM users.users_staging WHERE username = ?
     `;
     const knex_res = await this.pool
     const check_res = await knex_res.raw(check_query, [username]);
     if (check_res.rows.length > 0) return { success: false, error: "Username already exists" };
 
-
     const query = `
       INSERT INTO users.users_staging (username, password, preferences, devices, first_name, last_name)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username
+      VALUES (?, ?, ?, ?, ?, ?) RETURNING id, username
     `;
     const values = [
       username,
@@ -80,7 +78,7 @@ class UserDbOperations {
     // Assuming devices are in users table as a JSONB column on users_staging
     // You might want to adapt this based on your schema
     const query = `
-      SELECT devices FROM users.users_staging WHERE username = $1
+      SELECT devices FROM users.users_staging WHERE username = ?
     `;
     try{
       const knex_res = await this.pool
@@ -98,7 +96,7 @@ class UserDbOperations {
   // Get Agentic Preferences
   async getAgenticPreferences(username) {
     const query = `
-      SELECT preferences FROM users.users_staging WHERE username = $1
+      SELECT preferences FROM users.users_staging WHERE username = ?
     `;
     try{
       const knex_res = await this.pool
@@ -116,8 +114,8 @@ class UserDbOperations {
     // Array append in PG: array_append
     const query = `
       UPDATE users.users_staging
-      SET preferences = preferences || ARRAY[$1]
-      WHERE username = $2 RETURNING preferences
+      SET preferences = preferences || ARRAY[?]
+      WHERE username = ? RETURNING preferences
     `;
     try{
       const knex_res = await this.pool
@@ -134,8 +132,8 @@ class UserDbOperations {
     // array_remove in PG
     const query = `
       UPDATE users.users_staging
-      SET preferences = array_remove(preferences, $1)
-      WHERE username = $2 RETURNING preferences
+      SET preferences = array_remove(preferences, ?)
+      WHERE username = ? RETURNING preferences
     `;
     try{
       const knex_res = await this.pool
@@ -151,8 +149,8 @@ class UserDbOperations {
   async addDevice(username, device) {
     const query = `
     UPDATE users.users_staging
-    SET devices = devices || jsonb_build_object($1::text, $2::text)
-    WHERE username = $3
+    SET devices = devices || jsonb_build_object(?, ?)
+    WHERE username = ?
   `;
   
     try{
@@ -170,7 +168,7 @@ class UserDbOperations {
   async updateTokensOuraRing(username, tokens) {
     const query = `
       UPDATE users.users_staging
-      SET devices = jsonb_set(devices, '{Oura Ring}', $1::jsonb)
+      SET devices = jsonb_set(devices, '{Oura Ring}', ?)
       WHERE username = $2
     `;
     console.log("Tokens: ", JSON.stringify(tokens));
@@ -187,7 +185,7 @@ class UserDbOperations {
   async refreshTokens(username) {
     // get the refresh_token from the database
     const query = `
-      SELECT devices->'Oura Ring'->>'refresh_token' FROM users.users_staging WHERE username = $1
+      SELECT devices->'Oura Ring'->>'refresh_token' FROM users.users_staging WHERE username = ?
     `;
     const knex_res = await this.pool
     const res = await knex_res.raw(query, [username]);
@@ -200,8 +198,8 @@ class UserDbOperations {
   async deleteDevice(username, device_type) {
     const query = `
       UPDATE users.users_staging
-      SET devices = devices - $1::text
-      WHERE username = $2
+      SET devices = devices - ?
+      WHERE username = ?
     `;
     try{
       const knex_res = await this.pool
@@ -218,8 +216,8 @@ class UserDbOperations {
     // create json object for feedback and comment
     const query = `
       UPDATE logging.logger_final
-      SET feedback = $1, preferred_response = $2
-      WHERE id = $3
+      SET feedback = ?, preferred_response = ?
+      WHERE id = ?
     `;
     try{
       const knex_res = await this.pool
