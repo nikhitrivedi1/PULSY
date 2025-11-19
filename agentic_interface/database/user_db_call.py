@@ -1,7 +1,6 @@
 # Example GCP Call
 from google.cloud.sql.connector import Connector, IPTypes
-import psycopg
-from psycopg.types.json import Json
+import pg8000
 import yaml
 from pydantic import BaseModel
 from logger import Logger
@@ -31,8 +30,8 @@ class UserDbOperations:
 
         self.conn = connector.connect(
             settings.INSTANCE_CONNECTION_NAME,
-            "psycopg",
-            dbname=DATABASE_NAME,
+            "pg8000",
+            db=DATABASE_NAME,
             user=USERNAME,
             password=PASSWORD,
             ip_type=IPTypes.PUBLIC
@@ -41,44 +40,44 @@ class UserDbOperations:
         self.cursor = self.conn.cursor()
         self.logger_table = "logging.logger_final"
     
-    def upload_user_data(self,user_data: UserDbTyping) -> str:
-        # psycopq2 will handle the JSONB and ARRAY[VARCHAR(255)] types - so wecan just pass the pydantic model directly
-        # without any conversions
-        self.cursor.execute("INSERT INTO users.users_staging (username, password, devices, preferences, first_name, last_name) VALUES (%s, %s, %s, %s, %s, %s)", (user_data.name, user_data.username, user_data.password, user_data.devices, user_data.preferences, user_data.first_name, user_data.last_name))
-        self.conn.commit()
-        return "User data uploaded successfully"
+    # def upload_user_data(self,user_data: UserDbTyping) -> str:
+    #     # psycopq2 will handle the JSONB and ARRAY[VARCHAR(255)] types - so wecan just pass the pydantic model directly
+    #     # without any conversions
+    #     self.cursor.execute("INSERT INTO users.users_staging (username, password, devices, preferences, first_name, last_name) VALUES (:1, :2, :3, :4, :5, :6)", [user_data.name, user_data.username, user_data.password, user_data.devices, user_data.preferences, user_data.first_name, user_data.last_name])
+    #     self.conn.commit()
+    #     return "User data uploaded successfully"
     
     def get_device_information(self,username: str) -> tuple[dict[str,str]]:
         # Device Information is stored in the useres table as a dictionary device_type: apikey
         # There should only be one username in the database, so we can use a simple fetchall
-        self.cursor.execute("SELECT device_type, api_key FROM users WHERE username = %s", (username,))
+        self.cursor.execute("SELECT device_type, api_key FROM users.users_staging WHERE username = :1", [username])
         device_information = self.cursor.fetchall()
         return device_information
 
     
     def get_agentic_preferences(self,username: str) -> tuple[list[str]]:
         # Preferences will be stored as a list of strings
-        self.cursor.execute("SELECT preferences FROM users.users_staging WHERE username = %s", (username,))
+        self.cursor.execute("SELECT preferences FROM users.users_staging WHERE username = :1", [username])
         preferences = self.cursor.fetchone()
         return preferences
 
     def add_agentic_preference(self,username: str, preference: str) -> str:
         # Preferences will be stored as a list of strings
         # it would be a preference list - so we need to add it to the list
-        self.cursor.execute("UPDATE users.users_staging SET preferences = preferences || %s WHERE username = %s", (preference, username))
+        self.cursor.execute("UPDATE users.users_staging SET preferences = preferences || :1 WHERE username = :2", [preference, username])
         self.conn.commit()
         return "Preference added successfully"
 
     def remove_agentic_preference(self,username: str, preference: str) -> str:
         # Preferences will be stored as a list of strings
         # it would be a preference list - so we need to remove it from the list
-        self.cursor.execute("UPDATE users.users_staging SET preferences = array_remove(preferences,%s) WHERE username = %s", (preference, username))
+        self.cursor.execute("UPDATE users.users_staging SET preferences = array_remove(preferences,:1) WHERE username = :2", [preference, username])
         self.conn.commit()
         return "Preference removed successfully"
 
     def get_api_key(self, user_id: str, device_type: str) -> str:
         # Get the API key for the user - query via the user_db_call class
-        self.cursor.execute("SELECT devices->%s->>'access_token' FROM users.users_staging WHERE username = %s", (device_type, user_id))
+        self.cursor.execute("SELECT devices->:1->>'access_token' FROM users.users_staging WHERE username = :2", [device_type, user_id])
         access_token = self.cursor.fetchone()
         return access_token[0]
 
@@ -86,7 +85,7 @@ class UserDbOperations:
         # Log the message to the database
         # need to convert all message history into json
         # json_history = [json.dumps(message) for message in logger.message_history]
-        self.cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (%s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s) RETURNING id", (logger.timestamp, logger.inference_time, Json(logger.prompt), Json(logger.response), Json(logger.response_metadata), logger.feedback, logger.preferred_response, Json(logger.message_history), logger.system_prompt))
+        self.cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9) RETURNING id", [logger.timestamp, logger.inference_time, logger.prompt, logger.response, logger.response_metadata, logger.feedback, logger.preferred_response, logger.message_history, logger.system_prompt])
         self.conn.commit()
         return self.cursor.fetchone() # return the id of the logged message for feedback column population
 
@@ -106,13 +105,16 @@ def create_user_db_tables():
     PASSWORD = settings.PASSWORD
     PORT = settings.DB_PORT
 
+    connector = Connector()
+
     # Initialize the COnnectino
-    conn = psycopg.connect(
+    conn = connector.connect(
         host=PUBLIC_IP,
-        dbname=DATABASE_NAME,
+        db=DATABASE_NAME,
         user=USERNAME,
         password=PASSWORD,
-        port=PORT
+        port=PORT,
+        ip_type=IPTypes.PUBLIC
     )
 
     cursor = conn.cursor()
@@ -136,32 +138,3 @@ def create_user_db_tables():
 
 if __name__ == "__main__":
     create_user_db_tables()
-
-
-
-
-# cursor = conn.cursor()
-
-# cursor.execute("CREATE SCHEMA IF NOT EXISTS users")
-
-# cursor.execute("CREATE SCHEMA IF NOT EXISTS logging")
-
-# # Create a table at each of these schemas
-# cursor.execute("CREATE TABLE IF NOT EXISTS users.users (id SERIAL PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), password VARCHAR(255))")
-# cursor.execute("CREATE TABLE IF NOT EXISTS logging.logs (id SERIAL PRIMARY KEY, message VARCHAR(255), timestamp TIMESTAMP)")
-
-# # Insert a record into the users table
-# cursor.execute("INSERT INTO users.users (name, email, password) VALUES ('John Doe', 'john.doe@example.com', 'password123')")
-# cursor.execute("INSERT INTO logging.logs (message, timestamp) VALUES ('User logged in', NOW())")
-
-# # Commit the changes
-# conn.commit()
-
-# # Fetch the records from the users table
-# cursor.execute("SELECT * FROM users.users")
-# users = cursor.fetchall()
-
-# print(users)
-
-# cursor.close()
-# conn.close()
