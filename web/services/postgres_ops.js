@@ -2,7 +2,6 @@ import argon2 from 'argon2';
 import Knex from 'knex';
 import {Connector} from '@google-cloud/cloud-sql-connector';
 
-// TODO: Need to add the config files for the call here 
 class UserDbOperations {
   constructor() {
     const connector = new Connector();
@@ -36,7 +35,7 @@ class UserDbOperations {
     const query = `
       SELECT password, id FROM users.users_staging WHERE username = $1
     `;
-    const res = await this.pool.query(query, [username]);
+    const res = await this.pool.raw(query, [username]);
     if (res.rows.length === 0) return null;
     return await argon2.verify(res.rows[0].password, provided_password) ? res.rows[0].id : null;
   }
@@ -48,7 +47,7 @@ class UserDbOperations {
     const check_query = `
       SELECT id FROM users.users_staging WHERE username = $1
     `;
-    const check_res = await this.pool.query(check_query, [username]);
+    const check_res = await this.pool.raw(check_query, [username]);
     if (check_res.rows.length > 0) return { success: false, error: "Username already exists" };
 
 
@@ -65,7 +64,7 @@ class UserDbOperations {
       last_name
     ];
     try {
-      let res = await this.pool.query(query, values);
+      let res = await this.pool.raw(query, values);
       return { success: true, id: res.rows[0].id, username: res.rows[0].username };
     } catch (error) {
       console.error('Error uploading user data:', error);
@@ -81,7 +80,7 @@ class UserDbOperations {
       SELECT devices FROM users.users_staging WHERE username = $1
     `;
     try{
-      let res = await this.pool.query(query, [username]);
+      let res = await this.pool.raw(query, [username]);
       console.log(res.rows);
       if (res.rows.length === 0) return { success: false, return_value: "No devices found" };
       return { success: true, return_value: res.rows[0]};
@@ -98,7 +97,7 @@ class UserDbOperations {
       SELECT preferences FROM users.users_staging WHERE username = $1
     `;
     try{
-    let res = await this.pool.query(query, [username]);
+    let res = await this.pool.raw(query, [username]);
       if (res.rows.length === 0) return null;
       return res.rows[0].preferences;
     } catch (error) {
@@ -116,7 +115,7 @@ class UserDbOperations {
       WHERE username = $2 RETURNING preferences
     `;
     try{
-      let res = await this.pool.query(query, [preference, username]);
+      let res = await this.pool.raw(query, [preference, username]);
       return { success: true, return_value: res.rows[0].preferences };
     } catch (error) {
       console.error('Error adding agentic preference:', error);
@@ -133,7 +132,7 @@ class UserDbOperations {
       WHERE username = $2 RETURNING preferences
     `;
     try{
-      let res = await this.pool.query(query, [preference, username]);
+      let res = await this.pool.raw(query, [preference, username]);
       return { success: true, return_value: res.rows[0].preferences };
     } catch (error) {
       console.error('Error removing agentic preference:', error);
@@ -181,7 +180,7 @@ class UserDbOperations {
     const query = `
       SELECT devices->'Oura Ring'->>'refresh_token' FROM users.users_staging WHERE username = $1
     `;
-    const res = await this.pool.query(query, [username]);
+    const res = await this.pool.raw(query, [username]);
     if (res.rows.length === 0) return { success: false, return_value: "No refresh token found" };
     const refresh_token = res.rows[0].refresh_token;
     return { success: true, return_value: refresh_token };
@@ -195,7 +194,7 @@ class UserDbOperations {
       WHERE username = $2
     `;
     try{
-      await this.pool.query(query, [device_type, username]);
+      await this.pool.raw(query, [device_type, username]);
       return { success: true, return_value: "Device deleted successfully" };
     } catch (error) {
       console.error('Error deleting device:', error);
@@ -212,7 +211,7 @@ class UserDbOperations {
       WHERE id = $3
     `;
     try{
-      await this.pool.query(query, [feedback, preferred_response, log_id]);
+      await this.pool.raw(query, [feedback, preferred_response, log_id]);
       return { success: true, return_value: "Feedback added successfully" };
     } catch (error) {
       console.error('Error adding feedback:', error);
