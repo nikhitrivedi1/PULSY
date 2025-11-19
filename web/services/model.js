@@ -1,8 +1,5 @@
 import fs from 'fs';
-import {dirname, join} from 'path';
-import { fileURLToPath } from 'url';
 import UserDbOperations from './postgres_ops.js';
-import {GoogleAuth} from 'google-auth-library';
 
 /**
  * Model class handling user authentication and data management
@@ -47,8 +44,8 @@ class Model {
     async ouraRingRefreshCall(refresh_token) {
         let token_data = {
             "refresh_token": refresh_token,
-            "client_id": "b4bb9677-f948-4813-bd45-098fff51a7a5",
-            "client_secret": "42EWT2UsPjXU4B3LwAcB2WwurCg2ng1YWO5PAzH0QQY",
+            "client_id": process.env.OURA_CLIENT_ID,
+            "client_secret": process.env.OURA_SECRET,
             "grant_type": "refresh_token"
         }
         const response = await fetch("https://api.ouraring.com/oauth/token", {
@@ -96,23 +93,18 @@ class Model {
     }
 
     authorizeOuraRingUser(){
-        const CLIENT_ID = 'b4bb9677-f948-4813-bd45-098fff51a7a5';
         const REDIRECT_URI = "http://localhost:3000/my_devices/authorize_oura_ring";
         const scopes = ["personal", "daily", 'heartrate', 'stress', 'workout', 'spo2Daily'];
       
         const authUrl = `https://cloud.ouraring.com/oauth/authorize?` +
-          `client_id=${CLIENT_ID}&` +
+          `client_id=${process.env.OURA_CLIENT_ID}&` +
           `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
           `response_type=code&` +
-          `scope=${scopes.join(" ")}`;
-        
-        console.log("Auth URL: ", authUrl);
-      
+          `scope=${scopes.join(" ")}`;      
         return authUrl;
     }
 
     async getTokensOuraRing(code) {
-        const CLIENT_ID = 'b4bb9677-f948-4813-bd45-098fff51a7a5';
         const REDIRECT_URI = "http://localhost:3000/my_devices/authorize_oura_ring";
 
         const response = await fetch("https://api.ouraring.com/oauth/token", {
@@ -123,8 +115,8 @@ class Model {
             body: new URLSearchParams({
               grant_type: "authorization_code",
               code: code,
-              client_id: CLIENT_ID,
-              client_secret: '42EWT2UsPjXU4B3LwAcB2WwurCg2ng1YWO5PAzH0QQY',
+              client_id: process.env.OURA_CLIENT_ID,
+              client_secret: process.env.OURA_SECRET,
               redirect_uri: REDIRECT_URI
             })
           });
@@ -182,8 +174,8 @@ class Model {
           body: new URLSearchParams({
             'grant_type': 'refresh_token',
             'refresh_token': refreshToken,
-            'client_id': 'b4bb9677-f948-4813-bd45-098fff51a7a5',
-            'client_secret': '42EWT2UsPjXU4B3LwAcB2WwurCg2ng1YWO5PAzH0QQY'
+            'client_id': process.env.OURA_RING_CLIENT_ID,
+            'client_secret': process.env.OURA_SECRET,
           })
         });
       
@@ -277,16 +269,10 @@ class Model {
      * @returns {Promise<Object|string>} AI response
      */
     async chatQuery(query, username, user_history, ai_chat_history) {
-        // Get the Google Auth token
-        const targetAudience = process.env.BACKEND_URL;
-
-        const client = new GoogleAuth();
-        const idTokenClient = await client.getIdTokenClient(targetAudience);
-
         const url = `${process.env.BACKEND_URL}/query/`;
 
 
-        let response = await idTokenClient.fetch(url, {
+        let response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
