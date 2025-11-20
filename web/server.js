@@ -26,14 +26,19 @@ const controller = new Controller(null, null);
 
 /** Configure Express settings and middleware */
 app.set('view engine', 'ejs');
+app.set('trust proxy', 1);
 app.use(
     cookieSession({
         name: 'session',
         keys: [process.env.SESSION_SECRET],
         httpOnly: true,
-        secure: false,      // Cloud Run requires HTTPS → always true in production
+        secure: true,      // Cloud Run requires HTTPS → always true in production
         sameSite: 'lax',   // CSRF protection
         maxAge: 60 * 60 * 24 * 1000,
+        keys: [
+            process.env.SESSION_SECRET,
+            process.env.SESSION_SECRET_2,
+        ]
       })
 );
 app.use(express.json()); // Parse JSON request bodies
