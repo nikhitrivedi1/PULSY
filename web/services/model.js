@@ -94,7 +94,6 @@ class Model {
     }
 
     authorizeOuraRingUser(session){
-        const REDIRECT_URI = "http://localhost:3000/my_devices/authorize_oura_ring";
         const scopes = ["personal", "daily", 'heartrate', 'stress', 'workout', 'spo2Daily'];
 
         // Generate state and store state: user in SQL DB
@@ -103,7 +102,7 @@ class Model {
       
         const authUrl = `https://cloud.ouraring.com/oauth/authorize?` +
           `client_id=${process.env.OURA_CLIENT_ID}&` +
-          `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+          `redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&` +
           `response_type=code&` +
           `scope=${scopes.join(" ")}&` +
           `state=${state}`;      
@@ -120,8 +119,6 @@ class Model {
     }
 
     async getTokensOuraRing(code) {
-        const REDIRECT_URI = "http://localhost:3000/my_devices/authorize_oura_ring";
-
         const response = await fetch("https://api.ouraring.com/oauth/token", {
             method: "POST",
             headers: {
@@ -132,7 +129,7 @@ class Model {
               code: code,
               client_id: process.env.OURA_CLIENT_ID,
               client_secret: process.env.OURA_SECRET,
-              redirect_uri: REDIRECT_URI
+              redirect_uri: process.env.REDIRECT_URI
             })
           });
         
