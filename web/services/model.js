@@ -1,5 +1,6 @@
 import fs from 'fs';
 import UserDbOperations from './postgres_ops.js';
+import crypto from 'crypto';
 
 /**
  * Model class handling user authentication and data management
@@ -92,16 +93,30 @@ class Model {
         return this.user_db_operations.uploadUserData(user_data);
     }
 
-    authorizeOuraRingUser(){
+    authorizeOuraRingUser(session){
         const REDIRECT_URI = "http://localhost:3000/my_devices/authorize_oura_ring";
         const scopes = ["personal", "daily", 'heartrate', 'stress', 'workout', 'spo2Daily'];
+
+        // Generate state and store state: user in SQL DB
+        const state = crypto.randomBytes(16).toString("hex");
+        this.user_db_operations.storeState(state, session);
       
         const authUrl = `https://cloud.ouraring.com/oauth/authorize?` +
           `client_id=${process.env.OURA_CLIENT_ID}&` +
           `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
           `response_type=code&` +
-          `scope=${scopes.join(" ")}`;      
+          `scope=${scopes.join(" ")}&` +
+          `state=${state}`;      
         return authUrl;
+    }
+
+    getSession(state) {
+        return this.user_db_operations.getSession(state);
+    }
+
+    async deleteSession(state) {
+        console.log("Deleting Session: ", state);
+        return await this.user_db_operations.deleteSession(state);
     }
 
     async getTokensOuraRing(code) {
@@ -271,7 +286,6 @@ class Model {
     async chatQuery(query, username, user_history, ai_chat_history) {
         const url = `${process.env.BACKEND_URL}/query/`;
 
-
         let response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -292,6 +306,7 @@ class Model {
      * @returns {Object} User profile data
      */
     getUserProfile(username) {
+        console.log("Model - Username: ", username);
         return this.user_db_operations.getAgenticPreferences(username);
     }
 

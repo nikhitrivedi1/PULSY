@@ -13,6 +13,18 @@ import { marked } from 'marked';
 export default (controller) => {
     const router = express.Router();
 
+    router.post('/login', async (req, res) => {
+        let isAuthenticated = await controller.authenticate(req.body.username, req.body.password);
+        console.log("isAuthenticated: ", isAuthenticated)
+        if (isAuthenticated) {
+            req.session.username = req.body.username;
+            req.session.visited = true;
+            console.log("req.session: ", req.session)
+            res.status(200).redirect("/chat/home");
+        } else {
+            res.status(200).render("loginPage.ejs", { errorMessage: "Invalid username or password" });
+        }
+    });
 
     /**
      * GET /chat/home
@@ -21,42 +33,8 @@ export default (controller) => {
      * @param {Object} res - Express response object
      */
     router.get('/home', async (req, res) => {
-        // Check if session is already authenticated
         if (req.session.visited) {
-            console.log("Session already authenticated");
-            // Refresh the User Devices Status
-            try{
-                let response = await controller.getUserDevices(req.session.username);
-                let devices_array = [];
-
-                if (response.success){
-                    for (const [key, tokens] of Object.entries(response.return_value.devices)) {
-                        let is_connected = await controller.testUserDevices(key, tokens.access_token);
-                        if (is_connected) {
-                            devices_array.push({device_type: key, device_status: "pass"});
-                        } else {
-                            devices_array.push({device_type: key, device_status: "fail"});
-                        }
-                    }
-                }
-                // Verify the devices are connected
-                req.session.user_devices = devices_array;
-            } catch (error) {
-                console.log(error)
-                req.session.device_error_message = error.message;
-                req.session.user_devices = [];
-            }
-            res.render("chat_page.ejs", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, response_history: req.session.response_history, query_history: req.session.query_history });
-            return;
-        }
-    
-        // Authenticate the user
-        let isAuthenticated = await controller.authenticate(req.query.username, req.query.password);
-        if (isAuthenticated) {
-            // Modify the session object to include the username
-            req.session.username = req.query.username;
-            req.session.visited = true;
-    
+            console.log(req.session.username)
             // Load the user's metrics from the database
             try{
                 let user_metrics = await controller.loadUserMetrics(req.session.username);
@@ -88,10 +66,10 @@ export default (controller) => {
                 req.session.response_history = [];
         
                 // Render the chat page
-                res.render("chat_page.ejs", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, errorMessage: req.session.device_error_message });
+                res.status(200).render("chat_page", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, errorMessage: req.session.device_error_message });
             }
         } else {
-            res.render("loginPage.ejs", { errorMessage: "Invalid username or password" });
+            res.status(200).render("loginPage.ejs", { errorMessage: "Invalid username or password" });
         }
     });
 

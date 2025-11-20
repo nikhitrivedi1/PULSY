@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     PASSWORD: str
     DB_PORT: int
     INSTANCE_CONNECTION_NAME: str
+    LOCAL_MODE: str
 
     class Config:
         env_file = ".env"

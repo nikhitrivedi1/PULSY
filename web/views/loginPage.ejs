@@ -179,17 +179,12 @@
     </style>
 </head>
 <body>
-    <div class="video-background">
-        <video autoplay muted loop>
-            <source src="assets/fitness-background.mp4" type="video/mp4">
-        </video>
-    </div>
     <div class="login-container">
         <div class="login-box">
             <h1 class="app-title">PULSY</h1>
             <p class="app-subtitle">Your AI Wearable Device Advisor</p>
             
-            <form id="loginForm" action="/chat/home" method="GET">
+            <form id="loginForm" action="/chat/login" method="POST">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>
