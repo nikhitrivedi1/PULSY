@@ -312,12 +312,9 @@ class Model {
                 body: JSON.stringify({query: query, username: username, user_history: user_history, ai_chat_history: ai_chat_history })
             })
             
-            // if (!res.ok) {
-            //     const errorText = await res.text();
-            //     throw new Error(`Backend error: ${res.status} ${errorText}`);
-            // }
-        
-            return res.json();
+            // GoogleAuth client.request() automatically parses the response
+            // The data is available in res.data, not res.json()
+            return res.data;
         }
     }
 
