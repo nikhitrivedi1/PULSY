@@ -1,6 +1,7 @@
 import fs from 'fs';
 import UserDbOperations from './postgres_ops.js';
 import crypto from 'crypto';
+import { GoogleAuth } from "google-auth-library";
 
 /**
  * Model class handling user authentication and data management
@@ -283,18 +284,41 @@ class Model {
     async chatQuery(query, username, user_history, ai_chat_history) {
         const url = `${process.env.BACKEND_URL}/query/`;
 
-        let response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({query: query, username: username, user_history: user_history, ai_chat_history: ai_chat_history })
-        });
+        if (process.env.LOCAL_MODE == "true"){
 
-        if (response instanceof String){
-            return response
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({query: query, username: username, user_history: user_history, ai_chat_history: ai_chat_history })
+            });
+
+            if (response instanceof String){
+                return response
+            }
+            return response.json();
+        } else {
+            // Get the Google Auth Token
+            const auth = new GoogleAuth()
+            const client = await auth.getIdTokenClient(process.env.BACKEND_URL)
+
+            const res = await client.request({
+                url: url,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({query: query, username: username, user_history: user_history, ai_chat_history: ai_chat_history })
+            })
+            
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`Backend error: ${res.status} ${errorText}`);
+            }
+        
+            return res.json();
         }
-        return response.json();
     }
 
     /**
