@@ -69,7 +69,7 @@ export default (controller) => {
                 }
         
                 // Render the chat page
-                res.status(200).render("chat_page", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, errorMessage: req.session.device_error_message });
+                res.status(200).render("chat_page", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, errorMessage: req.session.device_error_message, query_history: req.session.query_history, response_history: req.session.response_history });
             }
         } else {
             res.status(200).render("loginPage.ejs", { errorMessage: "Invalid username or password" });
