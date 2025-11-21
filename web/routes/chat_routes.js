@@ -34,7 +34,6 @@ export default (controller) => {
      */
     router.get('/home', async (req, res) => {
         if (req.session.visited) {
-            console.log(req.session.username)
             // Load the user's metrics from the database
             try{
                 let user_metrics = await controller.loadUserMetrics(req.session.username);
@@ -62,8 +61,12 @@ export default (controller) => {
                 req.session.user_devices = [];
             }finally{
         
-                req.session.query_history = [];
-                req.session.response_history = [];
+                if (!req.session.query_history){
+                    req.session.query_history = [];
+                }
+                if (!req.session.response_history){
+                    req.session.response_history = [];
+                }
         
                 // Render the chat page
                 res.status(200).render("chat_page", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, errorMessage: req.session.device_error_message });

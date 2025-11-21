@@ -205,7 +205,7 @@ class Model {
      * @returns {Promise<Object>} Device metrics data
      */
     async loadUserDevices(device_object) {
-        let response = await fetch(`http://0.0.0.0:8000/load_user_devices/`, {
+        let response = await fetch(process.env.BACKEND_URL + "/load_user_devices/", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
