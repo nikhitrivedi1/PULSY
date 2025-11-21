@@ -4,7 +4,6 @@
 import requests
 from pinecone import Pinecone
 from langchain_huggingface import HuggingFaceEmbeddings
-import json
 
 import pandas as pd
 from database.user_db_call import UserDbOperations
@@ -12,12 +11,6 @@ from config.settings import settings
 
 # Create Instance of UserDbOperations
 user_db_operations = UserDbOperations()
-
-
-# Work ToDo
-# TODO: Look into using Pydantic to parse the response -> can commonize across the oura ring tools - https://python.langchain.com/api_reference/core/output_parsers/langchain_core.output_parsers.openai_tools.PydanticToolsParser.html
-# TODO: Error Handling - need to cover 400 or 500 type errors
-# TODO: Error Handling - need to handle case where file is not found
 
 
 # Oura Ring Tools
