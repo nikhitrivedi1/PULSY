@@ -127,7 +127,6 @@ class UserDbOperations {
     try{
       const knex_res = await this.pool;
       const res = await knex_res.raw(query, [state]);
-      console.log("res: ", res.rows);
       return { success: true, return_value: res.rows[0] };
     } catch (error) {
       console.error('Error getting session:', error);
@@ -277,8 +276,9 @@ class UserDbOperations {
       WHERE id = ?
     `;
     try{
+      console.log("Adding feedback: ", feedback, preferred_response, log_id);
       const knex_res = await this.pool;
-      await knex_res.raw(query, [feedback, preferred_response, log_id]);
+      await knex_res.raw(query, [feedback ?? null, preferred_response ?? null, log_id]);
       return { success: true, return_value: "Feedback added successfully" };
     } catch (error) {
       console.error('Error adding feedback:', error);

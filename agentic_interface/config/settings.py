@@ -4,7 +4,8 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     PINECONE_API_KEY: str
     PINECONE_HOST: str
-    PINECONE_INDEX: str
+    PINECONE_NAMESPACE_1: str
+    PINECONE_NAMESPACE_2: str
     PINECONE_EMBEDDING_MODEL: str
 
     PUBLIC_IP: str

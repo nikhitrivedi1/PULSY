@@ -32,7 +32,7 @@ app.use(
         name: 'session',
         keys: [process.env.SESSION_SECRET],
         httpOnly: true,
-        secure: true,      // Cloud Run requires HTTPS → always true in production
+        secure: process.env.LOCAL_MODE === 'true' ? false : true,      // Cloud Run requires HTTPS → always true in production
         sameSite: 'lax',   // CSRF protection
         maxAge: 60 * 60 * 24 * 1000,
         keys: [

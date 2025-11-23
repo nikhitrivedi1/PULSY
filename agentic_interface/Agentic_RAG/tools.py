@@ -17,24 +17,22 @@ user_db_operations = UserDbOperations()
 
 # Get the user sleep data from the Oura API between the start and end date
 # Returns: str - the sleep data between the start and end date - formatted as a string
-def get_sleep_data(start_date: str, end_date: str, user_id: str) -> str:
+def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
         """
         Get the user sleep data from the Oura API between the start and end date
         
         Args:
         start_date: the start date of the sleep data - format YYYY-MM-DD
         end_date: the end date of the sleep data - format YYYY-MM-DD
+        user_key: the API key for the user
 
         Returns:
         sleep_data(dict): the sleep data between the start and end date
         """
 
-        # Get the API Key
-        key = __get_device_api_key(user_id, "Oura Ring")
-
         # Build the GET Request Components
         URL = "https://api.ouraring.com/v2/usercollection/daily_sleep" # specific endpoint for sleep data
-        headers = {'Authorization': f'Bearer {key}'}
+        headers = {'Authorization': f'Bearer {user_key}'}
         params = {
             'start_date': start_date,
             'end_date': end_date
@@ -57,24 +55,22 @@ def get_sleep_data(start_date: str, end_date: str, user_id: str) -> str:
 
 # Get the user stress data from the Oura API between the start and end date
 # Returns: str - the stress data between the start and end date - formatted as a string
-def get_stress_data(start_date: str, end_date: str, user_id: str) -> str:
+def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
     """
     Get the user stress data from the Oura API between the start and end date
     
     Args:
     start_date: the start date of the stress data - format YYYY-MM-DD
     end_date: the end date of the stress data - format YYYY-MM-DD
+    user_key: the API key for the user
 
     Returns:
     stress_data(dict): the stress data between the start and end date
     """
 
-    # Get the API Key
-    key = __get_device_api_key(user_id, "Oura Ring")
-
     # Build the GET Request Components
     URL = "https://api.ouraring.com/v2/usercollection/daily_stress" # specific endpoint for stress data
-    headers = {'Authorization': f'Bearer {key}'}
+    headers = {'Authorization': f'Bearer {user_key}'}
     params = {
         'start_date': start_date,
         'end_date': end_date
@@ -96,24 +92,23 @@ def get_stress_data(start_date: str, end_date: str, user_id: str) -> str:
 
 # Get the user heart rate data from the Oura API between the start and end date
 # Returns: str - the heart rate data between the start and end date - formatted as a string
-def get_heart_rate_data(start_date: str, end_date: str, user_id: str) -> str:
+def get_heart_rate_data(start_date: str, end_date: str, user_key: str) -> str:
     """
     Get the user heart rate data from the Oura API between the start and end date
     
     Args:
     start_date: the start date of the heart rate data - format %Y-%m-%d
     end_date: the end date of the heart rate data - format %Y-%m-%d
-    user_id: the id of the user - used to access the correct API key
+    user_key: the API key for the user
 
     Returns:
     heart_rate_data(dict): the heart rate data between the start and end date
     """
     # Get the API Key
-    key = __get_device_api_key(user_id, "Oura Ring")
 
     # Build the GET Request Components
     URL = "https://api.ouraring.com/v2/usercollection/heartrate" # specific endpoint for heart rate data
-    headers = {'Authorization': f'Bearer {key}'}
+    headers = {'Authorization': f'Bearer {user_key}'}
     params = {
         'start_date': start_date,
         'end_date': end_date
@@ -143,6 +138,44 @@ def get_heart_rate_data(start_date: str, end_date: str, user_id: str) -> str:
 
 # Vector DB Tools
 
+# MedlinePlus Database
+# Returns: str - semantic search results - returning top 5 results from the vector db
+def get_MedlinePlus_Insights(query:str) -> str:
+    """
+    Given the user query, search the Pinecone VectorDB for the most relevant insights from MedlinePlus
+    When using information from this tool - ensure that you note to the user that this information is from MedlinePlus
+
+    Args:
+    query: the query to search for in the Pinecone Vector DB
+
+    Returns:
+    results(dict): the most relevant insights from MedlinePlus along with the corresponding metadata
+    """
+    try:
+        # Initialize Pinecone client
+        pc = Pinecone(api_key = settings.PINECONE_API_KEY)
+        index = pc.Index(host = settings.PINECONE_HOST)
+        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
+
+        # Convert query to vector space using embeddings model
+        queryVec = embeddings.embed_query(query)
+
+        results = index.query(
+            namespace = settings.PINECONE_NAMESPACE_2,
+            vector = queryVec,
+            top_k = 3,
+            include_metadata = True
+        )
+
+        # Return the documents and the query - note that this will not be returning any metadata
+        response_messages = [f"Source: {result['metadata']['source']}, Text: {result['metadata']['text']}, Similarity: {result['score']}" for result in results["matches"]]
+        return "\n".join(response_messages)
+    except RuntimeError as r:
+        # This is an internal endpoint - users do not need to provide any information
+        # Build out further exceptions to handle connection errors, etc.
+        raise RuntimeError("Pinecone Server Error")
+
+
 # Andrew Huberman Podcast Transcripts
 # Returns: str - semantic search results - returning top 5 results from the vector db
 def get_Andrew_Huberman_Insights(query:str) -> str:
@@ -167,9 +200,9 @@ def get_Andrew_Huberman_Insights(query:str) -> str:
         queryVec = embeddings.embed_query(query)
 
         results = index.query(
-            namespace = settings.PINECONE_INDEX,
+            namespace = settings.PINECONE_NAMESPACE_1,
             vector = queryVec,
-            top_k = 5,
+            top_k = 3,
             include_metadata = True
         )
 
@@ -350,12 +383,7 @@ def get_Andrew_Huberman_Insights(query:str) -> str:
 # # Internal Functions for Tools to get API Keys
 # # Get the API key for the user's device
 # # Returns: str - the API key for the user's device
-def __get_device_api_key(user_id: str, device_type: str) -> str:
-    """
-    Get the API key for the user - query via the user_db_call class
-    """
-    key = user_db_operations.get_api_key(user_id, device_type)
-    return key
+
     
 # # Get the Pinecone API key
 # # Returns: str - the Pinecone API key

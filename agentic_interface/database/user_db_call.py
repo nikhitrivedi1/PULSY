@@ -1,15 +1,10 @@
 # Example GCP Call
 from google.cloud.sql.connector import Connector, IPTypes
-import pg8000
 import yaml
 from pydantic import BaseModel
 from logger import Logger
 from config.settings import settings
 import json
-# Create a GCP INSTANCE Class
-# Objectives - Operations
-# 1. Access Device List
-# 2. Access Agentic Preferences
 
 class UserDbTyping(BaseModel):
     name: str
@@ -20,91 +15,114 @@ class UserDbTyping(BaseModel):
 
 class UserDbOperations:
     def __init__(self):
-        # Crearte a local version 
+        if settings.LOCAL_MODE == 'false':
+            self.connector = Connector()
+
+        self.logger_table = "logging.logger_final"
+
+    async def _get_conn(self):
         if settings.LOCAL_MODE == "true":
-            self.conn = pg8000.connect(
-                host=settings.PUBLIC_IP,
-                port=settings.DB_PORT,
+            import pg8000.dbapi as pgdb
+            return pgdb.connect(
                 user=settings.USERNAME,
                 password=settings.PASSWORD,
+                host=settings.PUBLIC_IP,
+                port=int(settings.DB_PORT),
                 database=settings.DATABASE_NAME
             )
         else:
-            connector = Connector()
-
-            DATABASE_NAME = settings.DATABASE_NAME
-            USERNAME = settings.USERNAME
-            PASSWORD = settings.PASSWORD
-
-            self.conn = connector.connect(
+            return self.connector.connect(
                 settings.INSTANCE_CONNECTION_NAME,
                 "pg8000",
-                db=DATABASE_NAME,
-                user=USERNAME,
-                password=PASSWORD,
+                db=settings.DATABASE_NAME,
+                user=settings.USERNAME,
+                password=settings.PASSWORD,
                 ip_type=IPTypes.PUBLIC
             )
-
-        self.logger_table = "logging.logger_final"
     
-    # def upload_user_data(self,user_data: UserDbTyping) -> str:
-    #     # psycopq2 will handle the JSONB and ARRAY[VARCHAR(255)] types - so wecan just pass the pydantic model directly
-    #     # without any conversions
-    #     self.cursor.execute("INSERT INTO users.users_staging (username, password, devices, preferences, first_name, last_name) VALUES (:1, :2, :3, :4, :5, :6)", [user_data.name, user_data.username, user_data.password, user_data.devices, user_data.preferences, user_data.first_name, user_data.last_name])
-    #     self.conn.commit()
-    #     return "User data uploaded successfully"
+    async def get_device_information(self,username: str) -> tuple[dict[str,str]]:
+        conn = await self._get_conn()
+        cursor = conn.cursor()
+        try:
+            # Device Information is stored in the useres table as a dictionary device_type: apikey
+            # There should only be one username in the database, so we can use a simple fetchall
+            cursor.execute("SELECT device_type, api_key FROM users.users_staging WHERE username = $1", [username])
+            device_information = cursor.fetchall()
+            return device_information
+        finally:
+            # close connection and cursor
+            cursor.close()
+            conn.close()
     
-    def get_device_information(self,username: str) -> tuple[dict[str,str]]:
-        cursor = self.conn.cursor()
-        # Device Information is stored in the useres table as a dictionary device_type: apikey
-        # There should only be one username in the database, so we can use a simple fetchall
-        cursor.execute("SELECT device_type, api_key FROM users.users_staging WHERE username = $1", [username])
-        device_information = cursor.fetchall()
-        return device_information
+    async def get_agentic_preferences(self,username: str) -> list[list[str]]:
+        conn = await self._get_conn()
+        cursor = conn.cursor()
+        try:
+            # Preferences will be stored as a list of strings
+            cursor.execute("SELECT preferences FROM users.users_staging WHERE username = $1", [username])
+            preferences = cursor.fetchone()
+            return preferences
+        finally:
+            cursor.close()
+            conn.close()
 
-    
-    def get_agentic_preferences(self,username: str) -> tuple[list[str]]:
-        print("Getting agentic preferences for username: ", username)
-        cursor = self.conn.cursor()
-        # Preferences will be stored as a list of strings
-        cursor.execute("SELECT preferences FROM users.users_staging WHERE username = $1", [username])
-        preferences = cursor.fetchone()
-        return preferences
-
-    def add_agentic_preference(self,username: str, preference: str) -> str:
-        cursor = self.conn.cursor()
-        # Preferences will be stored as a list of strings
-        # it would be a preference list - so we need to add it to the list
-        cursor.execute("UPDATE users.users_staging SET preferences = preferences || $1 WHERE username = $2", [preference, username])
-        self.conn.commit()
+    async def add_agentic_preference(self,username: str, preference: str) -> str:
+        conn = await self._get_conn()
+        cursor = conn.cursor()
+        try:
+            # Preferences will be stored as a list of strings
+            # it would be a preference list - so we need to add it to the list
+            cursor.execute("UPDATE users.users_staging SET preferences = preferences || $1 WHERE username = $2", [preference, username])
+            conn.commit()
+            # close connection
+        finally:
+            cursor.close()
+            conn.close()
         return "Preference added successfully"
 
-    def remove_agentic_preference(self,username: str, preference: str) -> str:
-        cursor = self.conn.cursor()
-        # Preferences will be stored as a list of strings
-        # it would be a preference list - so we need to remove it from the list
-        cursor.execute("UPDATE users.users_staging SET preferences = array_remove(preferences,$1) WHERE username = $2", [preference, username])
-        self.conn.commit()
+    async def remove_agentic_preference(self,username: str, preference: str) -> str:
+        conn = await self._get_conn()
+        cursor = conn.cursor()
+        try:
+            # Preferences will be stored as a list of strings
+            # it would be a preference list - so we need to remove it from the list
+            cursor.execute("UPDATE users.users_staging SET preferences = array_remove(preferences,$1) WHERE username = $2", [preference, username])
+            conn.commit()
+        finally:
+            # close connection
+            cursor.close()
+            conn.close()
         return "Preference removed successfully"
 
-    def get_api_key(self, user_id: str, device_type: str) -> str:
-        cursor = self.conn.cursor()
+    async def get_api_key(self, user_id: str, device_type: str) -> str:
+        conn = await self._get_conn()
+        cursor = conn.cursor()
+        try:
         # Get the API key for the user - query via the user_db_call class
-        cursor.execute("SELECT devices->$1->>'access_token' FROM users.users_staging WHERE username = $2", [device_type, user_id])
-        access_token = cursor.fetchone()
-        return access_token[0]
+            cursor.execute("SELECT devices->$1->>'access_token' FROM users.users_staging WHERE username = $2", [device_type, user_id])
+            access_token = cursor.fetchone()
+            return access_token[0]
+        finally:
+            cursor.close()
+            conn.close()
 
-    def log_message(self, logger: Logger) -> tuple[int]:
-        cursor = self.conn.cursor()
-        # Log the message to the database
-        # need to convert all message history into json
-        # json_history = [json.dumps(message) for message in logger.message_history]
-        cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [logger.timestamp, logger.inference_time, json.dumps(logger.prompt), json.dumps(logger.response), json.dumps(logger.response_metadata), logger.feedback, logger.preferred_response, json.dumps(logger.message_history), logger.system_prompt])
-        self.conn.commit()
-        return cursor.fetchone() # return the id of the logged message for feedback column population
+    async def log_message(self, logger: Logger) -> tuple[int]:
+        conn = await self._get_conn()
+        cursor = conn.cursor()
+        try:
+            # Log the message to the database
+            cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [logger.timestamp, logger.inference_time, json.dumps(logger.prompt), json.dumps(logger.response), json.dumps(logger.response_metadata), logger.feedback, logger.preferred_response, json.dumps(logger.message_history), logger.system_prompt])
+            conn.commit()
+            id = cursor.fetchone()
+            return id
+        finally:
+            # close connection
+            cursor.close()
+            conn.close()
 
     def close_connection(self):
-        self.conn.close()
+        if self.connector:
+            self.connector.close()
 
 
 # DEV TOOL - ONLY USED FOR TABLE INIT   
