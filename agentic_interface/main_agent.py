@@ -57,8 +57,7 @@ async def post_query(
 ) -> dict[str, str|int]:
     # initialize the LLM upon running the instance
     # Pass in the query body to get a response
-    res = agent.run(query.query, query.username, query.user_history, query.ai_chat_history)
-    print(res)
+    res = await agent.run(query.query, query.username, query.user_history, query.ai_chat_history)
     # Dictionary will contain the response and the log_id
     return res
 

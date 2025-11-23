@@ -14,6 +14,10 @@ export default (controller) => {
     const router = express.Router();
 
     router.post('/login', async (req, res) => {
+        console.log("POST /login - req.body:", req.body);
+        console.log("POST /login - username:", req.body.username);
+        console.log("POST /login - password:", req.body.password ? "***" : undefined);
+        
         let isAuthenticated = await controller.authenticate(req.body.username, req.body.password);
         console.log("isAuthenticated: ", isAuthenticated)
         if (isAuthenticated) {
@@ -33,6 +37,7 @@ export default (controller) => {
      * @param {Object} res - Express response object
      */
     router.get('/home', async (req, res) => {
+        
         if (req.session.visited) {
             // Load the user's metrics from the database
             try{
@@ -92,13 +97,14 @@ export default (controller) => {
     });
 
     router.post('/feedback', async (req, res) => {
-        console.log("Feedback received: ", req.body);
         const feedback = req.body.feedback;
         const comment = req.body.comment;
+        console.log("Feedback received: ", feedback, comment, req.session.log_id);
         const status = await controller.addFeedback(req.session.log_id, feedback, comment);
         if (status.success) {
             res.status(200).json({ success: true, message: "Feedback submitted successfully" });
         } else {
+            console.error("Failed to submit feedback:", status.error);
             res.status(500).json({ success: false, message: status.error });
         }
     });
