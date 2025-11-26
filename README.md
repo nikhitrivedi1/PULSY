@@ -62,7 +62,7 @@ Pulsy transforms your wearable data into **personalized, expert-grounded health 
 
 ### 🧪 AI / Modeling
 - [ ] Transition from OpenAI API to local LLM via Ollama
-- [ ] SFT on application specification dataset 
+- [ ] SFT on application specific dataset 
 
 ### 📱 Future Integrations
 - [ ] Apple HealthKit  
