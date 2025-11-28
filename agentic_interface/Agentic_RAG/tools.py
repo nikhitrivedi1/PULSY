@@ -1,82 +1,117 @@
-# Tools for the Agent 
+"""
+AI Agent Tools - Data Retrieval and Knowledge Base Access
 
-# Libraries
+Provides tool functions that the LangGraph agent can call to:
+1. Fetch wearable device data (Oura Ring API)
+   - Sleep metrics (score, contributors, timing)
+   - Stress levels (high stress periods)
+   - Heart rate data (BPM over time)
+
+2. Retrieve health insights from knowledge base
+   - RAG retrieval from Pinecone vector database
+   - Embeddings via HuggingFace models
+   - Content from health podcasts (Huberman, Goggins)
+
+All tools are designed for OpenAI function calling format.
+They return string representations that the LLM can interpret.
+
+Dependencies:
+- Oura Ring API for device data
+- Pinecone for vector search
+- HuggingFace for embeddings
+- PostgreSQL for user API keys
+"""
+
 import requests
 from pinecone import Pinecone
 from langchain_huggingface import HuggingFaceEmbeddings
-
 import pandas as pd
+
 from database.user_db_call import UserDbOperations
 from config.settings import settings
 
-# Create Instance of UserDbOperations
+# Singleton database connection for tool functions
 user_db_operations = UserDbOperations()
 
 
-# Oura Ring Tools
+# ========== Oura Ring Data Tools ==========
 
-# Get the user sleep data from the Oura API between the start and end date
-# Returns: str - the sleep data between the start and end date - formatted as a string
 def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
-        """
-        Get the user sleep data from the Oura API between the start and end date
-        
-        Args:
-        start_date: the start date of the sleep data - format YYYY-MM-DD
-        end_date: the end date of the sleep data - format YYYY-MM-DD
-        user_key: the API key for the user
-
-        Returns:
-        sleep_data(dict): the sleep data between the start and end date
-        """
-
-        # Build the GET Request Components
-        URL = "https://api.ouraring.com/v2/usercollection/daily_sleep" # specific endpoint for sleep data
-        headers = {'Authorization': f'Bearer {user_key}'}
-        params = {
-            'start_date': start_date,
-            'end_date': end_date
-        }
-
-        # Make the GET Request
-        response = requests.request("GET", URL, headers=headers, params=params).json()
-
-        # Extract Content from the response to pass as message to LLM
-        print("Response: ", response)
-        response_messages = []
-        for result in response["data"]:
-            # Extract Score, Contributors, and Day
-            score = result["score"]
-            contributors = result["contributors"]
-            day = result["day"]
-            response_messages.append(f"Score: {score}, Contributors: {str(contributors)}, Day: {day}")
-
-        return "\n".join(response_messages)
-
-# Get the user stress data from the Oura API between the start and end date
-# Returns: str - the stress data between the start and end date - formatted as a string
-def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
     """
-    Get the user stress data from the Oura API between the start and end date
+    Fetch sleep metrics from Oura Ring API
+    
+    Retrieves comprehensive sleep data including:
+    - Overall sleep score (0-100)
+    - Contributors (deep sleep, REM, latency, etc.)
+    - Sleep timing and quality
+    
+    This tool is called by the AI agent when users ask about
+    their sleep patterns, quality, or specific contributors.
     
     Args:
-    start_date: the start date of the stress data - format YYYY-MM-DD
-    end_date: the end date of the stress data - format YYYY-MM-DD
-    user_key: the API key for the user
-
+        start_date: Start date for data range (format: YYYY-MM-DD)
+        end_date: End date for data range (format: YYYY-MM-DD)
+        user_key: User's Oura Ring API access token
+    
     Returns:
-    stress_data(dict): the stress data between the start and end date
+        str: Formatted string with sleep scores and contributors for each day
+             Format: "Score: 85, Contributors: {...}, Day: 2025-01-15"
+    
+    Example:
+        >>> get_sleep_data("2025-01-01", "2025-01-07", "ABC123...")
+        "Score: 85, Contributors: {'deep_sleep': 90, ...}, Day: 2025-01-01\\n..."
     """
-
-    # Build the GET Request Components
-    URL = "https://api.ouraring.com/v2/usercollection/daily_stress" # specific endpoint for stress data
+    # Configure Oura API request
+    URL = "https://api.ouraring.com/v2/usercollection/daily_sleep"
     headers = {'Authorization': f'Bearer {user_key}'}
     params = {
         'start_date': start_date,
         'end_date': end_date
     }
 
-    # Make the GET Request
+    # Fetch data from Oura API
+    response = requests.request("GET", URL, headers=headers, params=params).json()
+
+    # Format response for LLM consumption
+    print("Sleep Data Response:", response)
+    response_messages = []
+    for result in response["data"]:
+        score = result["score"]
+        contributors = result["contributors"]  # Dict of metric scores
+        day = result["day"]
+        response_messages.append(
+            f"Score: {score}, Contributors: {contributors}, Day: {day}"
+        )
+
+    return "\n".join(response_messages)
+
+def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
+    """
+    Fetch stress metrics from Oura Ring API
+    
+    Retrieves daily stress data including:
+    - Overall stress day summary
+    - High stress periods (daytime stress)
+    - Recovery stress (nighttime)
+    
+    Args:
+        start_date: Start date for data range (format: YYYY-MM-DD)
+        end_date: End date for data range (format: YYYY-MM-DD)
+        user_key: User's Oura Ring API access token
+    
+    Returns:
+        str: Formatted string with stress metrics for each day
+             Format: "Day: 2025-01-15, Stress Summary: {...}"
+    """
+    # Configure Oura API request
+    URL = "https://api.ouraring.com/v2/usercollection/daily_stress"
+    headers = {'Authorization': f'Bearer {user_key}'}
+    params = {
+        'start_date': start_date,
+        'end_date': end_date
+    }
+
+    # Fetch data from Oura API
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
     response_messages = []

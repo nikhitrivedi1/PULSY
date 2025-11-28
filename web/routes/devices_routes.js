@@ -1,3 +1,14 @@
+/**
+ * Device Management Routes
+ * 
+ * Handles all device-related operations:
+ * - OAuth authorization callbacks (Oura Ring)
+ * - Device addition and removal
+ * - Device connection testing
+ * 
+ * @module devices_routes
+ */
+
 import express from 'express';
 
 /**
@@ -8,17 +19,34 @@ import express from 'express';
 export default (controller) => {
     const router = express.Router();
 
+    /**
+     * GET /authorize_oura_ring
+     * OAuth callback endpoint for Oura Ring authorization
+     * Handles the redirect after user authorizes the app on Oura's website
+     * 
+     * Flow:
+     * 1. Receive authorization code from Oura
+     * 2. Exchange code for access/refresh tokens
+     * 3. Restore session from state parameter
+     * 4. Save tokens to database
+     * 5. Clean up temporary state
+     * 
+     * @param {Object} req - Express request object with query params (code, state)
+     * @param {Object} res - Express response object
+     */
     router.get('/authorize_oura_ring', async (req, res) => {
         console.log("req.session: ", req.session)
-        // This is the redirect route for the Oura Ring authorization
-        console.log("Authorizing Oura Ring");
-        const code = req.query.code;
-        // Get the tokens from the acces code
+        console.log("Authorizing Oura Ring - OAuth callback received");
+        
+        const code = req.query.code; // Authorization code from Oura
+        
+        // Exchange authorization code for access tokens
         let tokens = await controller.getTokensOuraRing(code);
 
-        // Get the sesssion from the database
+        // Restore session data from OAuth state parameter
         let session = await controller.getSession(req.query.state);
         if (session.success) {
+            // Restore all session data
             req.session.username = session.return_value.username.username;
             req.session.visited = session.return_value.username.visited;
             req.session.user_devices = session.return_value.username.user_devices;
@@ -27,21 +55,23 @@ export default (controller) => {
             req.session.query_history = session.return_value.username.query_history;
             req.session.device_error_message = session.return_value.username.device_error_message;
         } else {
+            // If session restore fails, redirect to login
             return res.redirect('/');
         }
 
-        // Delete the session from the database
+        // Clean up temporary state-to-session mapping
         const status_delete_session = await controller.deleteSession(req.query.state);
         if (status_delete_session.success) {
-            console.log("Session deleted successfully");
+            console.log("OAuth state cleaned up successfully");
         } else {
-            console.log("Session deletion failed: ", status_delete_session.return_value);
+            console.log("OAuth state cleanup failed:", status_delete_session.return_value);
         }
 
-        // Update the tokens in the database
+        // Save OAuth tokens to user's account
         const status = await controller.updateTokensOuraRing(req.session.username, tokens);
-        console.log("Status: ", status);
+        console.log("Token update status:", status);
 
+        // Redirect to devices page to show newly connected device
         return res.redirect('/nav_bar/my_devices');
     });
     /**

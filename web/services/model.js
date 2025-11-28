@@ -1,3 +1,18 @@
+/**
+ * Model Layer for User and Device Management
+ * 
+ * Handles business logic for:
+ * - User authentication and registration
+ * - OAuth flows (Oura Ring integration)
+ * - Device management (add, delete, test connections)
+ * - Communication with backend AI agent
+ * - User preferences and feedback
+ * 
+ * Acts as an intermediary between controllers and database operations
+ * 
+ * @module model
+ */
+
 import fs from 'fs';
 import UserDbOperations from './postgres_ops.js';
 import crypto from 'crypto';
@@ -5,31 +20,34 @@ import { GoogleAuth } from "google-auth-library";
 
 /**
  * Model class handling user authentication and data management
+ * Provides high-level business logic methods for the application
  */
 class Model {
     /**
-     * Initialize Model with database path and data
+     * Constructs a new Model object and initializes the database operations.
      * @constructor
      */
     constructor() {
-        // This will be removed in the future
-        // this.db_path = join(dirname(fileURLToPath(import.meta.url)), "../../shared/user_state.json");
-        // this.data = JSON.parse(fs.readFileSync(this.db_path, 'utf8'));
-        // Initialize the PostGreSQL database connection
+        // Initialize the PostgreSQL database connection
         this.user_db_operations = new UserDbOperations();
     }
 
     /**
-     * Authenticate user credentials
+     * Authenticates user credentials.
      * @param {string} username - User's username
      * @param {string} password - User's password
      * @returns {boolean} True if authentication successful, false otherwise
      */
     authenticate(username, password) {
-        // get user password from the database
+        // Get user password from the database
         return this.user_db_operations.verifyPassword(password, username);
     }
 
+    /**
+     * Refreshes OAuth tokens for a user's Oura Ring integration.
+     * @param {string} username - User's username
+     * @returns {Promise<object>} Success status and new tokens or error
+     */
     async refreshTokens(username) {
         let refresh_token = await this.user_db_operations.refreshTokens(username);
         if (refresh_token.success) {
@@ -43,6 +61,12 @@ class Model {
         return { success: false, return_value: refresh_token.return_value };
     }
 
+    /**
+     * Makes an API call to Oura Ring to refresh the access token.
+     * @param {string} refresh_token - The refresh token from Oura
+     * @returns {Promise<object>} New access/refresh tokens or error
+     * @private
+     */
     async ouraRingRefreshCall(refresh_token) {
         let token_data = {
             "refresh_token": refresh_token,
@@ -59,7 +83,7 @@ class Model {
         });
         console.log("Response: ", response)
 
-        // Upload the nwe tokens to the data base
+        // Upload the new tokens to the database
         if (response.status == 200) {
             let tokens = await response.json();
             return this.user_db_operations.updateTokensOuraRing(username, tokens);
@@ -69,20 +93,14 @@ class Model {
     }
 
     /**
-     * Add a new user to the system
-     * @param {string} username - New user's username
-     * @param {string} password - New user's password
-     * @param {Object} profile - User profile information
-     * @param {Object} preferences - User preferences
-     * @returns {boolean} True if user added successfully, false otherwise
+     * Registers a new user in the system.
+     * @param {string} username - Chosen username
+     * @param {string} password - User's password (will be hashed)
+     * @param {object} profile - User profile data (first_name, last_name)
+     * @param {array} preferences - User preferences array
+     * @returns {Promise<object>} Success status with user ID or error
      */
     addUser(username, password, profile, preferences) {
-        // if (this.checkDuplicate(username)) {
-        //     console.log("User already exists");
-        //     return false;
-        // }
-        // TODO: Need to add a check to see if the user already exists
-
         let user_data = {
             username: username,
             password: password,
@@ -94,6 +112,12 @@ class Model {
         return this.user_db_operations.uploadUserData(user_data);
     }
 
+    /**
+     * Generates an OAuth authorization URL for the Oura Ring integration.
+     * Stores the state and session for CSRF protection.
+     * @param {string} session - Session or unique identifier to map state to user/session
+     * @returns {string} The OAuth URL for user authorization
+     */
     authorizeOuraRingUser(session){
         const scopes = ["personal", "daily", 'heartrate', 'stress', 'workout', 'spo2Daily'];
 
@@ -110,15 +134,30 @@ class Model {
         return authUrl;
     }
 
+    /**
+     * Retrieves a session by state value, for OAuth flows.
+     * @param {string} state - The state string used for OAuth session validation
+     * @returns {Object} Session data
+     */
     getSession(state) {
         return this.user_db_operations.getSession(state);
     }
 
+    /**
+     * Deletes a session given a state value.
+     * @param {string} state - The state string for the session
+     * @returns {Promise<Object>} Result of the deletion
+     */
     async deleteSession(state) {
         console.log("Deleting Session: ", state);
         return await this.user_db_operations.deleteSession(state);
     }
 
+    /**
+     * Fetches Oura Ring tokens using authorization code from OAuth flow.
+     * @param {string} code - OAuth token code
+     * @returns {Promise<Object>} Tokens received from Oura Ring
+     */
     async getTokensOuraRing(code) {
         const response = await fetch("https://api.ouraring.com/oauth/token", {
             method: "POST",
@@ -132,24 +171,37 @@ class Model {
               client_secret: process.env.OURA_SECRET,
               redirect_uri: process.env.REDIRECT_URI
             })
-          });
-        
-          const tokens = await response.json();
-          return tokens;
+        });
+        const tokens = await response.json();
+        return tokens;
     }
 
+    /**
+     * Updates tokens for the Oura Ring device for a user.
+     * @param {string} username - User's username
+     * @param {Object} tokens - Oura Ring tokens to store
+     * @returns {Promise<object>} Result of the update operation
+     */
     updateTokensOuraRing(username, tokens) {
         return this.user_db_operations.updateTokensOuraRing(username, tokens);
     }
+
     /**
-     * Get user's connected devices
+     * Retrieves a user's connected device information.
      * @param {string} username - User's username
-     * @returns {Object} User's devices
+     * @returns {Object} User's device information or devices list
      */
     getUserDevices(username) {
         return this.user_db_operations.getDeviceInformation(username);
     }
 
+    /**
+     * Tests if a given device type and API key are connected and valid.
+     * Only supports Oura Ring currently.
+     * @param {string} device_type - Device type (e.g., "Oura Ring")
+     * @param {string} api_key - API key/token for the device
+     * @returns {Promise<boolean>} True if the device is valid/connected, false otherwise
+     */
     async testUserDevices(device_type, api_key) {
         // Make call directly to device API to test if the device is connected
         if (device_type == "Oura Ring"){
@@ -174,8 +226,8 @@ class Model {
     }
 
     /**
-     * Refresh the access token for the Oura Ring
-     * @param {string} refreshToken - The refresh token for the Oura Ring
+     * Refreshes the access token for the Oura Ring device.
+     * @param {string} refreshToken - The refresh token for Oura Ring
      * @returns {Promise<Object>} The response from the Oura Ring API
      */
     async refreshAccessToken(refreshToken) {
@@ -193,16 +245,15 @@ class Model {
         });
       
         return response.json();
-      }
-
+    }
 
     /**
-     * Load metrics from a user device
+     * Loads metrics and data from a user device using its information object.
      * @param {Object} device_object - Device information object
      * @param {string} device_object.device_type - Type of device
      * @param {string} device_object.device_name - Name of device
      * @param {string} device_object.api_key - Device API key
-     * @returns {Promise<Object>} Device metrics data
+     * @returns {Promise<Object>} Device metrics data or throws error if fails
      */
     async loadUserDevices(device_object) {
         let response = await fetch(process.env.BACKEND_URL + "/load_user_devices/", {
@@ -222,7 +273,7 @@ class Model {
     }
 
     /**
-     * Add a new device for a user
+     * Adds a new device for a user.
      * @param {string} username - User's username
      * @param {string} device_type - Type of device
      * @param {string} api_key - Device API key
@@ -238,9 +289,9 @@ class Model {
     }
 
     /**
-     * Delete a device for a user
+     * Deletes a device for a user.
      * @param {string} username - User's username
-     * @param {string} device_name - Name of device to delete
+     * @param {string} device_type - Type of device to delete
      * @returns {Promise<boolean>} True if device deleted successfully, false otherwise
      */
     async deleteDevice(username, device_type) {
@@ -249,7 +300,7 @@ class Model {
     }
 
     /**
-     * Edit device information for a user - PERHAPS NOT NEEDED 
+     * Edits device information for a user. (Legacy, uses file-based storage.)
      * @param {string} username - User's username
      * @param {string} old_device_name - Current device name
      * @param {string} new_device_name - New device name
@@ -274,12 +325,13 @@ class Model {
     }
 
     /**
-     * Process a chat query through the AI system
+     * Processes a chat query through the AI system.
+     * This handles local and deployed (Google Auth) execution.
      * @param {string} query - User's query
      * @param {string} username - User's username
      * @param {Array} user_history - History of user queries
      * @param {Array} ai_chat_history - History of AI responses
-     * @returns {Promise<Object|string>} AI response
+     * @returns {Promise<Object|string>} AI response or an error string
      */
     async chatQuery(query, username, user_history, ai_chat_history) {
         const url = `${process.env.BACKEND_URL}/query/`;
@@ -319,7 +371,7 @@ class Model {
     }
 
     /**
-     * Get user's profile information 
+     * Retrieves the user's profile information.
      * @param {string} username - User's username
      * @returns {Object} User profile data
      */
@@ -328,16 +380,28 @@ class Model {
         return this.user_db_operations.getAgenticPreferences(username);
     }
 
+    /**
+     * Adds a user preference to the user's profile.
+     * @param {string} username - User's username
+     * @param {string} preference - Preference to add
+     * @returns {Promise<Object>} Result of the add operation
+     */
     addUserPreference(username, preference) {
         return this.user_db_operations.addAgenticPreference(username, preference);
     }
 
+    /**
+     * Deletes a user preference from the user's profile.
+     * @param {string} username - User's username
+     * @param {string} preference - Preference to remove
+     * @returns {Promise<Object>} Result of the delete operation
+     */
     deleteUserPreference(username, preference) {
         return this.user_db_operations.removeAgenticPreference(username, preference);
     }
 
     /**
-     * Update user's profile information - may just delete this function
+     * Updates user's profile information (Legacy, file-based; probably unused).
      * @param {string} username - User's username
      * @param {Object} profile - Updated profile information
      * @returns {Object|Error} Updated profile or error if update fails
@@ -354,6 +418,13 @@ class Model {
         }
     }
 
+    /**
+     * Adds feedback for a log or user interaction.
+     * @param {string} log_id - The log entry ID to associate feedback with
+     * @param {string} feedback - Feedback content/label
+     * @param {string} comment - Any additional user comments
+     * @returns {Promise<Object>} Result of the feedback insertion
+     */
     addFeedback(log_id, feedback, comment) {
         return this.user_db_operations.addFeedback(log_id, feedback, comment);
     }

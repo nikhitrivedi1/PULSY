@@ -26,19 +26,20 @@ const controller = new Controller(null, null);
 
 /** Configure Express settings and middleware */
 app.set('view engine', 'ejs');
-app.set('trust proxy', 1);
+app.set('trust proxy', 1); // Trust first proxy (required for Cloud Run behind load balancer)
+
+// Configure cookie-based session middleware
 app.use(
     cookieSession({
         name: 'session',
-        keys: [process.env.SESSION_SECRET],
-        httpOnly: true,
-        secure: process.env.LOCAL_MODE === 'true' ? false : true,      // Cloud Run requires HTTPS → always true in production
-        sameSite: 'lax',   // CSRF protection
-        maxAge: 60 * 60 * 24 * 1000,
         keys: [
-            process.env.SESSION_SECRET,
-            process.env.SESSION_SECRET_2,
-        ]
+            process.env.SESSION_SECRET || 'dev-secret-1', // Primary key for signing
+            process.env.SESSION_SECRET_2 || 'dev-secret-2', // Secondary key for key rotation
+        ],
+        httpOnly: true, // Prevents client-side JS from accessing cookies
+        secure: process.env.LOCAL_MODE === 'true' ? false : true, // Require HTTPS in production
+        sameSite: 'lax', // CSRF protection - allows navigation from external sites
+        maxAge: 60 * 60 * 24 * 1000, // Session expiry: 24 hours
       })
 );
 app.use(express.json()); // Parse JSON request bodies

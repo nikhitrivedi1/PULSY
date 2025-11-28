@@ -1,157 +1,306 @@
-# Agentic RAG Class
-# This class will self contain the RAG pipeline - there will be a SINGLE instance to control the entire application
-# inputs for getting a response will be query and context {username, query, historical_conversations}
+"""
+AgenticRAG - AI Health Advisor with Tool-Calling Capabilities
 
-#Libraries
-from email import message
-from operator import index
+This module implements a ReAct (Reasoning + Acting) agent using LangGraph.
+The agent can:
+1. Reason about user health queries
+2. Call tools to fetch device data or retrieve knowledge
+3. Synthesize personalized health advice
+
+Architecture:
+- Uses GPT-4 for natural language understanding
+- LangGraph for agentic workflow orchestration
+- Tool calling for dynamic data retrieval
+- Pinecone for RAG knowledge retrieval
+- PostgreSQL for logging and user data
+
+The agent operates as a singleton - one instance handles all users.
+User context is passed per-request for personalization.
+
+TODO: Add error handling for file IO operations
+"""
+
+# External Libraries
 from langgraph.graph import START, StateGraph
-from langgraph.prebuilt import tools_condition # this is the checker for the if you got a tool back
+from langgraph.prebuilt import tools_condition  # Conditional edge for tool calling
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, ToolMessage
 from langchain_openai import ChatOpenAI
 import json
-import os
-import yaml
 import datetime
 from logger import Logger
 import time
+
+# Internal Modules
 from database.user_db_call import UserDbOperations
 from config.settings import settings
+from Agentic_RAG.tools import (
+    get_heart_rate_data, 
+    get_sleep_data, 
+    get_stress_data, 
+    get_Andrew_Huberman_Insights
+)
 
-#Internal Classes
-from Agentic_RAG.tools import get_heart_rate_data, get_sleep_data, get_stress_data, get_Andrew_Huberman_Insights
-
-# Work ToDo
-# TODO: Error handling for file IO errors
-
-# CONSTANTS
+# Constants
 SYSTEM_PROMPT = "Agentic_RAG/system_instructions.md"
 
 class AgenticRAG:
+    """
+    ReAct Agent for Health Advisory
+    
+    Implements a reasoning + acting loop where the agent:
+    1. Reasons about the best response to user queries
+    2. Decides whether to call tools for data/knowledge
+    3. Uses tool results to formulate final advice
+    
+    The agent is stateless - each request is independent.
+    Conversation history is passed explicitly per request.
+    """
+    
     def __init__(self):
-        # LLM and Tools Initialization
-        self.llm = ChatOpenAI(model = 'gpt-4.1', streaming = True, openai_api_key = settings.OPENAI_API_KEY)
-        self.tools = [get_heart_rate_data, get_sleep_data, get_stress_data, get_Andrew_Huberman_Insights]
+        """
+        Initialize the AgenticRAG system
+        
+        Sets up:
+        - GPT-4 model with streaming
+        - Available tools (device data + RAG retrieval)
+        - LangGraph workflow
+        - Database connection
+        - System prompt
+        """
+        # Initialize GPT-4 model with tool calling
+        self.llm = ChatOpenAI(
+            model='gpt-4.1', 
+            streaming=True, 
+            openai_api_key=settings.OPENAI_API_KEY
+        )
+        
+        # Define available tools for the agent
+        self.tools = [
+            get_heart_rate_data,          # Fetch HR from user's wearable
+            get_sleep_data,                # Fetch sleep metrics
+            get_stress_data,               # Fetch stress metrics
+            get_Andrew_Huberman_Insights   # RAG retrieval from knowledge base
+        ]
+        
+        # Bind tools to LLM for function calling
         self.llm_with_tools = self.llm.bind_tools(self.tools)
 
-        # System Instruction Loading
-        self.sys_msg = SystemMessage(content = self.__get_system_instructions())
+        # Load system instructions from markdown file
+        self.sys_msg = SystemMessage(content=self.__get_system_instructions())
 
-        # Build the Graph
+        # Build LangGraph ReAct workflow
         self.react_graph = self.build_graph()
 
-        # Message History
+        # Initialize conversation history with system message
         self.messageHistory = [self.sys_msg]
 
-        # Print Confirmation
-        print("AgenticRAG Initialized")
-
-        # User DB Operations
+        # Initialize database operations
         self.user_db_operations = UserDbOperations()
+        
+        print("✓ AgenticRAG initialized successfully")
 
-    # Private Methods
     def __get_system_instructions(self) -> str:
+        """
+        Load system prompt from markdown file
+        
+        Returns:
+            str: System instructions for the AI
+        """
         with open(SYSTEM_PROMPT, 'r') as file:
             return file.read()
 
-    # Build the Graph
     def build_graph(self) -> StateGraph:
+        """
+        Build LangGraph ReAct workflow
+        
+        Graph structure:
+        START → reasoner → [tools_condition] → tools → reasoner → END
+        
+        The tools_condition is a conditional edge that checks if the
+        reasoner requested tool calls. If yes, execute tools; if no, end.
+        
+        Returns:
+            StateGraph: Compiled LangGraph workflow
+        """
         builder = StateGraph(MessagesState)
 
-        # Build Graph
-        # Add Reasoner and Tool Nodes
-        builder.add_node("reasoner", self.reasoner)
-        builder.add_node("tools", ToolNode(self.tools))
+        # Add nodes to the graph
+        builder.add_node("reasoner", self.reasoner)  # LLM reasoning step
+        builder.add_node("tools", ToolNode(self.tools))  # Tool execution step
 
-        # Add Edges
-        builder.add_edge(START, "reasoner")
-        # This conditional edge allows for the reasoner to make the call on whether 
-        # a tool call is necessary or not
+        # Define workflow edges
+        builder.add_edge(START, "reasoner")  # Start with reasoning
+        
+        # Conditional edge: if tools requested, go to tools; else end
         builder.add_conditional_edges(
             "reasoner",
-            tools_condition
+            tools_condition  # Built-in LangGraph condition checker
         )
+        
+        # After tools execute, return to reasoner for final response
         builder.add_edge("tools", "reasoner")
 
-        # Compile the DAG
+        # Compile the graph into an executable workflow
         return builder.compile()
 
-    # Reasoner Node
     def reasoner(self, state: MessagesState) -> MessagesState:
-        # state["messages"] is the list of messages that have been passed to the reasoner
+        """
+        Reasoning node - invokes LLM with tool calling
+        
+        This node:
+        1. Takes the message history from state
+        2. Invokes GPT-4 with available tools
+        3. Returns updated state with LLM response
+        
+        The LLM may return:
+        - A direct text response (if no tools needed)
+        - Tool call requests (if data is needed)
+        
+        Args:
+            state: Current conversation state with message history
+        
+        Returns:
+            MessagesState: Updated state with LLM response appended
+        """
         prior_messages = state["messages"]
+        
+        # Invoke LLM with tool calling capability
         response = self.llm_with_tools.invoke(prior_messages)
 
+        # Append response to message history
         return {"messages": prior_messages + [response]}
 
-    # Run the Agent
     async def run(self,
-        query: str, # The query to be passed to the LLM
-        user_id: str, # The user_id to be passed to the LLM - needs to match up with user_id from the db
-        query_history: list[str], # The history of queries
-        response_history: list[str] # The history of responses
-        ) -> list[str]:
-
-        # Get the current date
+        query: str,
+        user_id: str,
+        query_history: list[str],
+        response_history: list[str]
+        ) -> dict[str, str|int]:
+        """
+        Execute the agent workflow for a user query
+        
+        This is the main entry point for the agent. It:
+        1. Builds context (date, user ID, preferences, conversation history)
+        2. Retrieves user's device API key
+        3. Invokes the LangGraph ReAct workflow
+        4. Logs the interaction to database
+        5. Returns the AI response and log ID
+        
+        Args:
+            query: User's current question/request
+            user_id: Username for personalization and data access
+            query_history: List of previous user messages in this session
+            response_history: List of previous AI responses in this session
+        
+        Returns:
+            dict: Contains 'response' (AI message text) and 'log_id' (for feedback)
+        
+        TODO: Store API keys more securely (not in message context)
+        """
+        # Add current date to context for time-aware responses
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-
-        # Create the message history
+        date_message = f"Today's date is: {current_date}"
         user_specific_message = "My name and user_key is: "
-        date_message = "Today's date is: " + current_date
 
+        # Build message history starting with system prompt
         message_history = [self.sys_msg, date_message]
-        message_history.extend([SystemMessage(content = user_specific_message + user_id)])
-        message_conversation, chatml_conversation = self.create_message_history(query_history, response_history)
+        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
+        
+        # Convert conversation history to LangChain message format
+        message_conversation, chatml_conversation = self.create_message_history(
+            query_history, 
+            response_history
+        )
         message_history.extend(message_conversation)
-        # Add the query to the message history
 
-        # Get the user preferences
+        # Retrieve and add user preferences (e.g., preferred metrics, goals)
         user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
         if user_preferences is not None:
             user_preferences = user_preferences[0]
-            user_preferences_message = SystemMessage(content = "User preferences: " + str(user_preferences))
+            user_preferences_message = SystemMessage(
+                content=f"User preferences: {user_preferences}"
+            )
             message_history.extend([user_preferences_message])
         else:
             user_preferences = []
         
-        # Get the API key for the user
-        # TODO: Need a better solution here - so the API key is not stored in the message history
+        # Retrieve user's device API key (needed for tool calls)
+        # TODO: Implement secure key management instead of passing in context
         user_key = await self.__get_device_api_key(user_id, "Oura Ring")
-        message_history.extend([SystemMessage(content = user_specific_message +  user_id + " USER_KEY: " + user_key)])
+        message_history.extend([
+            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
+        ])
         
-        message_history.extend([HumanMessage(content = query)])
+        # Add current query
+        message_history.extend([HumanMessage(content=query)])
         query_idx = len(message_history) - 1
 
-        # Run the graph
+        # Execute the ReAct graph workflow
         start_time = time.time()
         messages = self.react_graph.invoke({"messages": message_history})
-        end_time = time.time()
-        inference_time = end_time - start_time
-        # Log the message
-        log_id = await self.log_message(query, response=messages['messages'][-1], message_hist= chatml_conversation, query_idx=query_idx, inference_time=inference_time, messages=messages, user_spec= date_message + " " + user_specific_message + "USER_KEY", preferences=user_preferences)
+        inference_time = time.time() - start_time
+        
+        # Log conversation to database for monitoring and feedback
+        log_id = await self.log_message(
+            query, 
+            response=messages['messages'][-1], 
+            message_hist=chatml_conversation, 
+            query_idx=query_idx, 
+            inference_time=inference_time, 
+            messages=messages, 
+            user_spec=f"{date_message} {user_specific_message}USER_KEY", 
+            preferences=user_preferences
+        )
 
-        # Return only the latest message -> Node will handle the aggregation of messages
-        return {"response": messages['messages'][-1].content, "log_id": log_id}
+        # Return final AI response and log ID
+        return {
+            "response": messages['messages'][-1].content, 
+            "log_id": log_id
+        }
 
-    # Not Ideal Implementation - but for the purpose of supposed short chat histories - this should be ok
-    def create_message_history(self, query_history: list[str], response_history: list[str]) -> list[str]:
-        """ Create the message history as LangGraph HumanMessage and AIMessage Objects"""
+    def create_message_history(
+        self, 
+        query_history: list[str], 
+        response_history: list[str]
+        ) -> tuple[list, list]:
+        """
+        Convert conversation history to LangChain message format
+        
+        Creates two representations:
+        1. LangChain messages (HumanMessage/AIMessage) for graph execution
+        2. ChatML format (dict) for database logging
+        
+        Args:
+            query_history: List of user messages
+            response_history: List of AI responses
+        
+        Returns:
+            tuple: (langchain_messages, chatml_messages)
+        
+        Note: Not ideal for long conversations - consider implementing
+              conversation summarization for production use
+        """
         message_history = []
         chatml_history = []
+        
         for i in range(len(query_history)):
-            message_history.append(HumanMessage(content = query_history[i]))
+            # Add user message
+            message_history.append(HumanMessage(content=query_history[i]))
             chatml_history.append({
                 "role": "user",
                 "content": query_history[i]
             })
-            if len(response_history) > i: # meant to handle initial case
-                message_history.append(AIMessage(content = response_history[i]))
+            
+            # Add AI response (if available)
+            if len(response_history) > i:
+                message_history.append(AIMessage(content=response_history[i]))
                 chatml_history.append({
                     "role": "assistant",
                     "content": response_history[i]
                 })
+        
         return message_history, chatml_history
 
 
