@@ -33,6 +33,7 @@ class UserDbOperations {
       console.log("Local mode enabled");
       
       // Direct connection for local development
+      // Pool default value is min 2 -> should have default of 0 for idle connections per docs
       this.pool = Promise.resolve(Knex({
         client: 'pg',
         connection: {
@@ -44,6 +45,10 @@ class UserDbOperations {
           ssl:{
             rejectUnauthorized: false, // Allow self-signed certs in development
           }
+        },
+        pool: {
+          min: 0,
+          max: 7,
         }
       }));
     } else {

@@ -26,11 +26,12 @@ from langgraph.prebuilt import tools_condition  # Conditional edge for tool call
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, ToolMessage
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 import json
 import datetime
 from logger import Logger
 import time
+from config.settings import settings
 
 # Internal Modules
 from database.user_db_call import UserDbOperations
@@ -70,10 +71,9 @@ class AgenticRAG:
         - System prompt
         """
         # Initialize GPT-4 model with tool calling
-        self.llm = ChatOpenAI(
-            model='gpt-4.1', 
-            streaming=True, 
-            openai_api_key=settings.OPENAI_API_KEY
+        self.llm = ChatOllama(
+            model=settings.OLLAMA_MODEL,
+            temperature=0.0,
         )
         
         # Define available tools for the agent

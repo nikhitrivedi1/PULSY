@@ -1,35 +1,32 @@
-# --- 1. Use a lightweight base image ---
-    FROM python:3.11-slim AS base
+###############################################
+# Cloud Run GPU + CUDA + Ollama + FastAPI
+###############################################
 
-    # --- 2. Set environment flags ---
-    ENV PYTHONDONTWRITEBYTECODE=1
-    ENV PYTHONUNBUFFERED=1
-    
-    # --- 3. Install system deps ---
-    RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
-        && rm -rf /var/lib/apt/lists/*
-    
-    # --- 4. Create working directory ---
-    WORKDIR /app
-    
-    # --- 5. Copy requirements first (layer caching) ---
-    COPY requirements.txt .
-    
-    # --- 6. Install Python deps ---
-    RUN pip install --upgrade pip && pip install -r requirements.txt
-    
-    # --- 7. Copy the rest of the application ---
-    COPY . .
-    
-    # --- 8. Create a non-root user for security ---
-    RUN useradd -m fastapiuser
-    USER fastapiuser
-    
-    # --- 9. Expose API port (FastAPI default = 8000) ---
-    EXPOSE 8000
-    
-    # --- 10. Start server with Gunicorn + Uvicorn workers ---
-    CMD ["sh", "-c", "uvicorn main_agent:app --host 0.0.0.0 --port ${PORT} --workers 1"]
+# 1. Base image with NVIDIA CUDA runtime
+FROM ollama/ollama
 
-    
+# 2. Install basic dependencies
+RUN apt-get update && apt-get install -y python3 python3-pip vim 
+
+# 4. Working directory
+WORKDIR /app
+
+# 5. Install Python requirements
+COPY requirements.txt .
+RUN pip install --break-system-packages pip && pip install --break-system-packages -r requirements.txt
+
+# 6. Copy FastAPI code
+COPY . .
+
+# # 7. Preload a model
+# RUN ollama pull llama3
+
+# Make sure the script is executable
+RUN chmod +x entrypoint.sh
+
+# Cloud Run listens on port 8080
+EXPOSE 8080
+# Ollama internal port
+EXPOSE 11434
+
+ENTRYPOINT ["./entrypoint.sh"]

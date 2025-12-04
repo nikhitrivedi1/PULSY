@@ -4,6 +4,11 @@ agentic_interface/DataSources/Huberman/
 agentic_interface/DataSources/Goggins/
 agentic_interface/DataSources/recent_papers_sleep_fitness_productivity.json
 agentic_interface/DataSources/content_aggregation.py
+agentic_interface/evals
+agentic_interface/database/__pycache__/user_db_call.cpython-311.pyc
+
+# SFT Files
+SFT/
 
 # Test Views
 web/views/chat_page_2.ejs

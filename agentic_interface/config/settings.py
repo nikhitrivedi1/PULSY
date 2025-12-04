@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     DB_PORT: int  # Database port (default: 5432)
     INSTANCE_CONNECTION_NAME: str  # GCP Cloud SQL instance name
     LOCAL_MODE: str  # "true" for local, "false" for GCP
+    OLLAMA_MODEL: str  # Ollama model to use
 
     class Config:
         """Pydantic configuration"""
