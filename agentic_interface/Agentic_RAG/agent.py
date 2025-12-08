@@ -148,8 +148,8 @@ class AgenticRAG:
         builder.add_edge("tools", "reasoner")
 
         # Compile the graph into an executable workflow
-        return builder.compile(checkpointer=MemorySaver())
-        # return builder.compile()
+        # return builder.compile(checkpointer=MemorySaver())
+        return builder.compile()
 
     def reasoner(self, state: MessagesState) -> MessagesState:
         """
