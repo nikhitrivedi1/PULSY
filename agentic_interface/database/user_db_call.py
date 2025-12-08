@@ -55,6 +55,7 @@ class UserDbOperations:
 
         # Database table for conversation logs
         self.logger_table = "logging.logger_final"
+        self.eval_table = "logging.eval_final"
 
     async def _get_conn(self):
         """
@@ -69,7 +70,7 @@ class UserDbOperations:
             # Local development: Direct TCP connection
             import pg8000.dbapi as pgdb
             return pgdb.connect(
-                user=settings.USERNAME,
+                user=settings.DB_USERNAME,
                 password=settings.PASSWORD,
                 host=settings.PUBLIC_IP,
                 port=int(settings.DB_PORT),
@@ -194,12 +195,16 @@ class UserDbOperations:
             cursor.close()
             conn.close()
 
-    async def log_message(self, logger: Logger) -> tuple[int]:
+    async def log_message(self, logger: Logger, eval_mode: bool = False) -> tuple[int]:
+        if eval_mode:
+            table = self.eval_table
+        else:
+            table = self.logger_table
         conn = await self._get_conn()
         cursor = conn.cursor()
         try:
             # Log the message to the database
-            cursor.execute(f"INSERT INTO {self.logger_table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [logger.timestamp, logger.inference_time, json.dumps(logger.prompt), json.dumps(logger.response), json.dumps(logger.response_metadata), logger.feedback, logger.preferred_response, json.dumps(logger.message_history), logger.system_prompt])
+            cursor.execute(f"INSERT INTO {table} (timestamp, inference_time, prompt, response, response_metadata, feedback, preferred_response, message_history, system_prompt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [logger.timestamp, logger.inference_time, json.dumps(logger.prompt), json.dumps(logger.response), json.dumps(logger.response_metadata), logger.feedback, logger.preferred_response, json.dumps(logger.message_history), logger.system_prompt])
             conn.commit()
             id = cursor.fetchone()
             return id

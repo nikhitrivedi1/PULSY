@@ -167,6 +167,5 @@ export default (controller) => {
             });
         }
     });
-
     return router;
 }

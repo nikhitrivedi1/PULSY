@@ -72,11 +72,10 @@ def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     # Fetch data from Oura API
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
-    if response["data"] == []:
+    if 'data' not in response:
         return "No sleep data found for the given date range"
 
     # Format response for LLM consumption
-    print("Sleep Data Response:", response)
     response_messages = []
     for result in response["data"]:
         score = result["score"]
@@ -117,10 +116,11 @@ def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
     # Fetch data from Oura API
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
-    if response["data"] == []:
+    if 'data' not in response:
         return "No stress data found for the given date range"
 
     response_messages = []
+
     for result in response["data"]:
         # Extract Score, Contributors, and Day
         stress_high = result["stress_high"]
@@ -162,7 +162,7 @@ def get_heart_rate_data(start_date: str, end_date: str, user_key: str) -> dict:
     # Extract the average "bpm" for workout sourse
     # Extract the average "bpm" for non-workout sources
     # In case the response is empty
-    if response["data"] == []:
+    if 'data' not in response:
         return {
             "max_bpm": None,
             "min_bpm": None,
