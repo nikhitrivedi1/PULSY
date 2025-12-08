@@ -33,6 +33,17 @@ from config.settings import settings
 # Singleton database connection for tool functions
 user_db_operations = UserDbOperations()
 
+# Initialize embeddings model once at module level (global variable)
+# This avoids repeated HuggingFace API calls and prevents 429 rate limiting errors
+_embeddings = None
+
+def get_embeddings():
+    """Lazy initialization of embeddings model - only loads once"""
+    global _embeddings
+    if _embeddings is None:
+        _embeddings = HuggingFaceEmbeddings(model_name=settings.PINECONE_EMBEDDING_MODEL)
+    return _embeddings
+
 
 # ========== Oura Ring Data Tools ==========
 
@@ -202,7 +213,9 @@ def get_MedlinePlus_Insights(query:str) -> str:
         # Initialize Pinecone client
         pc = Pinecone(api_key = settings.PINECONE_API_KEY)
         index = pc.Index(host = settings.PINECONE_HOST)
-        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
+        
+        # Use global embeddings instance (loaded once)
+        embeddings = get_embeddings()
 
         # Convert query to vector space using embeddings model
         queryVec = embeddings.embed_query(query)
@@ -241,7 +254,9 @@ def get_Andrew_Huberman_Insights(query:str) -> str:
         # Initialize Pinecone client
         pc = Pinecone(api_key = settings.PINECONE_API_KEY)
         index = pc.Index(host = settings.PINECONE_HOST)
-        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
+        
+        # Use global embeddings instance (loaded once)
+        embeddings = get_embeddings()
 
        # Convert query to vector space using embeddings model
         queryVec = embeddings.embed_query(query)

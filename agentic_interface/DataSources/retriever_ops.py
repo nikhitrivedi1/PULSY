@@ -8,13 +8,25 @@ from langchain_huggingface import HuggingFaceEmbeddings
 # Constants
 INDEX = 'podcastTranscripts'
 
+# Initialize embeddings model once at module level (global variable)
+# This avoids repeated HuggingFace API calls and prevents 429 rate limiting errors
+_embeddings = None
+
+def get_embeddings():
+    """Lazy initialization of embeddings model - only loads once"""
+    global _embeddings
+    if _embeddings is None:
+        _embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/bert-large-nli-stsb-mean-tokens')
+    return _embeddings
+
 class PineconeClass:
     def __init__(self, key):
         try:
             # Initialize Pinecone client
             self.pc = Pinecone(api_key = key)
             self.index = self.pc.Index(host = "https://ourahuberman-2qajcgl.svc.aped-4627-b74a.pinecone.io")
-            self.embeddings = HuggingFaceEmbeddings(model_name = 'sentence-transformers/bert-large-nli-stsb-mean-tokens')
+            # Use global embeddings instance (loaded once)
+            self.embeddings = get_embeddings()
             self.vector_store = PineconeVectorStore(embedding = self.embeddings, index = self.index)
         except RuntimeError as r:
             # This is an internal endpoint - users do not need to provide any information
