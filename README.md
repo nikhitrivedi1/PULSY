@@ -1,4 +1,4 @@
-# Pulsy — Your AI Advisor for Wearable Health 🧠⌚️
+# Pulsy — Your AI Advisor for Wearable Device Data 🧠⌚️
 
 Pulsy transforms your wearable data into **personalized, expert-grounded health insights**, powered by **agentic AI**, **RAG**, and curated scientific knowledge (inspired by voices like *Andrew Huberman*).
 
