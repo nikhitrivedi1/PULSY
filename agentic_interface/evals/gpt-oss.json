@@ -1,0 +1,1502 @@
+[
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you give me a rundown of my sleep quality over the past seven days?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: I'm curious about my nightly sleep scores last week. Could you show them?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me how my sleep performance has trended over the previous week.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: I want to see the trajectory of my sleep scores for the last month.\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you track my REM sleep across the past week and flag any low points?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide my sleep efficiency trend for the week leading up to today.\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my restfulness trend from the past week.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me the trend of my total sleep hours for the last week.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Please analyze my deep sleep time from the past month.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: I'd like to see the pattern of my sleep efficiency over the last 30 days.\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did my restfulness scores vary throughout last month?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What does my sleep score trend look like from two weeks ago until today?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Chart my REM sleep data for the past fortnight.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Compare my deep sleep metrics for the previous week to the week before that.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me how my sleep latency evolved over the past 10 days.\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me a timeline of my restfulness scores over the last ten days.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How have my nightly total sleep hours changed in the last two weeks?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can I see my sleep score progression from September through October?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide a week-by-week breakdown of my REM sleep for the last month.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Report how my deep sleep has trended during the previous four weeks.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me how my sleep latency has varied in the last four weeks.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me an overview of my sleep scores for the last 8 days.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What were my REM sleep durations for the past six nights?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Highlight any dips in my deep sleep over the last week.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: I want to review my restfulness levels for the past two weeks.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my total sleep durations from December 1 to December 7, 2025.\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_trend",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide an analysis of my sleep score trend for the past 14 days.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "sleep_trend"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my deep sleep duration last night?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me my REM sleep from the night before last.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How long did I sleep on December 1st, 2025?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my sleep efficiency two nights ago?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me my restfulness rating from yesterday.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my sleep score on Monday?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you tell me the sleep timing metric for last night?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me the REM sleep duration for December 2, 2025.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How long did it take me to fall asleep yesterday?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Please provide my restfulness value for November 27, 2025.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "no data due to tool error",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me the latency metric for last Friday.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my restfulness score on Sunday?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Please provide the sleep score for November 24, 2025.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my REM sleep for the first day of this month?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me my deep sleep for the third day of this week.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my latency on December 2, 2025?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_specific",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me my restfulness for November 19, 2025.\nLast Message: Source: Huberman/Transcripts/html/Tim Ferriss- How to Learn Better & Create Your Best Future.html, Text: So I have already this year, and we're in the reasonable beginning stages of the year, I have things blocked out until November of this year. And those provide the breaks in the action. Not just the breaks in the action, but the fun stuff. Because, by the way, guys, I thought for a long time, like, yeah, you take care of A, B and C, and the good stuff just takes care of itself. I do not any longer believe that to be true. Unless you schedule these things that you claim are important, they're going to get crowded out by bullshit. And maybe not bullshit, but just less important things. The urgent will crush the important. So I get these things on the calendar, and then I back up and I look at optimal weekly mind allocation, right? Attentional allocation. And there's an incredible cost to cognitive switching if you're just task-switching all day. So I will try my best to format a weekly rhythm, a weekly sequence that allows me to focus on certain types of tasks., Similarity: 0.398997217\nSource: Huberman/Transcripts/html/Dr. Susanna S\u00f8berg- How to Use Cold & Heat Exposure to Improve Your Health.html, Text: ANDREW HUBERMAN: Incredible. I just get a clarification around this 19 degrees Celsius room that they're sleeping in. So, they're under a comforter, a duvet. And you mentioned they have clothes on. The room is 19 degrees Celsius, but the temperature underneath their blanket might not be 19 degrees Celsius. So presumably, it's the cold on their face that's activating the increase in brown fat that was observed. Is that a reasonable expectation?SUSANNA S\u00d8BERG: I think so, yeah, because you have so many receptors in your face. Actually, it's enough. And I think it corresponds very well with the studies showing that you can activate the brown fat just by putting a hand into a bucket of cold water. And I did this experiment myself in my studies just to see how well did they respond to cold water. So, it was 4 degrees Celsius cold water for 4 minutes. And then I just measured blood pressure and heart rate to see, do they have an activation of this?, Similarity: 0.377249151\nSource: Huberman/Transcripts/html/Guest Series | Dr. Andy Galpin- Optimize Your Training Program for Fitness & Longevity.html, Text: Now, all we have to do is fill in the rest intervals, which reflect back, again, the goal. So generally higher rest intervals, which means time that you rest between your sets. Higher somewhere between two to five minutes for things like speed, power, and strength.Perhaps a little bit lower, although as you mentioned, it could also stay high for hypertrophy. And then for endurance, you follow the rest interval that reflects the type of endurance training that you'd like to get.That's walked us through one through nine. We're almost done. We've put together a pretty nice little protocol. It should be well rounded. It should be effective. We've also talked about how to progress it from week to week, keeping it within, again, four to six weeks, maybe up to eight before we then take a back-off., Similarity: 0.366522074"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_specific"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did I sleep last night? Please give me a summary.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can I get a summary of my sleep yesterday, including key metrics?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide me a breakdown of my sleep performance the night before yesterday.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you recap my sleep from last night with highlights and improvement suggestions?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Would you mind summarizing my sleep on the second day of last week?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: I'd like a detailed summary of my sleep from last Tuesday.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you provide an analysis of my sleep from the third night of last week?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me an overview of my sleep last evening with recommendations.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Summarise my sleep performance for the night just gone.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you describe my sleep last night and note any weak areas?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How was my sleep on the first day of this week? Please include analysis.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "sleep_summary"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "sleep_summary",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did I sleep the night before yesterday with key metrics and analysis?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "stress",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my stress data from November 15, 2025.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "no data found for stress analysis",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "stress",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me my stress data for November 22, 2025.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "stress",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my recovery time on the day before yesterday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "stress",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How much time did I spend in 'Restored' zone yesterday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "stress"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my heart rate yesterday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me the average workout heart rate for two days ago.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you show my heart rate data from last Monday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide my resting heart rate for yesterday.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me the average heart rate during non-workout times for November 23, 2025.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my highest bpm on November 29, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me the heart rate data for the day before yesterday.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did my heart rate look on December 1, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my heart rate on last Friday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me my average workout bpm from November 27, 2025.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me my minimum bpm on December 1, 2025.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What is my maximum heart rate for the night of November 30, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my average non-workout heart rate on November 25, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you share my heart rate metrics for Monday of this week?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What were my heart rate statistics two days prior?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me my heart rate numbers for yesterday's run.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me the min and max heart rate recorded yesterday.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide the heart rate stats for the last time I worked out.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my heart rate on December 3, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you tell me the average heart rate for non-workout periods on November 29, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "heart_rate"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What were my heart rate peaks on November 28, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "heart_rate",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did my heart rate vary on the second of December, 2025?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did I do across all metrics two days ago?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you compile my sleep, stress, and heart rate data for November 24, 2025?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What does my general wellness look like from the day before yesterday?\nLast Message: Source: Huberman/Transcripts/html/How to Improve your Mobility, Posture and Flexibility copy.html, Text: Andrew Huberman: Waking you up in the morning., Similarity: 0.40371263\nSource: Huberman/Transcripts/html/Dr Brian keating Charting The Architecture of the Universe Human Life copy.html, Text: over the same things you did when you first did these experiments. But as an experiment, you get transported and you get to, you know, encounter something that you feel like no one has ever done before., Similarity: 0.357768506\nSource: Huberman/Transcripts/html/How to Improve your Mobility, Posture and Flexibility copy.html, Text: Andrew Huberman: You do that every day?, Similarity: 0.343714893"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "get_stress_data tool call did not return any information, and the heart rate data was not available either. The assistant did not handle the absence of data appropriately.",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you report on my overall health scores for last Friday?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: I'd like to know how I did yesterday on sleep, heart rate, and stress.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me about all my metrics for the day before last.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can I get an integrated report for yesterday's sleep, stress, and heart rate?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "general_check_in",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide a general performance report for the day before yesterday.\nLast Message: Source: Huberman/Transcripts/html/How to Improve your Mobility, Posture and Flexibility copy.html, Text: Andrew Huberman: Waking you up in the morning., Similarity: 0.40371263\nSource: Huberman/Transcripts/html/Dr Brian keating Charting The Architecture of the Universe Human Life copy.html, Text: over the same things you did when you first did these experiments. But as an experiment, you get transported and you get to, you know, encounter something that you feel like no one has ever done before., Similarity: 0.357768506\nSource: Huberman/Transcripts/html/How to Improve your Mobility, Posture and Flexibility copy.html, Text: Andrew Huberman: You do that every day?, Similarity: 0.343714893"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "general_check_in"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you tell me my oxygen saturation during sleep last night?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me about my weight trend this month.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me my VO2 max for yesterday.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you give me my body fat percentage for last month?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me about my daily mood scores.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What is my breathing rate during sleep?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What is my caffeine intake from last week?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "none",
+        "CATEGORY": "unknown"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "unknown",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Provide my blood oxygen trend for the past week.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What does Andrew Huberman say about improving REM sleep?\nLast Message: Source: Huberman/Transcripts/html/Dr. Cal Newport- How to Enhance Focus and Improve Productivity.html, Text: ANDREW D. HUBERMAN: Yeah, I feel like in the, in the last 5, 10 years. Thanks largely in part to Matt Walker's book, Why We Sleep and the Advocacy around Sleep from others.ANDREW D. HUBERMAN: We've come to understand that sleep is essential for mental health, physical health and learning, cognitive performance, physical performance so much so that now people devote immense amounts of attention and, and resources to trying to get the best possible night's sleep. Whereas it was the I'll sleep when I'm dead mentality prior to that.ANDREW D. HUBERMAN: And I, I would love to see a world where people embrace, not the notion of boredom per se, but the notion of gaps, lack of external stimuli coming into our, our eyes and our cognitive system as a means to get smarter, to get more creative, to get better. We just need a language for this., Similarity: 0.531618118\nSource: Huberman/Transcripts/html/Sleep, Vertigo, TBI, OCD, Tips for Travelers, Gut-Brain Axis & More.html, Text: I found that to be a tremendously beneficial practice. Waking up, if I don't feel thoroughly rested, doing a 10 to 30-minute NSDR. Then getting out of bed and continuing the day. And if you don't have time to do that, do that 10-minute, maybe 20-minute later in the day at any point. And I think you'll see terrific results not just because you're recovering some sleep that you lost perhaps during the night or maybe you just need five to six hours, but also because you'll get better at falling and staying deeply asleep through the practice of NSDR in the morning or at some point throughout the day. I wouldn't recommend anything else elaborate unless you're feeling really exhausted during the day. In which case, then I would move to some of the more advanced sleep tools., Similarity: 0.526183069\nSource: Huberman/Transcripts/html/Dr. Cal Newport- How to Enhance Focus and Improve Productivity.html, Text: ANDREW D. HUBERMAN: Perhaps you don't know the answers to those questions. That's ok. You answer the questions in that brief two minute quiz and they match you to the specific mattress ideal for your sleep needs. In my, that was the dusk D US K mattress. I started sleeping on a dusk mattress well, over three years ago and it has significantly improved my sleep.ANDREW D. HUBERMAN: And as a consequence, I feel more focused and alert, I'm better able to do all the things that I need to cognitively physically throughout the day. So, if you're interested in upgrading your mattress, simply go to Helix Sleep. Com/Huberman, take that brief two minute quiz and they'll match you to a customized mattress ideal for you. You'll get up to $350 off any mattress order and two free pillows., Similarity: 0.511666417"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "no stress data found; should have provided insights based on Andrew Huberman's tips without relying on stress data",
+        "CATEGORY": "huberman_only"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you share Huberman's advice on lowering resting heart rate?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "huberman_only"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you share any insights from Huberman regarding sleep efficiency?\nLast Message: Source: Huberman/Transcripts/html/Thoughts on Longevity Supplements (Resveratrol, NR, NMN, Etc.) & How to Improve Memory.html, Text: You do a sort of a body scan. This practice, NSDR, doesn't involve any mantras, any intention. So there's nothing mystical about it. It's really a self-directed deep relaxation protocol that brings your mind and body into a state that is quite similar to rapid eye movement sleep. And the reason I say that is that your body is very still, but your mind remains active. Your mind is relaxed, if there is such a thing. So this is so to speak, right? No one really knows what, quote unquote, \"relaxed\" mind means., Similarity: 0.502897263\nSource: Huberman/Transcripts/html/Guest Series | Dr. Andy Galpin- Optimize Your Training Program for Fitness & Longevity.html, Text: ANDREW HUBERMAN: I really like what you're describing. I should just say that one of the reasons I put legs on Monday is because I tend to get enough sleep on the weekends. I generally get enough sleep during the middle of the week. But oftentimes, things will come up. I can be pretty sure, however, that I've, quote unquote, caught up on my sleep on the weekends. This notion of catching up on sleep is a little dicey scientifically.ANDY GALPIN: Yeah.ANDREW HUBERMAN: But I tend to be pretty rested by Monday morning.ANDY GALPIN: Right.ANDREW HUBERMAN: And actually, my week begins on Sunday. And Sundays are when I get my long form cardio.ANDY GALPIN: There you go., Similarity: 0.498087108\nSource: Huberman/Transcripts/html/Dr. Cal Newport- How to Enhance Focus and Improve Productivity.html, Text: ANDREW D. HUBERMAN: Yeah, I feel like in the, in the last 5, 10 years. Thanks largely in part to Matt Walker's book, Why We Sleep and the Advocacy around Sleep from others.ANDREW D. HUBERMAN: We've come to understand that sleep is essential for mental health, physical health and learning, cognitive performance, physical performance so much so that now people devote immense amounts of attention and, and resources to trying to get the best possible night's sleep. Whereas it was the I'll sleep when I'm dead mentality prior to that.ANDREW D. HUBERMAN: And I, I would love to see a world where people embrace, not the notion of boredom per se, but the notion of gaps, lack of external stimuli coming into our, our eyes and our cognitive system as a means to get smarter, to get more creative, to get better. We just need a language for this., Similarity: 0.478851259"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What did Huberman mention about managing anxiety?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What are Huberman's recommendations for improving sleep latency?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Tell me Huberman's thoughts on balancing work-related stress.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: How does Huberman advise on increasing total sleep duration?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What insights does Huberman have about heart rate variability?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What breathing techniques does Huberman recommend for relaxation?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Give me Huberman's advice on preparing for bedtime.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What does Huberman say about caffeine and sleep quality?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What are Huberman's strategies for recovering from poor sleep?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Could you tell me Huberman's guidance on using naps?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What does Huberman recommend for managing chronic stress?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Share Huberman's insights on improving restfulness during sleep.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What are Huberman's views on late-night screen exposure?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Provide Huberman's suggestions for optimizing deep sleep cycles.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: How does Huberman propose to enhance sleep efficiency?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What did Huberman say about hydration and sleep quality?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Share tips from Huberman on reducing bedtime latency.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What are Huberman's ideas on improving overall sleep quality?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Explain Huberman's perspective on adapting to shift work sleep schedules.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "huberman_only",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: What advice does Huberman offer for staying relaxed during the day?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "none",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "error_range",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my sleep for the last 100 days.\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "error_range",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Please retrieve my stress data for March 2018.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "error_range",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What were my sleep scores for the first quarter of 2015?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "none",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "error_range",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Give me my stress report for July 2001.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "error_range",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can I see my heart rate stats for September 2019?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "PASS",
+        "COMMENT": "",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "non-compliant workflow",
+        "CATEGORY": "error_range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my REM sleep for last night or the night before.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Can you summarise my sleep from last weekend?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did my heart rate look during the past holiday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Give me my sleep efficiency for the last public holiday.\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you tell me about my deep sleep from a couple of nights ago?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What was my sleep like on the second day of the week?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my heart rate from last afternoon.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: What is my total sleep for the weekend before last?\nLast Message: No sleep data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Show me my latency for the last night of vacation.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "ambiguous"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Give me my heart rate data from that day we traveled.\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "ambiguous",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Tell me about my sleep on the anniversary last year.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you summarize my deep sleep over the last week?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "inventing information",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: OK, how about my heart rate yesterday?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Could you also get my sleep summary for that day?\nLast Message: {\"max_bpm\": null, \"min_bpm\": null, \"average_bpm_workout\": null, \"average_bpm_non_workout\": null}"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "incorrect tool calling",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "COMMENT": "answer generation",
+        "CATEGORY": "multi_turn"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Now analyze my deep sleep trend for the past week.\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: Yesterday I didn't wear my ring; can you still give me my sleep data?\nLast Message: No stress data found for the given date range"
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Pinecone Server Error\nQuery: Also, could you show me what Huberman says about reducing stress?\nLast Message: "
+    },
+    {
+        "STATUS": "FAIL",
+        "CATEGORY": "multi_turn",
+        "COMMENT": "Error: Recursion limit of 10 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT\nQuery: How did I sleep last night?\nLast Message: No sleep data found for the given date range"
+    }
+]

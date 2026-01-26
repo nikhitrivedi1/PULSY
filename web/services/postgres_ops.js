@@ -31,7 +31,6 @@ class UserDbOperations {
   constructor() {
     if (process.env.LOCAL_MODE === 'true') {
       console.log("Local mode enabled");
-      
       // Direct connection for local development
       this.pool = Promise.resolve(Knex({
         client: 'pg',

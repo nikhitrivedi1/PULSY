@@ -39,11 +39,12 @@ from Agentic_RAG.tools import (
     get_heart_rate_data, 
     get_sleep_data, 
     get_stress_data, 
-    get_Andrew_Huberman_Insights
+    get_Andrew_Huberman_Insights,
+    sleep_analysis
 )
 
 # Constants
-SYSTEM_PROMPT = "Agentic_RAG/system_instructions.md"
+SYSTEM_PROMPT = "Agentic_RAG/system_prompts/system_instructions_v2.md"
 
 class AgenticRAG:
     """
@@ -81,7 +82,8 @@ class AgenticRAG:
             get_heart_rate_data,          # Fetch HR from user's wearable
             get_sleep_data,                # Fetch sleep metrics
             get_stress_data,               # Fetch stress metrics
-            get_Andrew_Huberman_Insights   # RAG retrieval from knowledge base
+            get_Andrew_Huberman_Insights,  # RAG retrieval from knowledge base
+            sleep_analysis              # Fetch sleep analysis
         ]
         
         # Bind tools to LLM for function calling

@@ -29,12 +29,134 @@ import pandas as pd
 
 from database.user_db_call import UserDbOperations
 from config.settings import settings
+from collections import Counter
 
 # Singleton database connection for tool functions
 user_db_operations = UserDbOperations()
 
 
 # ========== Oura Ring Data Tools ==========
+def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
+    """
+    Analyze the sleep of the user on a particular data
+    
+    Args:
+    start_date: the start date of the sleep data - format %Y-%m-%d
+    end_date: the end date of the sleep data - format %Y-%m-%d
+    * Note End Data must be greater than start date
+    user_key: the API key for the user
+
+    Returns:
+    sleep_analysis(dict): the sleep analysis for the user on the particular date
+    Included metrics:
+    - Bedtime Start
+    - Bedtime End
+    - Heart Rate Average
+    - Lowest Heart Rate
+    - Highest Heart Rate
+    - Average Breadth
+    - Average HRV
+    - Movement
+    - Normal Sleep Metrics
+    - Durations
+    """
+    print(f"Sleep Analysis - Start Date: {start_date}, End Date: {end_date}")
+
+    # Configure Oura API request
+    URL = "https://api.ouraring.com/v2/usercollection/sleep"
+    headers = {'Authorization': f'Bearer {user_key}'}
+    params = {
+        'start_date': start_date,
+        'end_date': end_date
+    }
+
+    # Fetch data from Oura API
+    try:
+        response = requests.request("GET", URL, headers=headers, params=params).json()
+    except Exception as e:
+        return f"Unable to retrieve sleep data due to {e}"
+
+    print(f"Response: {response}")
+    res = []
+    # With the data provided - what are the main analysis to provide
+    # sleep timing - when did you go to bed / when did you wake up?
+    if not response['data']: 
+        return "Data for the specified date appears to be unavailable or empty"
+
+    # TODO: Handle multiple days of data
+    extracted_data = response['data'][0]
+
+    res.append({
+        'bedtime_start': extracted_data['bedtime_start'],
+        'bedtime_end': extracted_data['bedtime_end']
+    })
+    # Heart Rate
+    # Need to handle case with null heart rate data value
+    heart_rate_items = {}
+    if extracted_data['heart_rate']['items'] is not None and isinstance(extracted_data['heart_rate']['items'][0], float|int):
+        heart_rate_items.update({
+            'heart_rate_average': extracted_data['average_heart_rate'],
+            'lowest_heart_rate': extracted_data['lowest_heart_rate'],
+            'highest_heart_rate': max(extracted_data['heart_rate']['items']),
+        })
+    else:
+        heart_rate_items.update({
+            'heart_rate_average': None,
+            'lowest_heart_rate': None,
+            'highest_heart_rate': None
+        })
+
+    res.append(heart_rate_items)
+    # heart rate variability - how much did your heart rate vary during the night?
+    # Need to handle the case with null hrv data values
+    if extracted_data['hrv']['items'] is not None and isinstance(extracted_data['hrv']['items'][0], float|int):
+        res.append({
+            'hrv_average': extracted_data['average_hrv'],
+            'hrv_min': min(extracted_data['hrv']['items']),
+            'hrv_max': max(extracted_data['hrv']['items'])
+        })
+    else:
+        res.append({
+            'hrv_average': None,
+            'hrv_min': None,
+            'hrv_max': None
+        })
+
+    # Movement - how much did you move during the night? - taken every 30 minutes
+    # 30-second movement classification for the period where every character corresponds to:
+    # '1' = no motion,
+    # '2' = restless,
+    # '3' = tossing and turning
+    # '4' = active
+
+    mapping = {
+        '1': 'no motion', 
+        '2': 'restless',
+        '3': 'tossing and turning',
+        '4': 'active'
+    }
+    movement = extracted_data['movement_30_sec']
+    length = len(movement)
+    cntr = Counter(movement)
+    [res.append({mapping[key]: (freq /length)} for key, freq in cntr)]
+
+
+    # Normal Sleep Metrics
+    res.append(extracted_data['readiness'])
+
+    # Durations - provided in seconds convert to hours and minutes
+    res.append({
+        'total_sleep_duration': f"{extracted_data['total_sleep_duration'] // 3600} hours and {extracted_data['total_sleep_duration'] % 3600} minutes",
+        'time_in_bed': f"{extracted_data['time_in_bed'] // 3600} hours and {extracted_data['time_in_bed'] % 3600} minutes",
+        'rem_sleep_duration': f"{extracted_data['rem_sleep_duration'] // 3600} hours and {extracted_data['rem_sleep_duration'] % 3600} minutes",
+        'light_sleep_duration': f"{extracted_data['light_sleep_duration'] // 3600} hours and {extracted_data['light_sleep_duration'] % 3600} minutes",
+        'deep_sleep_duration': f"{extracted_data['deep_sleep_duration'] // 3600} hours and {extracted_data['deep_sleep_duration'] % 3600} minutes",
+        'awake_time': f"{extracted_data['awake_time'] // 3600} hours and {extracted_data['awake_time'] % 3600} minutes"
+    })
+
+    # JSON dumps? List[dicts] into a JSON string?
+    print(f"Sleep Analysis: {res}")
+    return res
 
 def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     """
@@ -73,7 +195,9 @@ def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
     # Format response for LLM consumption
-    print("Sleep Data Response:", response)
+    if not response or 'data' not in response: 
+        return "Unable to retrieve sleep data"
+        
     response_messages = []
     for result in response["data"]:
         score = result["score"]
@@ -114,6 +238,9 @@ def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
     # Fetch data from Oura API
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
+    if not response or "data" not in response:
+        return "Unable to retrieve stress data"
+
     response_messages = []
     for result in response["data"]:
         # Extract Score, Contributors, and Day
@@ -152,6 +279,9 @@ def get_heart_rate_data(start_date: str, end_date: str, user_key: str) -> str:
     # Make the GET Request
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
+    if not response or "data" not in response:
+        return "Unable to retrieve heart rate data"
+
     # Extract the maximum "bpm" seen
     # Extract the minimum "bpm" seen
     # Extract the average "bpm" for workout sourse
@@ -171,48 +301,9 @@ def get_heart_rate_data(start_date: str, end_date: str, user_key: str) -> str:
     }
     return response_dict
 
-# Vector DB Tools
-
-# MedlinePlus Database
-# Returns: str - semantic search results - returning top 5 results from the vector db
-def get_MedlinePlus_Insights(query:str) -> str:
-    """
-    Given the user query, search the Pinecone VectorDB for the most relevant insights from MedlinePlus
-    When using information from this tool - ensure that you note to the user that this information is from MedlinePlus
-
-    Args:
-    query: the query to search for in the Pinecone Vector DB
-
-    Returns:
-    results(dict): the most relevant insights from MedlinePlus along with the corresponding metadata
-    """
-    try:
-        # Initialize Pinecone client
-        pc = Pinecone(api_key = settings.PINECONE_API_KEY)
-        index = pc.Index(host = settings.PINECONE_HOST)
-        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
-
-        # Convert query to vector space using embeddings model
-        queryVec = embeddings.embed_query(query)
-
-        results = index.query(
-            namespace = settings.PINECONE_NAMESPACE_2,
-            vector = queryVec,
-            top_k = 3,
-            include_metadata = True
-        )
-
-        # Return the documents and the query - note that this will not be returning any metadata
-        response_messages = [f"Source: {result['metadata']['source']}, Text: {result['metadata']['text']}, Similarity: {result['score']}" for result in results["matches"]]
-        return "\n".join(response_messages)
-    except RuntimeError as r:
-        # This is an internal endpoint - users do not need to provide any information
-        # Build out further exceptions to handle connection errors, etc.
-        raise RuntimeError("Pinecone Server Error")
-
-
 # Andrew Huberman Podcast Transcripts
 # Returns: str - semantic search results - returning top 5 results from the vector db
+# consolidate with get_insights()
 def get_Andrew_Huberman_Insights(query:str) -> str:
     """
     Given the user query, search the Pinecone VectorDB for the most relevant insights from Andrew Huberman's podcast transripts
@@ -252,180 +343,41 @@ def get_Andrew_Huberman_Insights(query:str) -> str:
         # Build out further exceptions to handle connection errors, etc.
         raise RuntimeError("Pinecone Server Error")
 
+def get_insights(query:str, scope:str = "all") -> str:
+    """
+    Given the user query, search the Pinecone VectorDB for the most relevant insights from the given scope
+    When using information from this tool - ensure that you note to the user that this information is from the given scope
 
-# User Management and Memory Tools
+    Args:
+    query: the query to search for in the Pinecone Vector DB
+    scope: the scope of the insights to search for - options are "Andrew Huberman", "all" (default)
+    """
+    try:
+        # Initialize Pinecone client
+        pc = Pinecone(api_key = settings.PINECONE_API_KEY)
+        index = pc.Index(host = settings.PINECONE_HOST)
+        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
 
-# # Get the user preferences from the database
-# # Returns: list[str] - the user preferences
-# def get_user_preferences(user_id: str) -> list[str]:
-#     """
-#     Get the user preferences from the database
+       # Convert query to vector space using embeddings model
+        queryVec = embeddings.embed_query(query)
 
-#     Args:
-#     user_id (str): the id of the user
+        # Deteremine the namespace based on the scope
+        namespace = settings.PINECONE_NAMESPACE_2 if scope == "Andrew Huberman" else settings.PINECONE_NAMESPACE_1
 
-#     Returns:
-#     preferences(list[str]): the user preferences
-#     """
-#     with open(MAIN_DB_PATH, 'r') as file:
-#         user_db = json.load(file)
-#         return user_db[user_id]["preferences"]
+        results = index.query(
+            namespace = namespace,
+            vector = queryVec,
+            top_k = 3,
+            include_metadata = True
+        )
 
-# Set the user preferences in the database
-# # Returns: str - confirmation that the preference has been added
-# def set_user_preferences(user_id: str, preference: str) -> str:
-#     """
-#     Whenever the user provides a preference, update the user preferences in the database
+        # distill the results into a list of messages
+        response_messages = [f"Source: {result['metadata']['source']}, Text: {result['metadata']['text']}, Similarity: {result['score']}" for result in results["matches"]]
 
-#     Args:
-#     user_id (str): the id of the user
-#     preference (str): the preference to add to the user preferences
+        # Return the documents and the query - note that this will not be returning any metadata
+        return "\n".join(response_messages)
 
-#     Returns:
-#     confirmation (str): confirmation that the preference has been added
-#     """
-#     with open(MAIN_DB_PATH, 'r') as file:
-#         user_db = json.load(file)
-
-#     with open(MAIN_DB_PATH, 'w') as file:
-#         user_db[user_id]["preferences"].append(preference)
-#         json.dump(user_db, file, indent=4)
-#     return f"Preference {preference} has been added to the user preferences"
-
-
-# Create a user goal in the database
-# Returns: str - confirmation that the goal has been created
-# def create_user_goal(
-#     user_id: str,
-#     goal_name: str,
-#     goal_description: str,
-#     goal_start_date: str,
-#     goal_end_date: str,
-#     goal_status: str,
-#     goal_created_at: str,
-#     goal_updated_at: str,
-#     goal_notes: str,
-#     goal_plans: str,
-#     ) -> str:
-#     """
-#     Create a goal defined by the user - this goal is the mission that you will be tracking and trying to make the user achieve
-
-#     Args:
-#     user_id: str - the id of the user
-#     goal_name: str - a given name for the goal - short and concise
-#     goal_description: str - a description of what the user is trying to achieve
-#     goal_start_date: str - the start date of the goal - format YYYY-MM-DD
-#     goal_end_date: str - the end date of the goal - format YYYY-MM-DD
-#     goal_status: str - the status of the goal - options are "active", "completed", "archived", "not started"
-#     goal_created_at: str - the date the goal was created - format YYYY-MM-DD
-#     goal_updated_at: str - the date the goal was last updated - format YYYY-MM-DD
-#     goal_notes: str - any important pieces of data that correspond to the goal that you want to keep track of for future reference
-#     goal_plans: str - the plans for the goal - this is the steps that you will be taking to help the user achieve the goal
-
-#     Returns:
-#     confirmation (str): confirmation that the goal has been created
-#     """
-#     goal_upload = {
-#         goal_name : {
-#             "goal_description" : goal_description,
-#             "goal_start_date" : goal_start_date,
-#             "goal_end_date" : goal_end_date,
-#             "goal_status" : goal_status,
-#             "goal_created_at" : goal_created_at,
-#             "goal_updated_at" : goal_updated_at,
-#             "goal_notes" : goal_notes,
-#             "goal_plans" : goal_plans,
-#             "goal_evidence" : []
-#         }
-#     }
-#     # Update with evidence - this is a list of GoalEvidence objects
-#     goal_upload["goal_evidence"] = []
-#     # Update the user db with the new goal
-#     with open(MAIN_DB_PATH, 'r') as file:
-#         user_db = json.load(file)
-
-#     with open(MAIN_DB_PATH, 'w') as file:
-#         user_db[user_id]["goals"].update(goal_upload)
-#         json.dump(user_db, file, indent=4)
-
-#     return f"Goal {goal_upload['goal_name']} has been created"
-
-# Add evidence to a goal in the database
-# Returns: str - confirmation that the evidence has been added to the goal
-# def add_goal_evidence(
-#     user_id: str,
-#     goal_name: str,
-#     evidence_name: str,
-#     evidence_description: str,
-#     evidence_date: str,
-#     evidence_metric: str,
-#     evidence_value: str,
-#     ) -> str:
-#     """
-#     Add evidence to a goal - this is a list of GoalEvidence objects
-
-#     Args:
-#     user_id: str - the id of the user
-#     goal_name: str - the name of the goal
-#     evidence_name: str - the name of the evidence
-#     evidence_description: str - the description of the evidence
-#     evidence_date: str - the date of the evidence - format YYYY-MM-DD
-#     evidence_metric: str - the metric of the evidence
-#     evidence_value: str - the value of the evidence
-
-#     Returns:
-#     confirmation (str): confirmation that the evidence has been added to the goal
-#     """
-
-#     evidence = {
-#         "evidence_name" : evidence_name,
-#         "evidence_description" : evidence_description,
-#         "evidence_date" : evidence_date,
-#         "evidence_metric" : evidence_metric,
-#         "evidence_value" : evidence_value
-#     }
-
-#     with open(MAIN_DB_PATH, 'r') as file:
-#         user_db = json.load(file)
-#         user_db[user_id]["goals"][goal_name]["goal_evidence"].append(evidence)
-#     with open(MAIN_DB_PATH, 'w') as file:
-#         json.dump(user_db, file, indent=4)
-#     return f"Evidence {evidence['evidence_name']} has been added to the goal {goal_name}"
-
-# Delete a goal from the database
-# Returns: str - confirmation that the goal has been deleted
-# def delete_goal(
-#     user_id: str,
-#     goal_name: str,
-#     ) -> str:
-#     """
-#     Delete a goal from the user's goals
-
-#     Args:
-#     user_id: str - the id of the user
-#     goal_name: str - the name of the goal that you want to delete
-
-#     Returns:
-#     confirmation (str): confirmation that the goal has been deleted
-#     """
-#     with open(MAIN_DB_PATH, 'r') as file:
-#         user_db = json.load(file)
-#         del user_db[user_id]["goals"][goal_name]
-#     with open(MAIN_DB_PATH, 'w') as file:
-#         json.dump(user_db, file, indent=4)
-#     return f"Goal {goal_name} has been deleted"
-
-# # Internal Functions for Tools to get API Keys
-# # Get the API key for the user's device
-# # Returns: str - the API key for the user's device
-
-    
-# # Get the Pinecone API key
-# # Returns: str - the Pinecone API key
-# def __get_pinecone_api_attributes() -> tuple[str, str, str, str]:
-#     """
-#     Get the Pinecone API key
-#     """
-#     with open(CONFIG_PATH, 'r') as file:
-#         contents = yaml.safe_load(file)
-#         return contents["PINECONE_API_KEY"], contents["PINECONE_HOST"], contents["PINECONE_INDEX"], contents["PINECONE_EMBEDDING_MODEL"]
+    except RuntimeError as r:
+        # This is an internal endpoint - users do not need to provide any information
+        # Build out further exceptions to handle connection errors, etc.
+        raise RuntimeError("Pinecone Server Error")

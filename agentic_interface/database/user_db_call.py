@@ -69,7 +69,7 @@ class UserDbOperations:
             # Local development: Direct TCP connection
             import pg8000.dbapi as pgdb
             return pgdb.connect(
-                user=settings.USERNAME,
+                user=settings.DB_USERNAME,
                 password=settings.PASSWORD,
                 host=settings.PUBLIC_IP,
                 port=int(settings.DB_PORT),
