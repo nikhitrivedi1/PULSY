@@ -1,9 +1,20 @@
-// Import required libraries
+/**
+ * Controller Layer - Request Handler for User Operations
+ * 
+ * Acts as the intermediary between routes and the model layer.
+ * Responsible for:
+ * - Delegating business logic to Model
+ * - Handling request/response flow
+ * - Coordinating between multiple model operations
+ * 
+ * @module controller
+ */
+
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Model } from '../services/model.js';
 
-// Get directory path
+// Get directory path for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -67,10 +78,22 @@ class Controller {
         return this.model.getUserProfile(username);
     }
 
+    /**
+     * Add a preference to user's profile
+     * @param {string} username - User's username
+     * @param {string} preference - Preference to add
+     * @returns {Promise<object>} Success status and updated preferences
+     */
     addUserPreference(username, preference) {
         return this.model.addUserPreference(username, preference);
     }
 
+    /**
+     * Remove a preference from user's profile
+     * @param {string} username - User's username
+     * @param {string} preference - Preference to remove
+     * @returns {Promise<object>} Success status and updated preferences
+     */
     deleteUserPreference(username, preference) {
         return this.model.deleteUserPreference(username, preference);
     }
@@ -108,6 +131,12 @@ class Controller {
         return this.model.getUserDevices(username);
     }
 
+    /**
+     * Test connection to a user device using API key
+     * @param {string} device_type - Type of device (e.g., "Oura Ring")
+     * @param {string} api_key - API key for device
+     * @returns {Promise<boolean>} True if device connection successful
+     */
     testUserDevices(device_type, api_key) {
         return this.model.testUserDevices(device_type, api_key);
     }
@@ -147,30 +176,68 @@ class Controller {
         return this.model.editDevice(username, old_device_name, new_device_name, device_type, api_key);
     }
 
+    /**
+     * Generate OAuth authorization URL for Oura Ring
+     * @param {object} session - Express session object
+     * @returns {string} Authorization URL for Oura Ring OAuth flow
+     */
     authorizeOuraRingUser(session) {
         return this.model.authorizeOuraRingUser(session);
     }
 
+    /**
+     * Exchange OAuth authorization code for access/refresh tokens
+     * @param {string} code - OAuth authorization code from Oura Ring
+     * @returns {Promise<object>} Access and refresh tokens
+     */
     getTokensOuraRing(code) {
         return this.model.getTokensOuraRing(code);
     }
 
+    /**
+     * Update stored OAuth tokens for a user's Oura Ring
+     * @param {string} username - User's username
+     * @param {object} tokens - New access and refresh tokens
+     * @returns {Promise<object>} Success status
+     */
     updateTokensOuraRing(username, tokens) {
         return this.model.updateTokensOuraRing(username, tokens);
     }
 
+    /**
+     * Refresh expired OAuth tokens for user
+     * @param {string} username - User's username
+     * @returns {Promise<object>} New tokens or error
+     */
     refreshTokens(username) {
         return this.model.refreshTokens(username);
     }
 
+    /**
+     * Add user feedback for an AI response
+     * @param {number} log_id - ID of the logged message
+     * @param {string} feedback - "up" or "down" for thumbs up/down
+     * @param {string} comment - Optional text feedback
+     * @returns {Promise<object>} Success status
+     */
     addFeedback(log_id, feedback, comment) {
         return this.model.addFeedback(log_id, feedback, comment);
     }
 
+    /**
+     * Retrieve username associated with OAuth state
+     * @param {string} state - OAuth state string
+     * @returns {Promise<object>} Username or error
+     */
     getSession(state) {
         return this.model.getSession(state);
     }
 
+    /**
+     * Delete OAuth state mapping after completion
+     * @param {string} state - OAuth state string
+     * @returns {Promise<object>} Success status
+     */
     deleteSession(state) {
         return this.model.deleteSession(state);
     }

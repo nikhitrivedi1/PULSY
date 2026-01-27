@@ -15,7 +15,7 @@ agentic_interface/Agentic_RAG/__pycache__/
 agentic_interface/RAG/__pycache__/
 agentic_interface/database/__pycache__/
 agentic_interface/config/__pycache__/
-
+agentic_interface/database/__pycache__/user_db_call.cpython-311.pyc
 # RAG Version
 agentic_interface/main.py
 agentic_interface/RAG/*
@@ -37,3 +37,6 @@ web/.env
 # Local Run Bashes
 agentic_interface/run_agent.sh
 web/start_web.sh
+
+# SFT
+SFT/*

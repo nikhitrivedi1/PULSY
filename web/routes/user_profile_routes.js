@@ -1,3 +1,14 @@
+/**
+ * User Profile Management Routes
+ * 
+ * Handles user profile operations:
+ * - View user profile and preferences
+ * - Update profile information
+ * - Add/remove user preferences
+ * 
+ * @module user_profile_routes
+ */
+
 import express from 'express';
 
 /**
@@ -35,6 +46,12 @@ export default (controller) => {
     });
 
 
+    /**
+     * POST /user_profile/add_preference
+     * Adds a new preference to user's profile
+     * @param {Object} req - Express request object with preference in body
+     * @param {Object} res - Express response object
+     */
     router.post('/add_preference', async (req, res) => {
         let user_preference = await controller.addUserPreference(req.session.username, req.body.preference);
         if (user_preference.success) {
@@ -44,6 +61,12 @@ export default (controller) => {
         }
     });
 
+    /**
+     * POST /user_profile/delete_preference
+     * Removes a preference from user's profile
+     * @param {Object} req - Express request object with preference in body
+     * @param {Object} res - Express response object
+     */
     router.post('/delete_preference', async (req, res) => {
         let user_preference = await controller.deleteUserPreference(req.session.username, req.body.preference);
         if (user_preference.success) {

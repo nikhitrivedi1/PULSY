@@ -1,36 +1,82 @@
-# Example GCP Call
+"""
+Database Operations for Agent Backend
+
+Handles PostgreSQL operations for:
+- User preferences and goals
+- Device information (API keys)
+- Conversation logging
+- Feedback storage
+
+Connection Management:
+- LOCAL_MODE=true: Direct TCP connection to PostgreSQL
+- LOCAL_MODE=false: Google Cloud SQL Connector with IAM auth
+
+Uses pg8000 as the PostgreSQL driver (compatible with Cloud SQL Connector).
+
+Security Note: API keys are stored encrypted in database but passed
+              plainly to agent context. Future work should use secure vaults.
+"""
+
 from google.cloud.sql.connector import Connector, IPTypes
-import yaml
 from pydantic import BaseModel
 from logger import Logger
 from config.settings import settings
 import json
 
 class UserDbTyping(BaseModel):
+    """Type definition for user data structure"""
     name: str
     username: str
     password: str
-    devices: dict[str, str]
+    devices: dict[str, str]  # device_type: api_key
     preferences: list[str]
 
 class UserDbOperations:
+    """
+    Database operations for agent backend
+    
+    Provides async methods for:
+    - Fetching user preferences and device info
+    - Logging conversations
+    - Storing feedback
+    
+    Automatically handles connection management based on LOCAL_MODE setting.
+    """
+    
     def __init__(self):
+        """
+        Initialize database connection
+        
+        If running in production (LOCAL_MODE=false), creates Cloud SQL Connector.
+        If running locally (LOCAL_MODE=true), uses direct TCP connection.
+        """
         if settings.LOCAL_MODE == 'false':
-            self.connector = Connector()
+            self.connector = Connector()  # Google Cloud SQL Connector
 
+        # Database table for conversation logs
         self.logger_table = "logging.logger_final"
 
     async def _get_conn(self):
+        """
+        Establish database connection based on environment
+        
+        Returns:
+            pg8000 connection object
+        
+        Note: Connections should be closed after use to avoid connection pool exhaustion
+        """
         if settings.LOCAL_MODE == "true":
+            # Local development: Direct TCP connection
             import pg8000.dbapi as pgdb
             return pgdb.connect(
-                user=settings.USERNAME,
+                user=settings.DB_USERNAME,
                 password=settings.PASSWORD,
                 host=settings.PUBLIC_IP,
                 port=int(settings.DB_PORT),
                 database=settings.DATABASE_NAME
             )
         else:
+            # Production: Cloud SQL Connector with IAM auth
             return self.connector.connect(
                 settings.INSTANCE_CONNECTION_NAME,
                 "pg8000",
@@ -40,41 +86,83 @@ class UserDbOperations:
                 ip_type=IPTypes.PUBLIC
             )
     
-    async def get_device_information(self,username: str) -> tuple[dict[str,str]]:
+    async def get_device_information(self, username: str) -> tuple[dict[str, str]]:
+        """
+        Retrieve user's connected wearable devices and API keys
+        
+        Args:
+            username: User's username
+        
+        Returns:
+            tuple: List of (device_type, api_key) tuples for all user devices
+        
+        Example:
+            [('Oura Ring', 'ABC123...'), ('Apple Watch', 'XYZ789...')]
+        """
         conn = await self._get_conn()
         cursor = conn.cursor()
         try:
-            # Device Information is stored in the useres table as a dictionary device_type: apikey
-            # There should only be one username in the database, so we can use a simple fetchall
-            cursor.execute("SELECT device_type, api_key FROM users.users_staging WHERE username = $1", [username])
+            cursor.execute(
+                "SELECT device_type, api_key FROM users.users_staging WHERE username = $1", 
+                [username]
+            )
             device_information = cursor.fetchall()
             return device_information
         finally:
-            # close connection and cursor
             cursor.close()
             conn.close()
     
-    async def get_agentic_preferences(self,username: str) -> list[list[str]]:
+    async def get_agentic_preferences(self, username: str) -> list[list[str]]:
+        """
+        Fetch user's health preferences for personalized responses
+        
+        Preferences might include:
+        - Preferred metrics to track
+        - Health goals
+        - Communication style preferences
+        
+        Args:
+            username: User's username
+        
+        Returns:
+            list: Nested list containing user preferences
+                 Returns None if user has no preferences set
+        """
         conn = await self._get_conn()
         cursor = conn.cursor()
         try:
-            # Preferences will be stored as a list of strings
-            cursor.execute("SELECT preferences FROM users.users_staging WHERE username = $1", [username])
+            cursor.execute(
+                "SELECT preferences FROM users.users_staging WHERE username = $1", 
+                [username]
+            )
             preferences = cursor.fetchone()
             return preferences
         finally:
             cursor.close()
             conn.close()
 
-    async def add_agentic_preference(self,username: str, preference: str) -> str:
+    async def add_agentic_preference(self, username: str, preference: str) -> str:
+        """
+        Add a new preference to user's profile
+        
+        Uses PostgreSQL array concatenation (||) to append to existing list.
+        
+        Args:
+            username: User's username
+            preference: New preference to add
+        
+        Returns:
+            str: Success message
+        """
         conn = await self._get_conn()
         cursor = conn.cursor()
         try:
-            # Preferences will be stored as a list of strings
-            # it would be a preference list - so we need to add it to the list
-            cursor.execute("UPDATE users.users_staging SET preferences = preferences || $1 WHERE username = $2", [preference, username])
+            cursor.execute(
+                "UPDATE users.users_staging SET preferences = preferences || $1 WHERE username = $2", 
+                [preference, username]
+            )
             conn.commit()
-            # close connection
+            return "Preference added successfully"
         finally:
             cursor.close()
             conn.close()

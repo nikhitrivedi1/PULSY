@@ -1,0 +1,300 @@
+{"id": 1, "category": "sleep_trend", "messages": [{"role": "user", "content": "Could you give me a rundown of my sleep quality over the past seven days?"}]}
+{"id": 2, "category": "sleep_trend", "messages": [{"role": "user", "content": "I'm curious about my nightly sleep scores last week. Could you show them?"}]}
+{"id": 3, "category": "sleep_trend", "messages": [{"role": "user", "content": "Tell me how my sleep performance has trended over the previous week."}]}
+{"id": 4, "category": "sleep_trend", "messages": [{"role": "user", "content": "I want to see the trajectory of my sleep scores for the last month."}]}
+{"id": 5, "category": "sleep_trend", "messages": [{"role": "user", "content": "Can you track my REM sleep across the past week and flag any low points?"}]}
+{"id": 6, "category": "sleep_trend", "messages": [{"role": "user", "content": "Could you analyze my deep sleep over the past seven days and highlight any issues?"}]}
+{"id": 7, "category": "sleep_trend", "messages": [{"role": "user", "content": "Provide my sleep efficiency trend for the week leading up to today."}]}
+{"id": 8, "category": "sleep_trend", "messages": [{"role": "user", "content": "How has my sleep latency changed over the last seven nights?"}]}
+{"id": 9, "category": "sleep_trend", "messages": [{"role": "user", "content": "Show me my restfulness trend from the past week."}]}
+{"id": 10, "category": "sleep_trend", "messages": [{"role": "user", "content": "Give me the trend of my total sleep hours for the last week."}]}
+{"id": 11, "category": "sleep_trend", "messages": [{"role": "user", "content": "What are my sleep scores between November 10 and November 17, 2025?"}]}
+{"id": 12, "category": "sleep_trend", "messages": [{"role": "user", "content": "Show my REM durations from Nov. 1 through Nov. 7, 2025."}]}
+{"id": 13, "category": "sleep_trend", "messages": [{"role": "user", "content": "Please analyze my deep sleep time from the past month."}]}
+{"id": 14, "category": "sleep_trend", "messages": [{"role": "user", "content": "I'd like to see the pattern of my sleep efficiency over the last 30 days."}]}
+{"id": 15, "category": "sleep_trend", "messages": [{"role": "user", "content": "Review my latency values over the previous month."}]}
+{"id": 16, "category": "sleep_trend", "messages": [{"role": "user", "content": "How did my restfulness scores vary throughout last month?"}]}
+{"id": 17, "category": "sleep_trend", "messages": [{"role": "user", "content": "Provide a trend analysis of my total sleep duration for the last 30 days."}]}
+{"id": 18, "category": "sleep_trend", "messages": [{"role": "user", "content": "What does my sleep score trend look like from two weeks ago until today?"}]}
+{"id": 19, "category": "sleep_trend", "messages": [{"role": "user", "content": "Chart my REM sleep data for the past fortnight."}]}
+{"id": 20, "category": "sleep_trend", "messages": [{"role": "user", "content": "Compare my deep sleep metrics for the previous week to the week before that."}]}
+{"id": 21, "category": "sleep_trend", "messages": [{"role": "user", "content": "Show me how my sleep latency evolved over the past 10 days."}]}
+{"id": 22, "category": "sleep_trend", "messages": [{"role": "user", "content": "Tell me my sleep efficiency trend from October 25 to November 3, 2025."}]}
+{"id": 23, "category": "sleep_trend", "messages": [{"role": "user", "content": "Give me a timeline of my restfulness scores over the last ten days."}]}
+{"id": 24, "category": "sleep_trend", "messages": [{"role": "user", "content": "How have my nightly total sleep hours changed in the last two weeks?"}]}
+{"id": 25, "category": "sleep_trend", "messages": [{"role": "user", "content": "Can I see my sleep score progression from September through October?"}]}
+{"id": 26, "category": "sleep_trend", "messages": [{"role": "user", "content": "Provide a week-by-week breakdown of my REM sleep for the last month."}]}
+{"id": 27, "category": "sleep_trend", "messages": [{"role": "user", "content": "Report how my deep sleep has trended during the previous four weeks."}]}
+{"id": 28, "category": "sleep_trend", "messages": [{"role": "user", "content": "Summarize my sleep efficiency trend for the past three weeks."}]}
+{"id": 29, "category": "sleep_trend", "messages": [{"role": "user", "content": "Tell me how my sleep latency has varied in the last four weeks."}]}
+{"id": 30, "category": "sleep_trend", "messages": [{"role": "user", "content": "Show me the fluctuations in my restfulness over the previous four weeks."}]}
+{"id": 31, "category": "sleep_trend", "messages": [{"role": "user", "content": "What's the pattern of my total sleep hours for the month preceding today?"}]}
+{"id": 32, "category": "sleep_trend", "messages": [{"role": "user", "content": "Give me an overview of my sleep scores for the last 8 days."}]}
+{"id": 33, "category": "sleep_trend", "messages": [{"role": "user", "content": "What were my REM sleep durations for the past six nights?"}]}
+{"id": 34, "category": "sleep_trend", "messages": [{"role": "user", "content": "Highlight any dips in my deep sleep over the last week."}]}
+{"id": 35, "category": "sleep_trend", "messages": [{"role": "user", "content": "How have my sleep efficiency numbers moved in the past nine days?"}]}
+{"id": 36, "category": "sleep_trend", "messages": [{"role": "user", "content": "Analyze my latency score trend for the last six days."}]}
+{"id": 37, "category": "sleep_trend", "messages": [{"role": "user", "content": "I want to review my restfulness levels for the past two weeks."}]}
+{"id": 38, "category": "sleep_trend", "messages": [{"role": "user", "content": "Show me my total sleep durations from December 1 to December 7, 2025."}]}
+{"id": 39, "category": "sleep_trend", "messages": [{"role": "user", "content": "Provide an analysis of my sleep score trend for the past 14 days."}]}
+{"id": 40, "category": "sleep_trend", "messages": [{"role": "user", "content": "How did my sleep metrics perform over the past month of November?"}]}
+{"id": 41, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my deep sleep duration last night?"}]}
+{"id": 42, "category": "sleep_specific", "messages": [{"role": "user", "content": "Tell me my REM sleep from the night before last."}]}
+{"id": 43, "category": "sleep_specific", "messages": [{"role": "user", "content": "How long did I sleep on December 1st, 2025?"}]}
+{"id": 44, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my sleep efficiency two nights ago?"}]}
+{"id": 45, "category": "sleep_specific", "messages": [{"role": "user", "content": "Give me my latency score for November 25, 2025."}]}
+{"id": 46, "category": "sleep_specific", "messages": [{"role": "user", "content": "Tell me my restfulness rating from yesterday."}]}
+{"id": 47, "category": "sleep_specific", "messages": [{"role": "user", "content": "How much total sleep did I get on November 28, 2025?"}]}
+{"id": 48, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my sleep score on Monday?"}]}
+{"id": 49, "category": "sleep_specific", "messages": [{"role": "user", "content": "Could you tell me the sleep timing metric for last night?"}]}
+{"id": 50, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my sleep score on the day before yesterday?"}]}
+{"id": 51, "category": "sleep_specific", "messages": [{"role": "user", "content": "Give me the REM sleep duration for December 2, 2025."}]}
+{"id": 52, "category": "sleep_specific", "messages": [{"role": "user", "content": "Tell me my deep sleep minutes from two nights ago."}]}
+{"id": 53, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my efficiency percentage on November 29, 2025?"}]}
+{"id": 54, "category": "sleep_specific", "messages": [{"role": "user", "content": "How long did it take me to fall asleep yesterday?"}]}
+{"id": 55, "category": "sleep_specific", "messages": [{"role": "user", "content": "Please provide my restfulness value for November 27, 2025."}]}
+{"id": 56, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my overall sleep score on December 3, 2025?"}]}
+{"id": 57, "category": "sleep_specific", "messages": [{"role": "user", "content": "How much REM did I get the night of November 30, 2025?"}]}
+{"id": 58, "category": "sleep_specific", "messages": [{"role": "user", "content": "Tell me my deep sleep on the second of December."}]}
+{"id": 59, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my sleep efficiency last Tuesday?"}]}
+{"id": 60, "category": "sleep_specific", "messages": [{"role": "user", "content": "Give me the latency metric for last Friday."}]}
+{"id": 61, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my restfulness score on Sunday?"}]}
+{"id": 62, "category": "sleep_specific", "messages": [{"role": "user", "content": "How long was my total sleep the night of November 26, 2025?"}]}
+{"id": 63, "category": "sleep_specific", "messages": [{"role": "user", "content": "Please provide the sleep score for November 24, 2025."}]}
+{"id": 64, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my REM sleep for the first day of this month?"}]}
+{"id": 65, "category": "sleep_specific", "messages": [{"role": "user", "content": "Give me my deep sleep for the third day of this week."}]}
+{"id": 66, "category": "sleep_specific", "messages": [{"role": "user", "content": "How much total sleep did I get on the most recent weekend?"}]}
+{"id": 67, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my sleep efficiency on the fourth of December?"}]}
+{"id": 68, "category": "sleep_specific", "messages": [{"role": "user", "content": "What was my latency on December 2, 2025?"}]}
+{"id": 69, "category": "sleep_specific", "messages": [{"role": "user", "content": "Tell me my restfulness for November 19, 2025."}]}
+{"id": 70, "category": "sleep_specific", "messages": [{"role": "user", "content": "Provide my sleep score for last Wednesday."}]}
+{"id": 71, "category": "sleep_summary", "messages": [{"role": "user", "content": "How did I sleep last night? Please give me a summary."}]}
+{"id": 72, "category": "sleep_summary", "messages": [{"role": "user", "content": "Can I get a summary of my sleep yesterday, including key metrics?"}]}
+{"id": 73, "category": "sleep_summary", "messages": [{"role": "user", "content": "Provide me a breakdown of my sleep performance the night before yesterday."}]}
+{"id": 74, "category": "sleep_summary", "messages": [{"role": "user", "content": "Give me my nightly sleep summary for November 30th, 2025."}]}
+{"id": 75, "category": "sleep_summary", "messages": [{"role": "user", "content": "Could you recap my sleep from last night with highlights and improvement suggestions?"}]}
+{"id": 76, "category": "sleep_summary", "messages": [{"role": "user", "content": "Would you mind summarizing my sleep on the second day of last week?"}]}
+{"id": 77, "category": "sleep_summary", "messages": [{"role": "user", "content": "What did my sleep look like last Thursday? Please summarise."}]}
+{"id": 78, "category": "sleep_summary", "messages": [{"role": "user", "content": "Summarize my sleep performance for the night of November 25, 2025."}]}
+{"id": 79, "category": "sleep_summary", "messages": [{"role": "user", "content": "I'd like a detailed summary of my sleep from last Tuesday."}]}
+{"id": 80, "category": "sleep_summary", "messages": [{"role": "user", "content": "How did my sleep go on November 26, 2025?"}]}
+{"id": 81, "category": "sleep_summary", "messages": [{"role": "user", "content": "Please create a sleep summary for my most recent night's rest."}]}
+{"id": 82, "category": "sleep_summary", "messages": [{"role": "user", "content": "Can you provide an analysis of my sleep from the third night of last week?"}]}
+{"id": 83, "category": "sleep_summary", "messages": [{"role": "user", "content": "Tell me what my sleep metrics were two nights ago and how I can improve."}]}
+{"id": 84, "category": "sleep_summary", "messages": [{"role": "user", "content": "Give me an overview of my sleep last evening with recommendations."}]}
+{"id": 85, "category": "sleep_summary", "messages": [{"role": "user", "content": "Could you deliver a comprehensive summary of my sleep for November 27, 2025?"}]}
+{"id": 86, "category": "sleep_summary", "messages": [{"role": "user", "content": "Summarise my sleep performance for the night just gone."}]}
+{"id": 87, "category": "sleep_summary", "messages": [{"role": "user", "content": "What is the complete sleep report for November 29, 2025?"}]}
+{"id": 88, "category": "sleep_summary", "messages": [{"role": "user", "content": "Review my sleep summary from the previous night and identify any concerns."}]}
+{"id": 89, "category": "sleep_summary", "messages": [{"role": "user", "content": "How did I sleep on December 2, 2025? Provide details."}]}
+{"id": 90, "category": "sleep_summary", "messages": [{"role": "user", "content": "Present my nightly sleep summary for the day before yesterday with actionable advice."}]}
+{"id": 91, "category": "sleep_summary", "messages": [{"role": "user", "content": "Could you describe my sleep last night and note any weak areas?"}]}
+{"id": 92, "category": "sleep_summary", "messages": [{"role": "user", "content": "Summarize my sleep metrics from last Saturday."}]}
+{"id": 93, "category": "sleep_summary", "messages": [{"role": "user", "content": "Give me a sleep summary for November 23, 2025."}]}
+{"id": 94, "category": "sleep_summary", "messages": [{"role": "user", "content": "How was my sleep on the first day of this week? Please include analysis."}]}
+{"id": 95, "category": "sleep_summary", "messages": [{"role": "user", "content": "I'd appreciate a sleep summary for the night of December 1, 2025."}]}
+{"id": 96, "category": "sleep_summary", "messages": [{"role": "user", "content": "Provide a report on my sleep for November 28, 2025 with improvement points."}]}
+{"id": 97, "category": "sleep_summary", "messages": [{"role": "user", "content": "Tell me what my sleep looked like two nights prior, summarised."}]}
+{"id": 98, "category": "sleep_summary", "messages": [{"role": "user", "content": "Offer a summary of my sleep from the final night of last month."}]}
+{"id": 99, "category": "sleep_summary", "messages": [{"role": "user", "content": "What is my sleep summary for last Monday?"}]}
+{"id": 100, "category": "sleep_summary", "messages": [{"role": "user", "content": "How did I sleep the night before yesterday with key metrics and analysis?"}]}
+{"id": 101, "category": "stress", "messages": [{"role": "user", "content": "How were my stress levels yesterday?"}]}
+{"id": 102, "category": "stress", "messages": [{"role": "user", "content": "Summarize my daytime stress for the last week."}]}
+{"id": 103, "category": "stress", "messages": [{"role": "user", "content": "Which day in the past seven days had my highest stress?"}]}
+{"id": 104, "category": "stress", "messages": [{"role": "user", "content": "Show me my stress data from November 15, 2025."}]}
+{"id": 105, "category": "stress", "messages": [{"role": "user", "content": "Could you tell me how stressed I was on Monday?"}]}
+{"id": 106, "category": "stress", "messages": [{"role": "user", "content": "Explain my stress zones from last week."}]}
+{"id": 107, "category": "stress", "messages": [{"role": "user", "content": "What days in the past month were categorized as 'Stressed'?"}]}
+{"id": 108, "category": "stress", "messages": [{"role": "user", "content": "Do you see any high stress days during the previous two weeks?"}]}
+{"id": 109, "category": "stress", "messages": [{"role": "user", "content": "Provide my stress metrics for November 20 through November 25."}]}
+{"id": 110, "category": "stress", "messages": [{"role": "user", "content": "How did my stress levels change over the last seven days?"}]}
+{"id": 111, "category": "stress", "messages": [{"role": "user", "content": "Give me a report of my stress scores for yesterday."}]}
+{"id": 112, "category": "stress", "messages": [{"role": "user", "content": "What was my stress zone for November 21, 2025?"}]}
+{"id": 113, "category": "stress", "messages": [{"role": "user", "content": "Analyse my stress data for the week ending yesterday."}]}
+{"id": 114, "category": "stress", "messages": [{"role": "user", "content": "Compare my stress levels of the last week to the week before."}]}
+{"id": 115, "category": "stress", "messages": [{"role": "user", "content": "What days last month showed elevated stress in my metrics?"}]}
+{"id": 116, "category": "stress", "messages": [{"role": "user", "content": "Tell me about my stress on December 1, 2025."}]}
+{"id": 117, "category": "stress", "messages": [{"role": "user", "content": "Could you review my stress metrics for the past three days?"}]}
+{"id": 118, "category": "stress", "messages": [{"role": "user", "content": "Show me my stress levels between November 10 and November 12, 2025."}]}
+{"id": 119, "category": "stress", "messages": [{"role": "user", "content": "Provide an overview of my stress data for the previous weekend."}]}
+{"id": 120, "category": "stress", "messages": [{"role": "user", "content": "What was my daytime stress like last Thursday?"}]}
+{"id": 121, "category": "stress", "messages": [{"role": "user", "content": "Identify any days with high stress in the last five days."}]}
+{"id": 122, "category": "stress", "messages": [{"role": "user", "content": "How was my stress yesterday compared to the day before?"}]}
+{"id": 123, "category": "stress", "messages": [{"role": "user", "content": "Give me my stress data for November 22, 2025."}]}
+{"id": 124, "category": "stress", "messages": [{"role": "user", "content": "What was my recovery time on the day before yesterday?"}]}
+{"id": 125, "category": "stress", "messages": [{"role": "user", "content": "Summarize the stress metrics from yesterday's data."}]}
+{"id": 126, "category": "stress", "messages": [{"role": "user", "content": "Which of the past seven days showed an 'Engaged' stress zone?"}]}
+{"id": 127, "category": "stress", "messages": [{"role": "user", "content": "What were the stress categories for last week?"}]}
+{"id": 128, "category": "stress", "messages": [{"role": "user", "content": "Could you tell me if there were any 'Relaxed' days in the previous week?"}]}
+{"id": 129, "category": "stress", "messages": [{"role": "user", "content": "How much time did I spend in 'Restored' zone yesterday?"}]}
+{"id": 130, "category": "stress", "messages": [{"role": "user", "content": "Give me an analysis of my stress zones over the last seven days."}]}
+{"id": 131, "category": "heart_rate", "messages": [{"role": "user", "content": "What was my heart rate yesterday?"}]}
+{"id": 132, "category": "heart_rate", "messages": [{"role": "user", "content": "Give me my maximum and minimum heart rate on November 28, 2025."}]}
+{"id": 133, "category": "heart_rate", "messages": [{"role": "user", "content": "Tell me the average workout heart rate for two days ago."}]}
+{"id": 134, "category": "heart_rate", "messages": [{"role": "user", "content": "Can you show my heart rate data from last Monday?"}]}
+{"id": 135, "category": "heart_rate", "messages": [{"role": "user", "content": "What were my heart rate statistics on December 2, 2025?"}]}
+{"id": 136, "category": "heart_rate", "messages": [{"role": "user", "content": "Provide my resting heart rate for yesterday."}]}
+{"id": 137, "category": "heart_rate", "messages": [{"role": "user", "content": "What is my heart rate for November 22, 2025?"}]}
+{"id": 138, "category": "heart_rate", "messages": [{"role": "user", "content": "Show me my min and max heart rate values from November 24, 2025."}]}
+{"id": 139, "category": "heart_rate", "messages": [{"role": "user", "content": "Give me the average heart rate during non-workout times for November 23, 2025."}]}
+{"id": 140, "category": "heart_rate", "messages": [{"role": "user", "content": "What was my highest bpm on November 29, 2025?"}]}
+{"id": 141, "category": "heart_rate", "messages": [{"role": "user", "content": "Tell me the heart rate data for the day before yesterday."}]}
+{"id": 142, "category": "heart_rate", "messages": [{"role": "user", "content": "How did my heart rate look on December 1, 2025?"}]}
+{"id": 143, "category": "heart_rate", "messages": [{"role": "user", "content": "Please provide heart rate metrics for November 26, 2025."}]}
+{"id": 144, "category": "heart_rate", "messages": [{"role": "user", "content": "What was my heart rate on last Friday?"}]}
+{"id": 145, "category": "heart_rate", "messages": [{"role": "user", "content": "Give me my average workout bpm from November 27, 2025."}]}
+{"id": 146, "category": "heart_rate", "messages": [{"role": "user", "content": "Tell me my minimum bpm on December 1, 2025."}]}
+{"id": 147, "category": "heart_rate", "messages": [{"role": "user", "content": "What is my maximum heart rate for the night of November 30, 2025?"}]}
+{"id": 148, "category": "heart_rate", "messages": [{"role": "user", "content": "Provide my heart rate data for Saturday's date."}]}
+{"id": 149, "category": "heart_rate", "messages": [{"role": "user", "content": "What was my average non-workout heart rate on November 25, 2025?"}]}
+{"id": 150, "category": "heart_rate", "messages": [{"role": "user", "content": "Could you share my heart rate metrics for Monday of this week?"}]}
+{"id": 151, "category": "heart_rate", "messages": [{"role": "user", "content": "What were my heart rate statistics two days prior?"}]}
+{"id": 152, "category": "heart_rate", "messages": [{"role": "user", "content": "Tell me my heart rate numbers for yesterday's run."}]}
+{"id": 153, "category": "heart_rate", "messages": [{"role": "user", "content": "Give me the min and max heart rate recorded yesterday."}]}
+{"id": 154, "category": "heart_rate", "messages": [{"role": "user", "content": "I would like my heart rate data for November 21, 2025."}]}
+{"id": 155, "category": "heart_rate", "messages": [{"role": "user", "content": "Provide the heart rate stats for the last time I worked out."}]}
+{"id": 156, "category": "heart_rate", "messages": [{"role": "user", "content": "What was my heart rate on December 3, 2025?"}]}
+{"id": 157, "category": "heart_rate", "messages": [{"role": "user", "content": "Can you tell me the average heart rate for non-workout periods on November 29, 2025?"}]}
+{"id": 158, "category": "heart_rate", "messages": [{"role": "user", "content": "Tell me my heart rate metrics for the afternoon of November 30, 2025."}]}
+{"id": 159, "category": "heart_rate", "messages": [{"role": "user", "content": "What were my heart rate peaks on November 28, 2025?"}]}
+{"id": 160, "category": "heart_rate", "messages": [{"role": "user", "content": "How did my heart rate vary on the second of December, 2025?"}]}
+{"id": 161, "category": "general_check_in", "messages": [{"role": "user", "content": "How was my day yesterday overall in terms of sleep, stress, and heart rate?"}]}
+{"id": 162, "category": "general_check_in", "messages": [{"role": "user", "content": "Give me a full health report for November 26, 2025."}]}
+{"id": 163, "category": "general_check_in", "messages": [{"role": "user", "content": "Provide a general check-in for last Wednesday."}]}
+{"id": 164, "category": "general_check_in", "messages": [{"role": "user", "content": "How did I do across all metrics two days ago?"}]}
+{"id": 165, "category": "general_check_in", "messages": [{"role": "user", "content": "I'd like a combined summary of my heart rate, sleep, and stress for the day before yesterday."}]}
+{"id": 166, "category": "general_check_in", "messages": [{"role": "user", "content": "Tell me about my wellness on December 1st."}]}
+{"id": 167, "category": "general_check_in", "messages": [{"role": "user", "content": "What were my scores across sleep, stress, and heart rate on November 20?"}]}
+{"id": 168, "category": "general_check_in", "messages": [{"role": "user", "content": "Summarize my overall health metrics for yesterday."}]}
+{"id": 169, "category": "general_check_in", "messages": [{"role": "user", "content": "Can you compile my sleep, stress, and heart rate data for November 24, 2025?"}]}
+{"id": 170, "category": "general_check_in", "messages": [{"role": "user", "content": "What does my general wellness look like from the day before yesterday?"}]}
+{"id": 171, "category": "general_check_in", "messages": [{"role": "user", "content": "Please provide an all-metrics check for November 29, 2025."}]}
+{"id": 172, "category": "general_check_in", "messages": [{"role": "user", "content": "Give me a combined overview of sleep, stress, and heart rate for the first of December."}]}
+{"id": 173, "category": "general_check_in", "messages": [{"role": "user", "content": "How did all my metrics turn out on November 23, 2025?"}]}
+{"id": 174, "category": "general_check_in", "messages": [{"role": "user", "content": "Could you report on my overall health scores for last Friday?"}]}
+{"id": 175, "category": "general_check_in", "messages": [{"role": "user", "content": "Provide a health summary for November 28, 2025, across all metrics."}]}
+{"id": 176, "category": "general_check_in", "messages": [{"role": "user", "content": "I'd like to know how I did yesterday on sleep, heart rate, and stress."}]}
+{"id": 177, "category": "general_check_in", "messages": [{"role": "user", "content": "Tell me about all my metrics for the day before last."}]}
+{"id": 178, "category": "general_check_in", "messages": [{"role": "user", "content": "How were my sleep, stress, and heart rate on November 25, 2025?"}]}
+{"id": 179, "category": "general_check_in", "messages": [{"role": "user", "content": "Can I get an integrated report for yesterday's sleep, stress, and heart rate?"}]}
+{"id": 180, "category": "general_check_in", "messages": [{"role": "user", "content": "Summarize my well-being metrics for last Saturday."}]}
+{"id": 181, "category": "general_check_in", "messages": [{"role": "user", "content": "What are my combined scores for November 27, 2025?"}]}
+{"id": 182, "category": "general_check_in", "messages": [{"role": "user", "content": "Give me a check-in on all metrics for two days ago."}]}
+{"id": 183, "category": "general_check_in", "messages": [{"role": "user", "content": "What does my overall health picture look like for November 22, 2025?"}]}
+{"id": 184, "category": "general_check_in", "messages": [{"role": "user", "content": "Provide a general performance report for the day before yesterday."}]}
+{"id": 185, "category": "general_check_in", "messages": [{"role": "user", "content": "Could you combine my sleep, stress, and heart rate data for last Monday?"}]}
+{"id": 186, "category": "unknown", "messages": [{"role": "user", "content": "What is my blood pressure reading from yesterday?"}]}
+{"id": 187, "category": "unknown", "messages": [{"role": "user", "content": "Could you tell me my oxygen saturation during sleep last night?"}]}
+{"id": 188, "category": "unknown", "messages": [{"role": "user", "content": "What's my fitness age?"}]}
+{"id": 189, "category": "unknown", "messages": [{"role": "user", "content": "Tell me about my weight trend this month."}]}
+{"id": 190, "category": "unknown", "messages": [{"role": "user", "content": "How many calories did I burn last night?"}]}
+{"id": 191, "category": "unknown", "messages": [{"role": "user", "content": "What was my step count yesterday?"}]}
+{"id": 192, "category": "unknown", "messages": [{"role": "user", "content": "Who won the game last night?"}]}
+{"id": 193, "category": "unknown", "messages": [{"role": "user", "content": "What is the capital of France?"}]}
+{"id": 194, "category": "unknown", "messages": [{"role": "user", "content": "How's the weather today?"}]}
+{"id": 195, "category": "unknown", "messages": [{"role": "user", "content": "Can you check my bank balance?"}]}
+{"id": 196, "category": "unknown", "messages": [{"role": "user", "content": "What's the stock price of Apple today?"}]}
+{"id": 197, "category": "unknown", "messages": [{"role": "user", "content": "Tell me my VO2 max for yesterday."}]}
+{"id": 198, "category": "unknown", "messages": [{"role": "user", "content": "Provide my blood glucose levels from last week."}]}
+{"id": 199, "category": "unknown", "messages": [{"role": "user", "content": "What was my hydration level yesterday?"}]}
+{"id": 200, "category": "unknown", "messages": [{"role": "user", "content": "Could you give me my body fat percentage for last month?"}]}
+{"id": 201, "category": "unknown", "messages": [{"role": "user", "content": "When is my next meeting?"}]}
+{"id": 202, "category": "unknown", "messages": [{"role": "user", "content": "What was the maximum temperature yesterday in San Francisco?"}]}
+{"id": 203, "category": "unknown", "messages": [{"role": "user", "content": "Who is the CEO of Tesla?"}]}
+{"id": 204, "category": "unknown", "messages": [{"role": "user", "content": "What's 2 plus 2?"}]}
+{"id": 205, "category": "unknown", "messages": [{"role": "user", "content": "Give me the recipe for pancakes."}]}
+{"id": 206, "category": "unknown", "messages": [{"role": "user", "content": "Can you summarise the news?"}]}
+{"id": 207, "category": "unknown", "messages": [{"role": "user", "content": "Tell me about my daily mood scores."}]}
+{"id": 208, "category": "unknown", "messages": [{"role": "user", "content": "Show me my menstrual cycle data."}]}
+{"id": 209, "category": "unknown", "messages": [{"role": "user", "content": "What is my breathing rate during sleep?"}]}
+{"id": 210, "category": "unknown", "messages": [{"role": "user", "content": "How many kilometers did I run yesterday?"}]}
+{"id": 211, "category": "unknown", "messages": [{"role": "user", "content": "What is my caffeine intake from last week?"}]}
+{"id": 212, "category": "unknown", "messages": [{"role": "user", "content": "Can you read my emails?"}]}
+{"id": 213, "category": "unknown", "messages": [{"role": "user", "content": "Tell me my phone battery percentage."}]}
+{"id": 214, "category": "unknown", "messages": [{"role": "user", "content": "What's my social media usage time?"}]}
+{"id": 215, "category": "unknown", "messages": [{"role": "user", "content": "Provide my blood oxygen trend for the past week."}]}
+{"id": 216, "category": "huberman_only", "messages": [{"role": "user", "content": "What does Andrew Huberman say about improving REM sleep?"}]}
+{"id": 217, "category": "huberman_only", "messages": [{"role": "user", "content": "What are Huberman's tips for reducing stress?"}]}
+{"id": 218, "category": "huberman_only", "messages": [{"role": "user", "content": "Could you share Huberman's advice on lowering resting heart rate?"}]}
+{"id": 219, "category": "huberman_only", "messages": [{"role": "user", "content": "What does Huberman suggest for better deep sleep?"}]}
+{"id": 220, "category": "huberman_only", "messages": [{"role": "user", "content": "Can you share any insights from Huberman regarding sleep efficiency?"}]}
+{"id": 221, "category": "huberman_only", "messages": [{"role": "user", "content": "What did Huberman mention about managing anxiety?"}]}
+{"id": 222, "category": "huberman_only", "messages": [{"role": "user", "content": "What are Huberman's recommendations for improving sleep latency?"}]}
+{"id": 223, "category": "huberman_only", "messages": [{"role": "user", "content": "Tell me Huberman's thoughts on balancing work-related stress."}]}
+{"id": 224, "category": "huberman_only", "messages": [{"role": "user", "content": "How does Huberman advise on increasing total sleep duration?"}]}
+{"id": 225, "category": "huberman_only", "messages": [{"role": "user", "content": "What insights does Huberman have about heart rate variability?"}]}
+{"id": 226, "category": "huberman_only", "messages": [{"role": "user", "content": "What breathing techniques does Huberman recommend for relaxation?"}]}
+{"id": 227, "category": "huberman_only", "messages": [{"role": "user", "content": "Give me Huberman's advice on preparing for bedtime."}]}
+{"id": 228, "category": "huberman_only", "messages": [{"role": "user", "content": "What does Huberman say about caffeine and sleep quality?"}]}
+{"id": 229, "category": "huberman_only", "messages": [{"role": "user", "content": "What are Huberman's strategies for recovering from poor sleep?"}]}
+{"id": 230, "category": "huberman_only", "messages": [{"role": "user", "content": "Could you tell me Huberman's guidance on using naps?"}]}
+{"id": 231, "category": "huberman_only", "messages": [{"role": "user", "content": "What does Huberman recommend for managing chronic stress?"}]}
+{"id": 232, "category": "huberman_only", "messages": [{"role": "user", "content": "Share Huberman's insights on improving restfulness during sleep."}]}
+{"id": 233, "category": "huberman_only", "messages": [{"role": "user", "content": "What are Huberman's views on late-night screen exposure?"}]}
+{"id": 234, "category": "huberman_only", "messages": [{"role": "user", "content": "Provide Huberman's suggestions for optimizing deep sleep cycles."}]}
+{"id": 235, "category": "huberman_only", "messages": [{"role": "user", "content": "How does Huberman propose to enhance sleep efficiency?"}]}
+{"id": 236, "category": "huberman_only", "messages": [{"role": "user", "content": "What did Huberman say about hydration and sleep quality?"}]}
+{"id": 237, "category": "huberman_only", "messages": [{"role": "user", "content": "Share tips from Huberman on reducing bedtime latency."}]}
+{"id": 238, "category": "huberman_only", "messages": [{"role": "user", "content": "What are Huberman's ideas on improving overall sleep quality?"}]}
+{"id": 239, "category": "huberman_only", "messages": [{"role": "user", "content": "Explain Huberman's perspective on adapting to shift work sleep schedules."}]}
+{"id": 240, "category": "huberman_only", "messages": [{"role": "user", "content": "What advice does Huberman offer for staying relaxed during the day?"}]}
+{"id": 241, "category": "error_range", "messages": [{"role": "user", "content": "Tell me about my sleep on February 30, 2025."}]}
+{"id": 242, "category": "error_range", "messages": [{"role": "user", "content": "Can I see my stress data for the year 2010?"}]}
+{"id": 243, "category": "error_range", "messages": [{"role": "user", "content": "Give me my heart rate data for next Monday."}]}
+{"id": 244, "category": "error_range", "messages": [{"role": "user", "content": "What was my sleep on January 1, 2026?"}]}
+{"id": 245, "category": "error_range", "messages": [{"role": "user", "content": "Show me my sleep for the last 100 days."}]}
+{"id": 246, "category": "error_range", "messages": [{"role": "user", "content": "What are my sleep scores for December 2026?"}]}
+{"id": 247, "category": "error_range", "messages": [{"role": "user", "content": "Please retrieve my stress data for March 2018."}]}
+{"id": 248, "category": "error_range", "messages": [{"role": "user", "content": "Get me my heart rate data from December 2020."}]}
+{"id": 249, "category": "error_range", "messages": [{"role": "user", "content": "Provide my sleep metrics for August 15, 2019."}]}
+{"id": 250, "category": "error_range", "messages": [{"role": "user", "content": "How did my stress look in 2005?"}]}
+{"id": 251, "category": "error_range", "messages": [{"role": "user", "content": "Tell me about my heart rate on 1999-12-31."}]}
+{"id": 252, "category": "error_range", "messages": [{"role": "user", "content": "What were my sleep scores for the first quarter of 2015?"}]}
+{"id": 253, "category": "error_range", "messages": [{"role": "user", "content": "Can you fetch my stress data for last year's February?"}]}
+{"id": 254, "category": "error_range", "messages": [{"role": "user", "content": "What is my heart rate data for April 1, 2024?"}]}
+{"id": 255, "category": "error_range", "messages": [{"role": "user", "content": "Show me my sleep summary for October 31, 2026."}]}
+{"id": 256, "category": "error_range", "messages": [{"role": "user", "content": "Give me my stress report for July 2001."}]}
+{"id": 257, "category": "error_range", "messages": [{"role": "user", "content": "What were my sleep metrics for December 2027?"}]}
+{"id": 258, "category": "error_range", "messages": [{"role": "user", "content": "Can I see my heart rate stats for September 2019?"}]}
+{"id": 259, "category": "error_range", "messages": [{"role": "user", "content": "Provide my sleep data for January 1, 1900."}]}
+{"id": 260, "category": "error_range", "messages": [{"role": "user", "content": "Fetch my stress levels for next week."}]}
+{"id": 261, "category": "ambiguous", "messages": [{"role": "user", "content": "What was my sleep score on Tuesday?"}]}
+{"id": 262, "category": "ambiguous", "messages": [{"role": "user", "content": "How did I sleep over the weekend?"}]}
+{"id": 263, "category": "ambiguous", "messages": [{"role": "user", "content": "Show me my REM sleep for last night or the night before."}]}
+{"id": 264, "category": "ambiguous", "messages": [{"role": "user", "content": "Tell me my stress for last Monday, I think."}]}
+{"id": 265, "category": "ambiguous", "messages": [{"role": "user", "content": "Can you summarise my sleep from last weekend?"}]}
+{"id": 266, "category": "ambiguous", "messages": [{"role": "user", "content": "What are my stress levels for earlier this week?"}]}
+{"id": 267, "category": "ambiguous", "messages": [{"role": "user", "content": "How did my heart rate look during the past holiday?"}]}
+{"id": 268, "category": "ambiguous", "messages": [{"role": "user", "content": "Give me my sleep efficiency for the last public holiday."}]}
+{"id": 269, "category": "ambiguous", "messages": [{"role": "user", "content": "Could you tell me about my deep sleep from a couple of nights ago?"}]}
+{"id": 270, "category": "ambiguous", "messages": [{"role": "user", "content": "What was my sleep like on the second day of the week?"}]}
+{"id": 271, "category": "ambiguous", "messages": [{"role": "user", "content": "Show me my heart rate from last afternoon."}]}
+{"id": 272, "category": "ambiguous", "messages": [{"role": "user", "content": "Summarize my stress metrics for the previous holiday."}]}
+{"id": 273, "category": "ambiguous", "messages": [{"role": "user", "content": "Tell me my sleep score for Tuesday of last week."}]}
+{"id": 274, "category": "ambiguous", "messages": [{"role": "user", "content": "I'd like to know my REM sleep from the night of the concert."}]}
+{"id": 275, "category": "ambiguous", "messages": [{"role": "user", "content": "What is my total sleep for the weekend before last?"}]}
+{"id": 276, "category": "ambiguous", "messages": [{"role": "user", "content": "How were my stress levels on the day we went hiking?"}]}
+{"id": 277, "category": "ambiguous", "messages": [{"role": "user", "content": "Show me my latency for the last night of vacation."}]}
+{"id": 278, "category": "ambiguous", "messages": [{"role": "user", "content": "What was my sleep efficiency on the second to last day of last month?"}]}
+{"id": 279, "category": "ambiguous", "messages": [{"role": "user", "content": "Give me my heart rate data from that day we traveled."}]}
+{"id": 280, "category": "ambiguous", "messages": [{"role": "user", "content": "Tell me about my sleep on the anniversary last year."}]}
+{"id": 281, "category": "multi_turn", "messages": [{"role": "user", "content": "Could you summarise my sleep last night?"}, {"role": "assistant", "content": "Here is your sleep summary."}, {"role": "user", "content": "Now can you tell me how stressed I was yesterday?"}]}
+{"id": 282, "category": "multi_turn", "messages": [{"role": "user", "content": "How were my stress levels over the past week?"}, {"role": "assistant", "content": "Here is your stress analysis."}, {"role": "user", "content": "Also, what was my heart rate yesterday?"}]}
+{"id": 283, "category": "multi_turn", "messages": [{"role": "user", "content": "Give me my heart rate for November 28, 2025."}, {"role": "assistant", "content": "Here is your heart rate data."}, {"role": "user", "content": "And how did I sleep on that day?"}]}
+{"id": 284, "category": "multi_turn", "messages": [{"role": "user", "content": "What does Huberman say about deep sleep?"}, {"role": "assistant", "content": "Huberman emphasises the importance of deep sleep."}, {"role": "user", "content": "Could you summarize my deep sleep over the last week?"}]}
+{"id": 285, "category": "multi_turn", "messages": [{"role": "user", "content": "Tell me about my sleep trend for the past week."}, {"role": "assistant", "content": "Here is your sleep trend."}, {"role": "user", "content": "Now provide my stress summary for yesterday."}]}
+{"id": 286, "category": "multi_turn", "messages": [{"role": "user", "content": "Can you give me a general check-in for December 1, 2025?"}, {"role": "assistant", "content": "Here's your health summary."}, {"role": "user", "content": "And what tips does Huberman give for improving sleep latency?"}]}
+{"id": 287, "category": "multi_turn", "messages": [{"role": "user", "content": "How did I sleep last night?"}, {"role": "assistant", "content": "You slept 7 hours with a score of 82."}, {"role": "user", "content": "By the way, what's my deep sleep time on that night?"}]}
+{"id": 288, "category": "multi_turn", "messages": [{"role": "user", "content": "Please show my heart rate for November 30, 2025."}, {"role": "assistant", "content": "Your heart rate data is ready."}, {"role": "user", "content": "Also, how stressed was I on the same day?"}]}
+{"id": 289, "category": "multi_turn", "messages": [{"role": "user", "content": "I need to know my sleep efficiency from last week."}, {"role": "assistant", "content": "Here's your sleep efficiency trend."}, {"role": "user", "content": "Could you check my deep sleep for yesterday as well?"}]}
+{"id": 290, "category": "multi_turn", "messages": [{"role": "user", "content": "What were my stress zones for last weekend?"}, {"role": "assistant", "content": "You were in the Engaged zone both days."}, {"role": "user", "content": "Now can you provide a full health summary for the last weekend?"}]}
+{"id": 291, "category": "multi_turn", "messages": [{"role": "user", "content": "Who won the game last night?"}, {"role": "assistant", "content": "I'm not sure."}, {"role": "user", "content": "OK, how about my heart rate yesterday?"}]}
+{"id": 292, "category": "multi_turn", "messages": [{"role": "user", "content": "Show me my sleep score for last Wednesday."}, {"role": "assistant", "content": "Your score was 76."}, {"role": "user", "content": "What does Huberman suggest for raising low scores?"}]}
+{"id": 293, "category": "multi_turn", "messages": [{"role": "user", "content": "Can you tell me about my heart rate last Sunday?"}, {"role": "assistant", "content": "Your heart rate data shows normal values."}, {"role": "user", "content": "Could you also get my sleep summary for that day?"}]}
+{"id": 294, "category": "multi_turn", "messages": [{"role": "user", "content": "Give me my sleep summary from last night."}, {"role": "assistant", "content": "You slept well."}, {"role": "user", "content": "Also, what were my stress levels for last night?"}]}
+{"id": 295, "category": "multi_turn", "messages": [{"role": "user", "content": "Tell me a bit about yourself, Pulsy."}, {"role": "assistant", "content": "I'm an AI health advisor."}, {"role": "user", "content": "Now could you summarize my sleep from two nights ago?"}]}
+{"id": 296, "category": "multi_turn", "messages": [{"role": "user", "content": "Could you provide my stress summary for yesterday?"}, {"role": "assistant", "content": "Your stress was high."}, {"role": "user", "content": "What insight does Huberman have on managing such stress?"}]}
+{"id": 297, "category": "multi_turn", "messages": [{"role": "user", "content": "I need my deep sleep metrics from November 28, 2025."}, {"role": "assistant", "content": "You had 1 hour 30 minutes of deep sleep."}, {"role": "user", "content": "Now analyze my deep sleep trend for the past week."}]}
+{"id": 298, "category": "multi_turn", "messages": [{"role": "user", "content": "Show me my heart rate data for November 29, 2025."}, {"role": "assistant", "content": "Your heart rate details are available."}, {"role": "user", "content": "Yesterday I didn't wear my ring; can you still give me my sleep data?"}]}
+{"id": 299, "category": "multi_turn", "messages": [{"role": "user", "content": "How were my stress metrics for last Monday?"}, {"role": "assistant", "content": "You were engaged that day."}, {"role": "user", "content": "Also, could you show me what Huberman says about reducing stress?"}]}
+{"id": 300, "category": "multi_turn", "messages": [{"role": "user", "content": "What is the square root of 16?"}, {"role": "assistant", "content": "It's 4."}, {"role": "user", "content": "How did I sleep last night?"}]}
