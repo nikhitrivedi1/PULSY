@@ -80,7 +80,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     res = []
     # With the data provided - what are the main analysis to provide
     # sleep timing - when did you go to bed / when did you wake up?
-    if not response['data']: 
+    if not response or 'data' not in response or not response['data']: 
         return "Data for the specified date appears to be unavailable or empty"
 
     # TODO: Handle multiple days of data
@@ -93,7 +93,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # Heart Rate
     # Need to handle case with null heart rate data value
     heart_rate_items = {}
-    if extracted_data['heart_rate']['items'] is not None and isinstance(extracted_data['heart_rate']['items'][0], float|int):
+    if (not extracted_data['heart_rate'] or 'items' not in extracted_data['heart_rate'] or extracted_data['heart_rate']['items'] is not None) and isinstance(extracted_data['heart_rate']['items'][0], float|int):
         heart_rate_items.update({
             'heart_rate_average': extracted_data['average_heart_rate'],
             'lowest_heart_rate': extracted_data['lowest_heart_rate'],
@@ -109,7 +109,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     res.append(heart_rate_items)
     # heart rate variability - how much did your heart rate vary during the night?
     # Need to handle the case with null hrv data values
-    if extracted_data['hrv']['items'] is not None and isinstance(extracted_data['hrv']['items'][0], float|int):
+    if (not extracted_data['hrv'] or 'items' not in extracted_data['hrv'] or extracted_data['hrv']['items'] is not None) and isinstance(extracted_data['hrv']['items'][0], float|int):
         res.append({
             'hrv_average': extracted_data['average_hrv'],
             'hrv_min': min(extracted_data['hrv']['items']),
@@ -129,16 +129,24 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # '3' = tossing and turning
     # '4' = active
 
-    mapping = {
-        '1': 'no motion', 
-        '2': 'restless',
-        '3': 'tossing and turning',
-        '4': 'active'
-    }
-    movement = extracted_data['movement_30_sec']
-    length = len(movement)
-    cntr = Counter(movement)
-    [res.append({mapping[key]: (freq /length)} for key, freq in cntr)]
+    if not extracted_data['movement_30_sec']:
+        res.append({
+            'movement_30_sec': None
+        })
+    else:
+        mapping = {
+            '1': 'no motion', 
+            '2': 'restless',
+            '3': 'tossing and turning',
+            '4': 'active'
+        }
+        movement = extracted_data['movement_30_sec']
+        length = len(movement)
+        cntr = Counter(movement)
+        mapped_dict = {}
+        for key, freq in cntr.items():
+            mapped_dict.update({mapping[key]: (freq /length)})
+        res.append(mapped_dict)
 
 
     # Normal Sleep Metrics
@@ -146,16 +154,15 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
 
     # Durations - provided in seconds convert to hours and minutes
     res.append({
-        'total_sleep_duration': f"{extracted_data['total_sleep_duration'] // 3600} hours and {extracted_data['total_sleep_duration'] % 3600} minutes",
-        'time_in_bed': f"{extracted_data['time_in_bed'] // 3600} hours and {extracted_data['time_in_bed'] % 3600} minutes",
-        'rem_sleep_duration': f"{extracted_data['rem_sleep_duration'] // 3600} hours and {extracted_data['rem_sleep_duration'] % 3600} minutes",
-        'light_sleep_duration': f"{extracted_data['light_sleep_duration'] // 3600} hours and {extracted_data['light_sleep_duration'] % 3600} minutes",
-        'deep_sleep_duration': f"{extracted_data['deep_sleep_duration'] // 3600} hours and {extracted_data['deep_sleep_duration'] % 3600} minutes",
-        'awake_time': f"{extracted_data['awake_time'] // 3600} hours and {extracted_data['awake_time'] % 3600} minutes"
+        'total_sleep_duration': f"{extracted_data['total_sleep_duration'] // 3600} hours and {((extracted_data['total_sleep_duration'] % 3600) // 60)} minutes",
+        'time_in_bed': f"{extracted_data['time_in_bed'] // 3600} hours and {((extracted_data['time_in_bed'] % 3600) // 60)} minutes",
+        'rem_sleep_duration': f"{extracted_data['rem_sleep_duration'] // 3600} hours and {((extracted_data['rem_sleep_duration'] % 3600) // 60)} minutes",
+        'light_sleep_duration': f"{extracted_data['light_sleep_duration'] // 3600} hours and {((extracted_data['light_sleep_duration'] % 3600) // 60)} minutes",
+        'deep_sleep_duration': f"{extracted_data['deep_sleep_duration'] // 3600} hours and {((extracted_data['deep_sleep_duration'] % 3600) // 60)} minutes",
+        'awake_time': f"{extracted_data['awake_time'] // 3600} hours and {((extracted_data['awake_time'] % 3600) // 60)} minutes"
     })
 
     # JSON dumps? List[dicts] into a JSON string?
-    print(f"Sleep Analysis: {res}")
     return res
 
 def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
@@ -195,7 +202,7 @@ def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
     # Format response for LLM consumption
-    if not response or 'data' not in response: 
+    if not response or 'data' not in response or not response['data']: 
         return "Unable to retrieve sleep data"
         
     response_messages = []
@@ -279,7 +286,7 @@ def get_heart_rate_data(start_date: str, end_date: str, user_key: str) -> str:
     # Make the GET Request
     response = requests.request("GET", URL, headers=headers, params=params).json()
 
-    if not response or "data" not in response:
+    if not response or "data" not in response or not response['data']:
         return "Unable to retrieve heart rate data"
 
     # Extract the maximum "bpm" seen

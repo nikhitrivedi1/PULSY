@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     # Database Configuration
     PUBLIC_IP: str  # PostgreSQL host IP (for local mode)
     DATABASE_NAME: str  # Name of the database
-    DB_USERNAME: str  # Database username
+    USERNAME: str  # Database username
     PASSWORD: str  # Database password
     DB_PORT: int  # Database port (default: 5432)
     INSTANCE_CONNECTION_NAME: str  # GCP Cloud SQL instance name

@@ -178,7 +178,9 @@ class AgenticRAG:
         query: str,
         user_id: str,
         query_history: list[str],
-        response_history: list[str]
+        response_history: list[str],
+        eval_mode: bool = False,
+        config: dict = None
         ) -> dict[str, str|int]:
         """
         Execute the agent workflow for a user query
