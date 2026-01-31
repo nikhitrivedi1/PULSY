@@ -140,7 +140,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # '3' = tossing and turning
     # '4' = active
 
-    if checks['analysis']['movement']:
+    if not checks['analysis']['movement']:
         res.append({
             'movement_30_sec': None
         })
