@@ -205,12 +205,12 @@ class Controller {
     }
 
     /**
-     * Refresh expired OAuth tokens for user
+     * Refresh expired OAuth tokens for user's Oura Ring
      * @param {string} username - User's username
      * @returns {Promise<object>} New tokens or error
      */
-    refreshTokens(username) {
-        return this.model.refreshTokens(username);
+    refreshOuraTokens(username) {
+        return this.model.refreshOuraTokens(username);
     }
 
     /**

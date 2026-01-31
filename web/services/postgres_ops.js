@@ -327,16 +327,22 @@ class UserDbOperations {
    * @param {string} username
    * @returns {Promise<object>}
    */
-  async refreshTokens(username) {
+  async getRefreshToken(username) {
     // get the refresh_token from the database
     const query = `
-      SELECT devices->'Oura Ring'->>'refresh_token' FROM users.users_staging WHERE username = ?
+      SELECT devices->'Oura Ring'->>'refresh_token' AS refresh_token FROM users.users_staging WHERE username = ?
     `;
-    const knex_res = await this.pool;
-    const res = await knex_res.raw(query, [username]);
-    if (res.rows.length === 0) return { success: false, return_value: "No refresh token found" };
-    const refresh_token = res.rows[0].refresh_token;
-    return { success: true, return_value: refresh_token };
+    try {
+      const knex_res = await this.pool;
+      const res = await knex_res.raw(query, [username]);
+      if (res.rows.length === 0 || !res.rows[0].refresh_token) {
+        return { success: false, return_value: "No refresh token found" };
+      }
+      return { success: true, return_value: res.rows[0].refresh_token };
+    } catch (error) {
+      console.error('Error getting refresh token:', error);
+      return { success: false, return_value: error.message };
+    }
   }
 
   /**
