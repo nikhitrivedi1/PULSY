@@ -30,6 +30,8 @@ export default (controller) => {
         }
     });
 
+    
+
     /**
      * GET /chat/home
      * Renders the chat page with user metrics and goals
