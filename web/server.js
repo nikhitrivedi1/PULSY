@@ -54,6 +54,8 @@ app.use('/user_profile', userProfileRoutes(controller));
 app.use('/chat', chatRoutes(controller));
 app.use('/my_devices', devicesRoutes(controller));
 app.use('/nav_bar', navBarRoutes(controller));
+app.use('/chat/sources', express.static(path.join(__dirname, 'knowledge_sources')));
+
 
 /** Default route handler */
 app.get('/', (req, res) => {

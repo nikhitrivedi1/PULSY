@@ -81,7 +81,7 @@ class UserDbOperations:
                 settings.INSTANCE_CONNECTION_NAME,
                 "pg8000",
                 db=settings.DATABASE_NAME,
-                user=settings.USERNAME,
+                user=settings.DB_USERNAME,
                 password=settings.PASSWORD,
                 ip_type=IPTypes.PUBLIC
             )
@@ -220,7 +220,7 @@ def create_user_db_tables():
 
     PUBLIC_IP = settings.PUBLIC_IP
     DATABASE_NAME = settings.DATABASE_NAME
-    USERNAME = settings.USERNAME
+    USERNAME = settings.DB_USERNAME
     PASSWORD = settings.PASSWORD
     PORT = settings.DB_PORT
 

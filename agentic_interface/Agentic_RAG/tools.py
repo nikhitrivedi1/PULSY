@@ -30,7 +30,7 @@ import pandas as pd
 from database.user_db_call import UserDbOperations
 from config.settings import settings
 from collections import Counter
-from response_checks import ResponseChecks
+from Agentic_RAG.response_checks import ResponseChecks
 
 # Singleton database connection for tool functions
 user_db_operations = UserDbOperations()
@@ -63,8 +63,10 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     - Durations
     """
     # Input Parameter Check to ensure we are not getting multiple days of data
-    if start_date != end_date:
-        return "Sleep analysis is only available for a single day"
+    if start_date == end_date:
+        return "Please provide a different start and end date."
+
+    print(f"Start Date: {start_date}, End Date: {end_date}")
 
     # Configure Oura API request
     URL = "https://api.ouraring.com/v2/usercollection/sleep"
@@ -77,6 +79,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # Fetch data from Oura API
     try:
         response = requests.request("GET", URL, headers=headers, params=params).json()
+        print(f"Response: {response}")
     except Exception as e:
         return f"Unable to retrieve sleep data due to {e}"
 
@@ -84,6 +87,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     checks = response_checks.check_response(response, "oura", "analysis")
     if not checks['basic']:
         return "Data for the specified date appears to be unavailable or empty"
+    print(f"Checks: {checks}")
 
     # if it is fully a boolean -> return immediately with error message 
     # otherwise -> proceed to extract data with error dictionaries
@@ -100,7 +104,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # Heart Rate
     # Need to handle case with null heart rate data value
     heart_rate_items = {}
-    if checks['heart_rate']:
+    if checks['analysis']['heart_rate']:
         heart_rate_items.update({
             'heart_rate_average': extracted_data['average_heart_rate'],
             'lowest_heart_rate': extracted_data['lowest_heart_rate'],
@@ -116,7 +120,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     res.append(heart_rate_items)
     # heart rate variability - how much did your heart rate vary during the night?
     # Need to handle the case with null hrv data values
-    if checks['hrv']:
+    if checks['analysis']['hrv']:
         res.append({
             'hrv_average': extracted_data['average_hrv'],
             'hrv_min': min(extracted_data['hrv']['items']),
@@ -136,7 +140,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # '3' = tossing and turning
     # '4' = active
 
-    if checks['movement']:
+    if checks['analysis']['movement']:
         res.append({
             'movement_30_sec': None
         })
@@ -208,12 +212,14 @@ def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     # Fetch data from Oura API
     try:
         response = requests.request("GET", URL, headers=headers, params=params).json()
+        print(f"Response: {response}")
     except Exception as e:
         return f"Unable to retrieve sleep data due to {e}"
 
     # Format response for LLM consumption
-    if not response or 'data' not in response or not response['data']: 
-        return "Unable to retrieve sleep data"
+    checks = response_checks.check_response(response, "oura", "analysis")
+    if not checks['basic']:
+        return "Data for the specified date appears to be unavailable or empty"
         
     response_messages = []
     for result in response["data"]:

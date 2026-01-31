@@ -22,6 +22,7 @@ class ResponseChecks:
     def _check_oura_basic(self, response:dict) -> bool:
         # If call is successful, check the response to see if data is populated
         if not response or "data" not in response or not response['data']:
+            print(f"Basic check failed for response: {response}")
             return False
         return True
 
@@ -30,17 +31,20 @@ class ResponseChecks:
         res = defaultdict(bool)
         # Heart Rate and HRV - min and max taken on items - utilizing average as entry to proceed to others
         res['heart_rate'] = (
+            'average_heart_rate' in response and
             response['average_heart_rate'] is not None and 
             response['average_heart_rate'] > 0 and
             'items' in response['heart_rate']
             )
         res['hrv'] = (
+            'average_hrv' in response and
             response['average_hrv'] is not None and
             response['average_hrv'] > 0 and
             'items' in response['hrv']
         )
 
         res['movement'] = (
+            'movement_30_sec' in response and
             response['movement_30_sec'] is not None
         )
         return res
