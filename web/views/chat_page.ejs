@@ -431,10 +431,80 @@
             margin-left: 2px;
             margin-top: 8px;
         }
+
+        /* Toast notification styles for token refresh status */
+        .toast-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease, fadeOut 0.5s ease 4.5s forwards;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .toast-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .toast-error {
+            background: #c92e22;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* Reconnect button loading state */
+        .sidebar-reconnect-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .sidebar-reconnect-btn.loading {
+            position: relative;
+        }
+
+        .sidebar-reconnect-btn.loading::after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 6px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <%- include('partials_header.ejs') %>
+
+    <!-- Toast notification for token refresh status -->
+    <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+        <div class="toast-notification toast-success" id="toastNotification">
+            <strong>Success!</strong> <%= successMessage %>
+        </div>
+    <% } else if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+        <div class="toast-notification toast-error" id="toastNotification">
+            <strong>Error:</strong> <%= errorMessage %>
+        </div>
+    <% } %>
 
     <!-- Metrics Sidebar -->
     <div class="metrics-container">
@@ -606,6 +676,33 @@
             if (chatHistory) {
                 chatHistory.scrollTop = chatHistory.scrollHeight;
             }
+
+            // === TOAST NOTIFICATION HANDLING ===
+            const toast = document.getElementById('toastNotification');
+            if (toast) {
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 5000);
+
+                // Click to dismiss
+                toast.addEventListener('click', () => {
+                    toast.style.display = 'none';
+                });
+            }
+
+            // === RECONNECT BUTTON HANDLING ===
+            const reconnectForms = document.querySelectorAll('form[action="/chat/refresh_tokens"]');
+            reconnectForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const btn = form.querySelector('.sidebar-reconnect-btn');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.classList.add('loading');
+                        btn.textContent = 'Reconnecting...';
+                    }
+                });
+            });
 
             // === HELPER FUNCTIONS ===
             

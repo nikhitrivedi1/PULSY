@@ -48,47 +48,67 @@ class Model {
      * @param {string} username - User's username
      * @returns {Promise<object>} Success status and new tokens or error
      */
-    async refreshTokens(username) {
-        let refresh_token = await this.user_db_operations.refreshTokens(username);
-        if (refresh_token.success) {
-            let tokens = await this.ouraRingRefreshCall(refresh_token.return_value);
-            if (tokens.success) {
-                return { success: true, return_value: tokens.return_value };
-            } else {
-                return { success: false, return_value: tokens.return_value };
-            }
+    async refreshOuraTokens(username) {
+        // Step 1: Get the refresh token from the database
+        let refresh_token_result = await this.user_db_operations.getRefreshToken(username);
+        if (!refresh_token_result.success) {
+            return { success: false, return_value: refresh_token_result.return_value };
         }
-        return { success: false, return_value: refresh_token.return_value };
+
+        // Step 2: Call Oura API to exchange refresh token for new tokens
+        let tokens_result = await this.ouraRingRefreshCall(refresh_token_result.return_value, username);
+        if (!tokens_result.success) {
+            return { success: false, return_value: tokens_result.return_value };
+        }
+
+        return { success: true, return_value: tokens_result.return_value };
     }
 
     /**
      * Makes an API call to Oura Ring to refresh the access token.
      * @param {string} refresh_token - The refresh token from Oura
+     * @param {string} username - User's username for storing new tokens
      * @returns {Promise<object>} New access/refresh tokens or error
      * @private
      */
-    async ouraRingRefreshCall(refresh_token) {
+    async ouraRingRefreshCall(refresh_token, username) {
         let token_data = {
             "refresh_token": refresh_token,
             "client_id": process.env.OURA_CLIENT_ID,
             "client_secret": process.env.OURA_SECRET,
             "grant_type": "refresh_token"
         }
-        const response = await fetch("https://api.ouraring.com/oauth/token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams(token_data)
-        });
-        console.log("Response: ", response)
 
-        // Upload the new tokens to the database
-        if (response.status == 200) {
-            let tokens = await response.json();
-            return this.user_db_operations.updateTokensOuraRing(username, tokens);
-        } else {
-            return { success: false, return_value: response.json() };
+        try {
+            const response = await fetch("https://api.ouraring.com/oauth/token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(token_data)
+            });
+            console.log("Oura token refresh response status:", response.status);
+
+            if (response.status === 200) {
+                // Parse the new tokens
+                let tokens = await response.json();
+                console.log("New tokens received from Oura API");
+
+                // Save the new tokens to the database
+                const update_result = await this.user_db_operations.updateTokensOuraRing(username, tokens);
+                if (update_result.success) {
+                    return { success: true, return_value: tokens };
+                } else {
+                    return { success: false, return_value: "Failed to save new tokens" };
+                }
+            } else {
+                const error_body = await response.json();
+                console.error("Oura token refresh failed:", error_body);
+                return { success: false, return_value: error_body.error_description || "Token refresh failed" };
+            }
+        } catch (error) {
+            console.error("Error calling Oura API:", error);
+            return { success: false, return_value: error.message };
         }
     }
 

@@ -83,19 +83,73 @@ export default (controller) => {
         }
     });
 
-    router.get('/refresh_tokens', async (req, res) => {
-        // TODO: Add other devices types at a later time
-        if (req.device_type == "Oura Ring") {
-            let response = await controller.refreshTokens(req.session.username);
-            // Update the user devices status
-            if (response.success) {
-                let user_devices = await controller.getUserDevices(req.session.username);
-                if (user_devices.success) {
-                    req.session.user_devices = user_devices.return_value.devices;
+    /**
+     * POST /chat/refresh_tokens
+     * Refreshes OAuth tokens for a disconnected device
+     * Uses the OAuth2 refresh token flow to obtain new access tokens
+     * @param {Object} req - Express request object containing device_type in body
+     * @param {Object} res - Express response object
+     */
+    router.post('/refresh_tokens', async (req, res) => {
+        const device_type = req.body.device_type;
+        let errorMessage = null;
+        let successMessage = null;
+
+        try {
+            // Currently only supporting Oura Ring
+            if (device_type === "Oura Ring") {
+                console.log("Refreshing Oura Ring tokens for user:", req.session.username);
+                
+                // Step 1: Refresh the tokens using OAuth2 refresh token flow
+                let refresh_result = await controller.refreshOuraTokens(req.session.username);
+                
+                if (refresh_result.success) {
+                    console.log("Token refresh successful, testing new connection...");
+                    
+                    // Step 2: Test the new access token
+                    const new_tokens = refresh_result.return_value;
+                    let is_connected = await controller.testUserDevices("Oura Ring", new_tokens.access_token);
+                    
+                    if (is_connected) {
+                        // Step 3: Update session with new device status
+                        let devices_response = await controller.getUserDevices(req.session.username);
+                        if (devices_response.success) {
+                            // Rebuild devices array with updated status
+                            let devices_array = [];
+                            for (const [key, tokens] of Object.entries(devices_response.return_value.devices)) {
+                                let device_connected = await controller.testUserDevices(key, tokens.access_token);
+                                devices_array.push({
+                                    device_type: key, 
+                                    device_status: device_connected ? "pass" : "fail"
+                                });
+                            }
+                            req.session.user_devices = devices_array;
+                        }
+                        successMessage = "Device reconnected successfully!";
+                    } else {
+                        errorMessage = "Token refresh succeeded but connection test failed. Please try reconnecting your device.";
+                    }
+                } else {
+                    console.error("Token refresh failed:", refresh_result.return_value);
+                    errorMessage = `Failed to refresh tokens: ${refresh_result.return_value}`;
                 }
+            } else {
+                errorMessage = `Token refresh not supported for ${device_type}`;
             }
-        } 
-        res.render("chat_page.ejs", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, successMessage: "Tokens refreshed successfully", errorMessage: null });
+        } catch (error) {
+            console.error("Error in refresh_tokens route:", error);
+            errorMessage = "An unexpected error occurred while refreshing tokens.";
+        }
+
+        // Render chat page preserving all session state
+        res.render("chat_page.ejs", { 
+            user_metrics: req.session.user_metrics || {}, 
+            user_devices: req.session.user_devices || [], 
+            query_history: req.session.query_history || [],
+            response_history: req.session.response_history || [],
+            successMessage: successMessage,
+            errorMessage: errorMessage
+        });
     });
 
     router.post('/feedback', async (req, res) => {
