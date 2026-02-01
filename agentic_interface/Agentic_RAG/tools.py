@@ -23,6 +23,7 @@ Dependencies:
 """
 
 import requests
+import json
 from pinecone import Pinecone
 from langchain_huggingface import HuggingFaceEmbeddings
 import pandas as pd
@@ -108,13 +109,11 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
         heart_rate_items.update({
             'heart_rate_average': extracted_data['average_heart_rate'],
             'lowest_heart_rate': extracted_data['lowest_heart_rate'],
-            'highest_heart_rate': max(extracted_data['heart_rate']['items']),
         })
     else:
         heart_rate_items.update({
             'heart_rate_average': None,
             'lowest_heart_rate': None,
-            'highest_heart_rate': None
         })
 
     res.append(heart_rate_items)
@@ -123,14 +122,10 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     if checks['analysis']['hrv']:
         res.append({
             'hrv_average': extracted_data['average_hrv'],
-            'hrv_min': min(extracted_data['hrv']['items']),
-            'hrv_max': max(extracted_data['hrv']['items'])
         })
     else:
         res.append({
             'hrv_average': None,
-            'hrv_min': None,
-            'hrv_max': None
         })
 
     # Movement - how much did you move during the night? - taken every 30 minutes
@@ -174,7 +169,7 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     })
 
     # JSON dumps? List[dicts] into a JSON string?
-    return res
+    return json.dumps(res)
 
 def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     """
@@ -226,11 +221,13 @@ def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
         score = result["score"]
         contributors = result["contributors"]  # Dict of metric scores
         day = result["day"]
-        response_messages.append(
-            f"Score: {score}, Contributors: {contributors}, Day: {day}"
-        )
+        response_messages.append({
+            "score": score,
+            "contributors": contributors,
+            "day": day
+        })
 
-    return "\n".join(response_messages)
+    return json.dumps(response_messages)
 
 def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
     """
@@ -271,9 +268,14 @@ def get_stress_data(start_date: str, end_date: str, user_key: str) -> str:
         recovery_high = result["recovery_high"]
         day = result["day"]
         day_summary = result["day_summary"]
-        response_messages.append(f"Stress High: {stress_high}, Recovery High: {recovery_high}, Day: {day}, Day Summary: {day_summary}")
+        response_messages.append({
+            "stress_high": stress_high,
+            "recovery_high": recovery_high,
+            "day": day,
+            "day_summary": day_summary
+        })
 
-    return "\n".join(response_messages)
+    return json.dumps(response_messages)
 
 # Get the user heart rate data from the Oura API between the start and end date
 # Returns: str - the heart rate data between the start and end date - formatted as a string
@@ -317,12 +319,12 @@ def get_heart_rate_data(start_date: str, end_date: str, user_key: str) -> str:
     average_bpm_non_workout = df[df["source"] != "workout"]["bpm"].mean()
 
     response_dict = {
-        "max_bpm": max_bpm,
-        "min_bpm": min_bpm,
-        "average_bpm_workout": average_bpm_workout,
-        "average_bpm_non_workout": average_bpm_non_workout
+        "max_bpm": float(max_bpm),
+        "min_bpm": float(min_bpm),
+        "average_bpm_workout": float(average_bpm_workout) if not pd.isna(average_bpm_workout) else None,
+        "average_bpm_non_workout": float(average_bpm_non_workout) if not pd.isna(average_bpm_non_workout) else None
     }
-    return response_dict
+    return json.dumps(response_dict)
 
 # Andrew Huberman Podcast Transcripts
 # Returns: str - semantic search results - returning top 5 results from the vector db

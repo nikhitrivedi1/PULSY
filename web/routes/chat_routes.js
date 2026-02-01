@@ -143,7 +143,7 @@ export default (controller) => {
 
         // Render chat page preserving all session state
         res.render("chat_page.ejs", { 
-            user_metrics: req.session.user_metrics || {}, 
+            user_metrics: req.session.user_metrics || [], 
             user_devices: req.session.user_devices || [], 
             query_history: req.session.query_history || [],
             response_history: req.session.response_history || [],
