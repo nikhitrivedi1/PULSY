@@ -264,6 +264,144 @@ class AgenticRAG:
             "log_id": log_id
         }
 
+    async def run_stream(self,
+        query: str,
+        user_id: str,
+        query_history: list[str],
+        response_history: list[str]
+        ):
+        """
+        Execute the agent workflow with streaming events
+        
+        This method yields events in real-time as the agent executes:
+        - tool_start: When a tool begins executing
+        - tool_end: When a tool finishes executing
+        - token: Each token of the final response
+        - done: When the workflow completes
+        
+        Args:
+            query: User's current question/request
+            user_id: Username for personalization and data access
+            query_history: List of previous user messages in this session
+            response_history: List of previous AI responses in this session
+        
+        Yields:
+            dict: Event objects with 'type' and relevant data
+        """
+        # Add current date to context for time-aware responses
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        date_message = f"Today's date is: {current_date}"
+        user_specific_message = "My name and user_key is: "
+
+        # Build message history starting with system prompt
+        message_history = [self.sys_msg, date_message]
+        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
+        
+        # Convert conversation history to LangChain message format
+        message_conversation, chatml_conversation = self.create_message_history(
+            query_history, 
+            response_history
+        )
+        message_history.extend(message_conversation)
+
+        # Retrieve and add user preferences
+        user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
+        if user_preferences is not None:
+            user_preferences = user_preferences[0]
+            user_preferences_message = SystemMessage(
+                content=f"User preferences: {user_preferences}"
+            )
+            message_history.extend([user_preferences_message])
+        else:
+            user_preferences = []
+        
+        # Retrieve user's device API key
+        user_key = await self.__get_device_api_key(user_id, "Oura Ring")
+        message_history.extend([
+            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
+        ])
+        
+        # Add current query
+        message_history.extend([HumanMessage(content=query)])
+        query_idx = len(message_history) - 1
+
+        # Track state for logging
+        start_time = time.time()
+        final_response_content = ""
+        all_messages = None
+        
+        # Stream events from the ReAct graph
+        async for event in self.react_graph.astream_events(
+            {"messages": message_history},
+            version="v2"
+        ):
+            event_type = event.get("event", "")
+            
+            # Tool execution start
+            if event_type == "on_tool_start":
+                tool_name = event.get("name", "unknown")
+                yield {
+                    "type": "tool_start",
+                    "tool_name": tool_name
+                }
+            
+            # Tool execution end
+            elif event_type == "on_tool_end":
+                tool_name = event.get("name", "unknown")
+                yield {
+                    "type": "tool_end",
+                    "tool_name": tool_name
+                }
+            
+            # Token streaming from the chat model
+            elif event_type == "on_chat_model_stream":
+                chunk = event.get("data", {}).get("chunk")
+                if chunk and hasattr(chunk, "content") and chunk.content:
+                    # Yield string content (including whitespace/newlines for formatting)
+                    # Skip empty strings but preserve newlines and spaces
+                    if isinstance(chunk.content, str) and len(chunk.content) > 0:
+                        final_response_content += chunk.content
+                        yield {
+                            "type": "token",
+                            "content": chunk.content
+                        }
+            
+            # Capture final state for logging
+            elif event_type == "on_chain_end":
+                if event.get("name") == "LangGraph":
+                    # This is the final graph completion
+                    output = event.get("data", {}).get("output", {})
+                    if "messages" in output:
+                        all_messages = output
+
+        # Calculate inference time
+        inference_time = time.time() - start_time
+        
+        # Prepare messages state for logging if we captured it
+        if all_messages is None:
+            # Fallback: create a simple messages structure
+            all_messages = {
+                "messages": message_history + [AIMessage(content=final_response_content)]
+            }
+        
+        # Log the conversation
+        log_id = await self.log_message(
+            query, 
+            response=all_messages['messages'][-1], 
+            message_hist=chatml_conversation, 
+            query_idx=query_idx, 
+            inference_time=inference_time, 
+            messages=all_messages, 
+            user_spec=f"{date_message} {user_specific_message}USER_KEY", 
+            preferences=user_preferences
+        )
+
+        # Yield completion event with log_id
+        yield {
+            "type": "done",
+            "log_id": log_id
+        }
+
     def create_message_history(
         self, 
         query_history: list[str], 

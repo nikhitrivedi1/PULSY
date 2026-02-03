@@ -490,6 +490,117 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Clear Chat Button */
+        .clear-chat-container {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(11, 54, 91, 0.1);
+        }
+
+        .clear-chat-btn {
+            width: 100%;
+            padding: 10px 15px;
+            background: transparent;
+            border: 1px solid #c92e22;
+            color: #c92e22;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .clear-chat-btn:hover {
+            background: #c92e22;
+            color: white;
+        }
+
+        .clear-chat-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Tool status indicator */
+        .tool-status-container {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 150;
+        }
+
+        .tool-status-container.active {
+            display: block;
+        }
+
+        .tool-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #0B365B;
+            color: #E8E1D7;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tool-status-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(232, 225, 215, 0.3);
+            border-top-color: #E8E1D7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .tool-status-text {
+            font-weight: 500;
+        }
+
+        .tool-status-indicator.complete {
+            background: #27ae60;
+        }
+
+        .tool-status-indicator.complete .tool-status-spinner {
+            display: none;
+        }
+
+        .tool-status-indicator.complete::before {
+            content: "✓";
+            margin-right: -4px;
+        }
+
+        /* Streaming cursor element */
+        .streaming-cursor {
+            display: inline;
+            animation: blink 1s infinite;
+            color: #0B365B;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -585,6 +696,21 @@
                 <% } %>
             </div>
         </div>
+
+        <!-- Clear Chat Button -->
+        <div class="clear-chat-container">
+            <button type="button" id="clearChatBtn" class="clear-chat-btn">
+                <i class="fas fa-trash-alt"></i> Clear Chat
+            </button>
+        </div>
+    </div>
+
+    <!-- Tool Status Indicator (for streaming mode) -->
+    <div class="tool-status-container" id="toolStatusContainer">
+        <div class="tool-status-indicator" id="toolStatusIndicator">
+            <div class="tool-status-spinner"></div>
+            <span class="tool-status-text" id="toolStatusText">Processing...</span>
+        </div>
     </div>
 
     <!-- Main Chat Area -->
@@ -670,6 +796,8 @@
     </div>
 
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+    <!-- Marked.js for markdown parsing in streaming mode -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chatHistory = document.querySelector('.chat-history');
@@ -703,6 +831,57 @@
                     }
                 });
             });
+
+            // === CLEAR CHAT BUTTON HANDLING ===
+            const clearChatBtn = document.getElementById('clearChatBtn');
+            if (clearChatBtn) {
+                clearChatBtn.addEventListener('click', async function() {
+                    // Confirm before clearing
+                    if (!confirm('Are you sure you want to clear your chat history? This cannot be undone.')) {
+                        return;
+                    }
+
+                    clearChatBtn.disabled = true;
+                    clearChatBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Clearing...';
+
+                    try {
+                        const response = await fetch('/chat/clear-history', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Clear the chat container UI
+                            const chatContainer = document.getElementById('chatContainer');
+                            if (chatContainer) {
+                                // Keep only the greeting message and spacer
+                                chatContainer.innerHTML = `
+                                    <div class="message assistant-message">
+                                        Hello! I'm your AI wearables advisor. How can I help you optimize your device usage today?
+                                    </div>
+                                    <div id="chatSpacer" style="height: 250px;"></div>
+                                `;
+                            }
+                            clearChatBtn.innerHTML = '<i class="fas fa-check"></i> Cleared!';
+                            setTimeout(() => {
+                                clearChatBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear Chat';
+                                clearChatBtn.disabled = false;
+                            }, 1500);
+                        } else {
+                            throw new Error(data.error || 'Failed to clear chat');
+                        }
+                    } catch (error) {
+                        console.error('Error clearing chat:', error);
+                        clearChatBtn.innerHTML = '<i class="fas fa-times"></i> Error';
+                        setTimeout(() => {
+                            clearChatBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear Chat';
+                            clearChatBtn.disabled = false;
+                        }, 1500);
+                    }
+                });
+            }
 
             // === HELPER FUNCTIONS ===
             
@@ -875,6 +1054,260 @@
             const queryInput = document.getElementById('queryInput');
             const sendBtn = document.getElementById('sendQuery');
             const errorDiv = document.getElementById('errorMessage');
+            const toolStatusContainer = document.getElementById('toolStatusContainer');
+            const toolStatusIndicator = document.getElementById('toolStatusIndicator');
+            const toolStatusText = document.getElementById('toolStatusText');
+
+            // Tool name friendly mapping
+            const toolFriendlyNames = {
+                'get_sleep_data': 'Fetching sleep data',
+                'sleep_analysis': 'Analyzing sleep patterns',
+                'get_stress_data': 'Fetching stress data',
+                'get_heart_rate_data': 'Fetching heart rate data',
+                'get_Andrew_Huberman_Insights': 'Searching knowledge base'
+            };
+
+            // Show tool status indicator
+            function showToolStatus(toolName, status) {
+                const friendlyName = toolFriendlyNames[toolName] || toolName;
+                
+                if (status === 'running') {
+                    toolStatusIndicator.classList.remove('complete');
+                    toolStatusText.textContent = friendlyName + '...';
+                    toolStatusContainer.classList.add('active');
+                } else if (status === 'complete') {
+                    toolStatusIndicator.classList.add('complete');
+                    toolStatusText.textContent = friendlyName + ' done';
+                    // Hide after a brief moment
+                    setTimeout(() => {
+                        toolStatusContainer.classList.remove('active');
+                        toolStatusIndicator.classList.remove('complete');
+                    }, 800);
+                }
+            }
+
+            // Hide tool status indicator
+            function hideToolStatus() {
+                toolStatusContainer.classList.remove('active');
+            }
+
+            // Handle streaming query submission
+            async function submitQueryStreaming(userQuery) {
+                const spacer = document.getElementById('chatSpacer');
+                
+                // Create assistant message element for streaming
+                const assistantMsgEl = document.createElement('div');
+                assistantMsgEl.className = 'message assistant-message';
+                assistantMsgEl.id = 'streaming-assistant-msg';
+                
+                // Create a container for the streamed content
+                const contentContainer = document.createElement('div');
+                contentContainer.id = 'streaming-content';
+                assistantMsgEl.appendChild(contentContainer);
+                
+                // Create blinking cursor element
+                const cursorEl = document.createElement('span');
+                cursorEl.className = 'streaming-cursor';
+                cursorEl.textContent = '▊';
+                assistantMsgEl.appendChild(cursorEl);
+                
+                if (spacer) {
+                    chatContainer.insertBefore(assistantMsgEl, spacer);
+                } else {
+                    chatContainer.appendChild(assistantMsgEl);
+                }
+                scrollToBottom();
+
+                let fullResponse = '';
+                let logId = null;
+                let lastRenderTime = 0;
+                let renderInterval = null;
+                const RENDER_INTERVAL_MS = 50; // Render every 50ms for smooth updates
+
+                // Render markdown to the content container
+                function renderMarkdown(force = false) {
+                    const now = Date.now();
+                    
+                    // Skip if not enough time has passed (unless forced)
+                    if (!force && (now - lastRenderTime) < RENDER_INTERVAL_MS) {
+                        return;
+                    }
+                    
+                    lastRenderTime = now;
+                    
+                    try {
+                        // Use marked to parse markdown - check both API styles
+                        const rendered = (typeof marked.parse === 'function') 
+                            ? marked.parse(fullResponse) 
+                            : marked(fullResponse);
+                        contentContainer.innerHTML = rendered;
+                        scrollToBottom();
+                    } catch (err) {
+                        console.error('Markdown render error:', err);
+                        // Fallback to plain text with line breaks
+                        contentContainer.innerHTML = fullResponse.replace(/\n/g, '<br>');
+                    }
+                }
+
+                // Start a render interval to ensure regular updates
+                renderInterval = setInterval(() => {
+                    if (fullResponse) {
+                        renderMarkdown(true);
+                    }
+                }, RENDER_INTERVAL_MS);
+
+                return new Promise((resolve, reject) => {
+                    const eventSource = new EventSource(`/chat/query/stream?query=${encodeURIComponent(userQuery)}`);
+                    
+                    eventSource.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            
+                            switch(data.type) {
+                                case 'tool_start':
+                                    showToolStatus(data.tool_name, 'running');
+                                    break;
+                                    
+                                case 'tool_end':
+                                    showToolStatus(data.tool_name, 'complete');
+                                    break;
+                                    
+                                case 'token':
+                                    if (data.content) {
+                                        fullResponse += data.content;
+                                        // Try to render (will be throttled)
+                                        renderMarkdown();
+                                    }
+                                    break;
+                                    
+                                case 'done':
+                                    logId = data.log_id;
+                                    eventSource.close();
+                                    clearInterval(renderInterval);
+                                    
+                                    // Remove cursor
+                                    cursorEl.remove();
+                                    assistantMsgEl.removeAttribute('id');
+                                    
+                                    // Final markdown render and add feedback form
+                                    const markedResponse = (typeof marked.parse === 'function') 
+                                        ? marked.parse(fullResponse) 
+                                        : marked(fullResponse);
+                                    assistantMsgEl.innerHTML = markedResponse + createFeedbackFormHTML();
+                                    
+                                    // Initialize feedback handlers
+                                    initializeFeedbackForm(assistantMsgEl);
+                                    
+                                    // Save chat history to database (fire-and-forget)
+                                    fetch('/chat/save-history', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            query: userQuery,
+                                            response: markedResponse,
+                                            log_id: logId
+                                        })
+                                    }).catch(err => console.error('Failed to save chat history:', err));
+                                    
+                                    hideToolStatus();
+                                    scrollToBottom();
+                                    
+                                    resolve({ response: markedResponse, log_id: logId });
+                                    break;
+                                    
+                                case 'error':
+                                    eventSource.close();
+                                    clearInterval(renderInterval);
+                                    hideToolStatus();
+                                    assistantMsgEl.remove();
+                                    reject(new Error(data.message || 'Streaming error'));
+                                    break;
+                            }
+                        } catch (parseError) {
+                            console.error('Error parsing event:', parseError);
+                        }
+                    };
+                    
+                    eventSource.onerror = (error) => {
+                        console.error('EventSource error:', error);
+                        eventSource.close();
+                        clearInterval(renderInterval);
+                        hideToolStatus();
+                        
+                        // If we have partial response, show it
+                        if (fullResponse) {
+                            cursorEl.remove();
+                            const markedResponse = (typeof marked.parse === 'function') 
+                                ? marked.parse(fullResponse) 
+                                : marked(fullResponse);
+                            assistantMsgEl.innerHTML = markedResponse + createFeedbackFormHTML();
+                            initializeFeedbackForm(assistantMsgEl);
+                            resolve({ response: markedResponse, log_id: null });
+                        } else {
+                            assistantMsgEl.remove();
+                            reject(new Error('Connection lost'));
+                        }
+                    };
+                });
+            }
+
+            // Handle non-streaming query submission (original implementation)
+            async function submitQueryNonStreaming(userQuery) {
+                const spacer = document.getElementById('chatSpacer');
+                
+                // Show "Thinking..." message with pulsing animation
+                const assistantMsg = document.createElement('div');
+                assistantMsg.className = 'message assistant-message thinking-message';
+                assistantMsg.id = 'pending-assistant-msg';
+                assistantMsg.innerHTML = '<em style="color:#666;">🤔 Thinking...</em>';
+                if (spacer) {
+                    chatContainer.insertBefore(assistantMsg, spacer);
+                } else {
+                    chatContainer.appendChild(assistantMsg);
+                }
+                scrollToBottom();
+
+                const res = await fetch('/chat/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ query: userQuery })
+                });
+
+                const data = await res.json();
+
+                // Remove "Thinking..." message
+                assistantMsg.remove();
+
+                // Check for errors
+                if (!res.ok || (data.success === false)) {
+                    throw new Error(data.error || data.message || 'Server error occurred');
+                }
+
+                // Get the response
+                let assistantResponse = data.response || '';
+                
+                if (!assistantResponse) {
+                    assistantResponse = 'Sorry, I did not understand. Please try again.';
+                }
+
+                // Create assistant message element with feedback form (insert before spacer)
+                const assistantMsgEl = document.createElement('div');
+                assistantMsgEl.className = 'message assistant-message';
+                assistantMsgEl.innerHTML = assistantResponse + createFeedbackFormHTML();
+                if (spacer) {
+                    chatContainer.insertBefore(assistantMsgEl, spacer);
+                } else {
+                    chatContainer.appendChild(assistantMsgEl);
+                }
+
+                // Initialize feedback handlers for the new form
+                initializeFeedbackForm(assistantMsgEl);
+
+                return { response: assistantResponse, log_id: data.log_id };
+            }
 
             if (queryForm && chatContainer && queryInput) {
                 queryForm.addEventListener('submit', async function(e) {
@@ -902,65 +1335,13 @@
                     }
                     scrollToBottom();
 
-                    // Show "Thinking..." message with pulsing animation
-                    const assistantMsg = document.createElement('div');
-                    assistantMsg.className = 'message assistant-message thinking-message';
-                    assistantMsg.id = 'pending-assistant-msg';
-                    assistantMsg.innerHTML = '<em style="color:#666;">🤔 Thinking...</em>';
-                    if (spacer) {
-                        chatContainer.insertBefore(assistantMsg, spacer);
-                    } else {
-                        chatContainer.appendChild(assistantMsg);
-                    }
-
-                    // Scroll to bottom
-                    scrollToBottom();
-
                     // Disable input while processing
                     sendBtn.disabled = true;
                     queryInput.disabled = true;
 
                     try {
-                        const res = await fetch('/chat/query', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ query: userQuery })
-                        });
-
-                        const data = await res.json();
-
-                        // Remove "Thinking..." message
-                        assistantMsg.remove();
-
-                        // Check for errors
-                        if (!res.ok || (data.success === false)) {
-                            const errorMessage = data.error || data.message || 'Server error occurred';
-                            if (errorDiv) errorDiv.textContent = errorMessage;
-                            return;
-                        }
-
-                        // Get the response
-                        let assistantResponse = data.response || '';
-                        
-                        if (!assistantResponse) {
-                            assistantResponse = 'Sorry, I did not understand. Please try again.';
-                        }
-
-                        // Create assistant message element with feedback form (insert before spacer)
-                        const assistantMsgEl = document.createElement('div');
-                        assistantMsgEl.className = 'message assistant-message';
-                        assistantMsgEl.innerHTML = assistantResponse + createFeedbackFormHTML();
-                        if (spacer) {
-                            chatContainer.insertBefore(assistantMsgEl, spacer);
-                        } else {
-                            chatContainer.appendChild(assistantMsgEl);
-                        }
-
-                        // Initialize feedback handlers for the new form
-                        initializeFeedbackForm(assistantMsgEl);
+                        // Always use streaming mode
+                        await submitQueryStreaming(userQuery);
 
                         // Scroll to bottom after rendering completes
                         scrollToBottom();
@@ -968,8 +1349,7 @@
 
                     } catch(err) {
                         console.error('Query submission error:', err);
-                        if (assistantMsg.parentNode) assistantMsg.remove();
-                        if (errorDiv) errorDiv.textContent = "Network error: " + err.message;
+                        if (errorDiv) errorDiv.textContent = "Error: " + err.message;
                     } finally {
                         // Re-enable input
                         sendBtn.disabled = false;

@@ -11,12 +11,24 @@ export default (controller) => {
 
     /**
      * GET /logout
-     * Handles user logout by destroying session and redirecting to home
+     * Handles user logout by clearing chat history, destroying session and redirecting to home
      * @param {Object} req - Express request object containing session
      * @param {Object} res - Express response object
      */
-    router.get('/logout', (req, res) => {
+    router.get('/logout', async (req, res) => {
         console.log("Logging out");
+        
+        // Clear chat history from database before destroying session
+        if (req.session && req.session.username) {
+            try {
+                await controller.clearChatHistory(req.session.username);
+                console.log("Chat history cleared for user:", req.session.username);
+            } catch (error) {
+                console.error("Error clearing chat history on logout:", error);
+                // Continue with logout even if clearing fails
+            }
+        }
+        
         req.session = null;
         res.redirect('/');
     });

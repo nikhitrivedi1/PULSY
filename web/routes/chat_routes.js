@@ -67,16 +67,35 @@ export default (controller) => {
                 req.session.device_error_message = error.message;
                 req.session.user_devices = [];
             }finally{
-        
-                if (!req.session.query_history){
-                    req.session.query_history = [];
-                }
-                if (!req.session.response_history){
-                    req.session.response_history = [];
+                // Load chat history from database instead of session
+                let query_history = [];
+                let response_history = [];
+                
+                try {
+                    const historyResult = await controller.getChatHistory(req.session.username);
+                    if (historyResult.success && historyResult.return_value) {
+                        query_history = historyResult.return_value.queries || [];
+                        response_history = historyResult.return_value.responses || [];
+                        // Update session log_id if available
+                        if (historyResult.return_value.log_id) {
+                            req.session.log_id = historyResult.return_value.log_id;
+                        }
+                    }
+                } catch (historyError) {
+                    console.error("Error loading chat history from DB:", historyError);
+                    // Fall back to session if DB fails
+                    query_history = req.session.query_history || [];
+                    response_history = req.session.response_history || [];
                 }
         
                 // Render the chat page
-                res.status(200).render("chat_page", { user_metrics: req.session.user_metrics, user_devices: req.session.user_devices, errorMessage: req.session.device_error_message, query_history: req.session.query_history, response_history: req.session.response_history });
+                res.status(200).render("chat_page", { 
+                    user_metrics: req.session.user_metrics, 
+                    user_devices: req.session.user_devices, 
+                    errorMessage: req.session.device_error_message, 
+                    query_history: query_history, 
+                    response_history: response_history 
+                });
             }
         } else {
             res.status(200).render("loginPage.ejs", { errorMessage: "Invalid username or password" });
@@ -166,6 +185,70 @@ export default (controller) => {
     });
 
     /**
+     * POST /chat/save-history
+     * Saves chat history to database after streaming completes
+     * Called by frontend after SSE streaming is done
+     * @param {Object} req - Express request with query, response, log_id in body
+     * @param {Object} res - Express response object
+     */
+    router.post('/save-history', async (req, res) => {
+        try {
+            const { query, response, log_id } = req.body;
+            const username = req.session.username;
+
+            if (!username) {
+                return res.status(401).json({ success: false, error: "Not authenticated" });
+            }
+
+            if (!query || !response) {
+                return res.status(400).json({ success: false, error: "Missing query or response" });
+            }
+
+            const result = await controller.saveChatHistory(username, query, response, log_id);
+            
+            if (result.success) {
+                // Also update session log_id for feedback
+                req.session.log_id = log_id;
+                res.status(200).json({ success: true });
+            } else {
+                console.error("Failed to save chat history:", result.return_value);
+                res.status(500).json({ success: false, error: result.return_value });
+            }
+        } catch (error) {
+            console.error("Error in /save-history route:", error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    /**
+     * POST /chat/clear-history
+     * Clears all chat history for the current user
+     * @param {Object} req - Express request object
+     * @param {Object} res - Express response object
+     */
+    router.post('/clear-history', async (req, res) => {
+        try {
+            const username = req.session.username;
+
+            if (!username) {
+                return res.status(401).json({ success: false, error: "Not authenticated" });
+            }
+
+            const result = await controller.clearChatHistory(username);
+            
+            if (result.success) {
+                res.status(200).json({ success: true });
+            } else {
+                console.error("Failed to clear chat history:", result.return_value);
+                res.status(500).json({ success: false, error: result.return_value });
+            }
+        } catch (error) {
+            console.error("Error in /clear-history route:", error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    /**
      * POST /chat/query
      * Handles chat queries asynchronously and returns JSON response
      * @param {Object} req - Express request object containing query data
@@ -203,8 +286,7 @@ export default (controller) => {
             const response = response_data.response;
             const log_id = response_data.log_id;
             const marked_response = marked(response);
-            console.log(marked_response);
-            console.log("Query processed successfully, Log ID:", log_id);
+
             
             req.session.response_history.push(marked_response);
             req.session.log_id = log_id;
@@ -221,6 +303,80 @@ export default (controller) => {
                 error: "Failed to process query",
                 message: error.message 
             });
+        }
+    });
+
+    /**
+     * GET /chat/query/stream
+     * Streams AI chat responses using Server-Sent Events (SSE)
+     * Proxies the SSE stream from the Python backend to the frontend
+     * 
+     * Query Parameters:
+     * - query: User's question/query
+     * 
+     * @param {Object} req - Express request object containing session and query params
+     * @param {Object} res - Express response object configured for SSE
+     */
+    router.get('/query/stream', async (req, res) => {
+        const query = req.query.query;
+        const username = req.session.username;
+        
+        if (!query || !username) {
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.write(`data: ${JSON.stringify({ type: 'error', message: 'Missing query or username' })}\n\n`);
+            res.end();
+            return;
+        }
+
+        // Load chat history from database for context (session won't persist after flushHeaders)
+        let query_history = [];
+        let response_history = [];
+        
+        try {
+            const historyResult = await controller.getChatHistory(username);
+            if (historyResult.success && historyResult.return_value) {
+                query_history = historyResult.return_value.queries || [];
+                response_history = historyResult.return_value.responses || [];
+            }
+        } catch (historyError) {
+            console.error("Error loading chat history for streaming:", historyError);
+        }
+        
+        // Add current query to the history for context
+        query_history.push(query);
+
+        // Set SSE headers
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+        res.flushHeaders();
+
+        try {
+            // Get streaming response from model
+            const streamIterator = await controller.chatQueryStream(
+                query, 
+                username, 
+                query_history, 
+                response_history
+            );
+
+            // Process and forward each event
+            for await (const event of streamIterator) {
+                // Forward the event to client
+                res.write(`data: ${JSON.stringify(event)}\n\n`);
+            }
+
+            // Note: Session updates are NOT possible after flushHeaders() with cookie-session
+            // Frontend will call /save-history to persist the response to database
+            res.end();
+
+        } catch (error) {
+            console.error('Error in /query/stream route:', error);
+            res.write(`data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`);
+            res.end();
         }
     });
 
