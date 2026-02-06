@@ -1,6 +1,6 @@
-# Pulsy — Your AI Advisor for Wearable Device Data 🧠⌚️
+# Pulsy — Your AI Advisor for Oura Ring Data 🧠⌚️
 
-Pulsy transforms your wearable data into **personalized, expert-grounded health insights**, powered by **agentic AI**, **RAG**, and curated scientific knowledge (inspired by voices like *Andrew Huberman*).
+Pulsy transforms your Oura Ring data into **personalized, expert-grounded health insights**, powered by **agentic AI**, **RAG**, and curated scientific knowledge (inspired by voices like *Andrew Huberman*).
 
 👉 **Try it live:** https://pulsy-768224718837.us-west1.run.app/
 
