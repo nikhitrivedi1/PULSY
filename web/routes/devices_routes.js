@@ -74,6 +74,7 @@ export default (controller) => {
         // Redirect to devices page to show newly connected device
         return res.redirect('/nav_bar/my_devices');
     });
+
     /**
      * POST /devices/action
      * Handles device addition and deletion actions
@@ -87,12 +88,13 @@ export default (controller) => {
         if(req.body.action == "add") {
             console.log("Adding device");
             const device_type = req.body.device_type;
-            const api_key = req.body.api_key;
             // status = await controller.addDevice(req.session.username, device_type, api_key);
             if (device_type == "Oura Ring"){
                 let auth_url = await controller.authorizeOuraRingUser(req.session);
                 return res.redirect(auth_url);
-            }            
+            }else{
+                res.render("my_devices_page.ejs", { successMessage: null, errorMessage: "Invalid device type" });
+            }          
         } 
         // Handle device deletion
         else if(req.body.action == "delete") {
