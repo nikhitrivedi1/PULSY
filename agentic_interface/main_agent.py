@@ -181,7 +181,7 @@ async def stream_query(
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no"  # Disable nginx buffering if behind proxy
+            "X-Accel-Buffering": "no"
         }
     )
 

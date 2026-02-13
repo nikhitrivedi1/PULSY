@@ -40,3 +40,5 @@ web/start_web.sh
 
 # SFT
 SFT/*
+
+agentic_interface/database/__pycache__/user_db_call.cpython-311.pyc

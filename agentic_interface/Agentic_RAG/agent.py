@@ -203,43 +203,9 @@ class AgenticRAG:
         
         TODO: Store API keys more securely (not in message context)
         """
-        # Add current date to context for time-aware responses
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        date_message = f"Today's date is: {current_date}"
-        user_specific_message = "My name and user_key is: "
-
-        # Build message history starting with system prompt
-        message_history = [self.sys_msg, date_message]
-        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
-        
-        # Convert conversation history to LangChain message format
-        message_conversation, chatml_conversation = self.create_message_history(
-            query_history, 
-            response_history
+        message_history, chatml_conversation, user_preferences, query_idx, user_spec = (
+            await self._prepare_context(query, user_id, query_history, response_history)
         )
-        message_history.extend(message_conversation)
-
-        # Retrieve and add user preferences (e.g., preferred metrics, goals)
-        user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
-        if user_preferences is not None:
-            user_preferences = user_preferences[0]
-            user_preferences_message = SystemMessage(
-                content=f"User preferences: {user_preferences}"
-            )
-            message_history.extend([user_preferences_message])
-        else:
-            user_preferences = []
-        
-        # Retrieve user's device API key (needed for tool calls)
-        # TODO: Implement secure key management instead of passing in context
-        user_key = await self.__get_device_api_key(user_id, "Oura Ring")
-        message_history.extend([
-            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
-        ])
-        
-        # Add current query
-        message_history.extend([HumanMessage(content=query)])
-        query_idx = len(message_history) - 1
 
         # Execute the ReAct graph workflow
         start_time = time.time()
@@ -254,7 +220,7 @@ class AgenticRAG:
             query_idx=query_idx, 
             inference_time=inference_time, 
             messages=messages, 
-            user_spec=f"{date_message} {user_specific_message}USER_KEY", 
+            user_spec=user_spec, 
             preferences=user_preferences
         )
 
@@ -288,42 +254,9 @@ class AgenticRAG:
         Yields:
             dict: Event objects with 'type' and relevant data
         """
-        # Add current date to context for time-aware responses
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        date_message = f"Today's date is: {current_date}"
-        user_specific_message = "My name and user_key is: "
-
-        # Build message history starting with system prompt
-        message_history = [self.sys_msg, date_message]
-        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
-        
-        # Convert conversation history to LangChain message format
-        message_conversation, chatml_conversation = self.create_message_history(
-            query_history, 
-            response_history
+        message_history, chatml_conversation, user_preferences, query_idx, user_spec = (
+            await self._prepare_context(query, user_id, query_history, response_history)
         )
-        message_history.extend(message_conversation)
-
-        # Retrieve and add user preferences
-        user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
-        if user_preferences is not None:
-            user_preferences = user_preferences[0]
-            user_preferences_message = SystemMessage(
-                content=f"User preferences: {user_preferences}"
-            )
-            message_history.extend([user_preferences_message])
-        else:
-            user_preferences = []
-        
-        # Retrieve user's device API key
-        user_key = await self.__get_device_api_key(user_id, "Oura Ring")
-        message_history.extend([
-            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
-        ])
-        
-        # Add current query
-        message_history.extend([HumanMessage(content=query)])
-        query_idx = len(message_history) - 1
 
         # Track state for logging
         start_time = time.time()
@@ -392,7 +325,7 @@ class AgenticRAG:
             query_idx=query_idx, 
             inference_time=inference_time, 
             messages=all_messages, 
-            user_spec=f"{date_message} {user_specific_message}USER_KEY", 
+            user_spec=user_spec, 
             preferences=user_preferences
         )
 
@@ -445,6 +378,48 @@ class AgenticRAG:
         
         return message_history, chatml_history
 
+    async def _prepare_context(
+        self,
+        query: str,
+        user_id: str,
+        query_history: list[str],
+        response_history: list[str],
+    ) -> tuple[list, list, list, int, str]:
+        """
+        Build execution context shared by run and run_stream.
+        Returns message_history, chatml_conversation, user_preferences, query_idx, user_spec.
+        """
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        date_message = f"Today's date is: {current_date}"
+        user_specific_message = "My name and user_key is: "
+
+        message_history = [self.sys_msg, date_message]
+        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
+
+        message_conversation, chatml_conversation = self.create_message_history(
+            query_history, response_history
+        )
+        message_history.extend(message_conversation)
+
+        user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
+        if user_preferences is not None:
+            user_preferences = user_preferences[0]
+            message_history.extend([
+                SystemMessage(content=f"User preferences: {user_preferences}")
+            ])
+        else:
+            user_preferences = []
+
+        user_key = await self.__get_device_api_key(user_id, "Oura Ring")
+        message_history.extend([
+            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
+        ])
+
+        message_history.extend([HumanMessage(content=query)])
+        query_idx = len(message_history) - 1
+        user_spec = f"{date_message} {user_specific_message}USER_KEY"
+
+        return message_history, chatml_conversation, user_preferences, query_idx, user_spec
 
     def log_message_test(self):
         messages_with_query =  [HumanMessage(content="Today's date is: 2025-10-25", additional_kwargs={}, response_metadata={}, id='488f9dd2-f869-4074-a83f-c46ebe157dff'), SystemMessage(content='My name and user_id is: Nikhil', additional_kwargs={}, response_metadata={}, id='9ec6c681-ce43-487b-977f-77cb8b5b4dcb'), HumanMessage(content='Can you help me with my sleep scores from last month?', additional_kwargs={}, response_metadata={}, id='e750b85f-b151-45f1-ad43-ea6d5a2b52f1'), AIMessage(content='<p>Here are your sleep scores from the last month:</p>\n<p><strong>Oura Ring</strong> Sleep Scores: <code>&lt;Nikhil, Oura Ring, Sep. 25, 2025 – Oct. 25, 2025&gt;</code></p>\n<ul>\n<li>09.25: 81</li>\n<li>10.02: 85</li>\n<li>10.03: 71</li>\n<li>10.05: 76</li>\n<li>10.06: 81</li>\n<li>10.11: 81</li>\n<li>10.14: 82</li>\n<li>10.16: 89</li>\n<li>10.17: 85</li>\n<li>10.18: 78</li>\n<li>10.19: 74</li>\n<li>10.22: 84</li>\n<li>10.23: 80</li>\n</ul>\n<p>Notable points:</p>\n<ul>\n<li>Several scores are in the optimal range (85+).</li>\n<li>A few lower scores (10.03: 71, 10.05: 76, 10.19: 74) suggest some nights may need attention.</li>\n</ul>\n<p>Scores below 70 are considered &quot;Fair&quot; and those above 85 &quot;Optimal&quot; by Oura standards. Regular variation is normal, but if you&#39;re concerned about consistency, focusing on pre-sleep routines and stress management may help.</p>\n<p>Let me know if you&#39;d like deeper analysis of contributors (deep/REM sleep, latency, etc.) for any specific period!</p>\n', additional_kwargs={}, response_metadata={}, id='f7be94a6-c2ff-4fe8-b76e-838932c96732'), HumanMessage(content='Yeah can you help me figure out what contributors to my sleep score were bad for the 10.03 sleep score?', additional_kwargs={}, response_metadata={}, id='e9f7f3c3-9ed7-47a7-9250-30e90600db7d'), HumanMessage(content='Yeah can you help me figure out what contributors to my sleep score were bad for the 10.03 sleep score?', additional_kwargs={}, response_metadata={}, id='c6b386ce-f918-4939-b6f5-36186560f597')]
