@@ -14,9 +14,6 @@ export default (controller) => {
     const router = express.Router();
 
     router.post('/login', async (req, res) => {
-        console.log("POST /login - req.body:", req.body);
-        console.log("POST /login - username:", req.body.username);
-        console.log("POST /login - password:", req.body.password ? "***" : undefined);
         
         let isAuthenticated = await controller.authenticate(req.body.username, req.body.password);
         console.log("isAuthenticated: ", isAuthenticated)

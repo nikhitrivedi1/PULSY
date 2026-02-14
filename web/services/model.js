@@ -542,7 +542,6 @@ class Model {
      * @returns {Object} User profile data
      */
     getUserProfile(username) {
-        console.log("Model - Username: ", username);
         return this.user_db_operations.getAgenticPreferences(username);
     }
 

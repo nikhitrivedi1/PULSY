@@ -74,7 +74,6 @@ class Controller {
      * @returns {Object} User profile data
      */
     getUserProfile(username) {
-        console.log("Controller - Username: ", username);
         return this.model.getUserProfile(username);
     }
 
