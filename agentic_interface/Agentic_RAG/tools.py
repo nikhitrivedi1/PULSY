@@ -67,8 +67,6 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     if start_date == end_date:
         return "Please provide a different start and end date."
 
-    print(f"Start Date: {start_date}, End Date: {end_date}")
-
     # Configure Oura API request
     URL = "https://api.ouraring.com/v2/usercollection/sleep"
     headers = {'Authorization': f'Bearer {user_key}'}
@@ -80,7 +78,6 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     # Fetch data from Oura API
     try:
         response = requests.request("GET", URL, headers=headers, params=params).json()
-        print(f"Response: {response}")
     except Exception as e:
         return f"Unable to retrieve sleep data due to {e}"
 
@@ -88,7 +85,6 @@ def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
     checks = response_checks.check_response(response, "oura", "analysis")
     if not checks['basic']:
         return "Data for the specified date appears to be unavailable or empty"
-    print(f"Checks: {checks}")
 
     # if it is fully a boolean -> return immediately with error message 
     # otherwise -> proceed to extract data with error dictionaries
@@ -207,7 +203,6 @@ def get_sleep_data(start_date: str, end_date: str, user_key: str) -> str:
     # Fetch data from Oura API
     try:
         response = requests.request("GET", URL, headers=headers, params=params).json()
-        print(f"Response: {response}")
     except Exception as e:
         return f"Unable to retrieve sleep data due to {e}"
 

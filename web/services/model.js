@@ -391,12 +391,157 @@ class Model {
     }
 
     /**
+     * Processes a chat query with streaming responses via SSE.
+     * Returns an async generator that yields events as they arrive.
+     * 
+     * @param {string} query - User's query
+     * @param {string} username - User's username
+     * @param {Array} user_history - History of user queries
+     * @param {Array} ai_chat_history - History of AI responses
+     * @returns {AsyncGenerator} Async generator yielding event objects
+     */
+    async *chatQueryStream(query, username, user_history, ai_chat_history) {
+        // Build query parameters for SSE GET request
+        const params = new URLSearchParams({
+            query: query,
+            username: username,
+            user_history: JSON.stringify(user_history),
+            ai_chat_history: JSON.stringify(ai_chat_history)
+        });
+        
+        const url = `${process.env.BACKEND_URL}/query/stream?${params.toString()}`;
+
+        if (process.env.LOCAL_MODE === "true") {
+            // Local mode: direct fetch with SSE
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/event-stream'
+                }
+            });
+
+            if (!response.ok) {
+                yield { type: 'error', message: `Backend error: ${response.status}` };
+                return;
+            }
+
+            // Read the SSE stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+                    
+                    // Decode the chunk and add to buffer
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    // Process complete SSE messages (lines ending with \n\n)
+                    const lines = buffer.split('\n\n');
+                    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const jsonStr = line.slice(6); // Remove 'data: ' prefix
+                                const event = JSON.parse(jsonStr);
+                                yield event;
+                            } catch (parseError) {
+                                console.error('Error parsing SSE event:', parseError, line);
+                            }
+                        }
+                    }
+                }
+                
+                // Process any remaining buffer
+                if (buffer.startsWith('data: ')) {
+                    try {
+                        const jsonStr = buffer.slice(6);
+                        const event = JSON.parse(jsonStr);
+                        yield event;
+                    } catch (parseError) {
+                        // Incomplete message, ignore
+                    }
+                }
+            } finally {
+                reader.releaseLock();
+            }
+        } else {
+            // Deployed mode with Google Auth
+            // Note: SSE with Google Auth is more complex - we need to use regular request
+            // and parse the streaming response
+            const auth = new GoogleAuth();
+            const client = await auth.getIdTokenClient(process.env.BACKEND_URL);
+            
+            // Get the auth token
+            const headers = await client.getRequestHeaders();
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    ...headers,
+                    'Accept': 'text/event-stream'
+                }
+            });
+
+            if (!response.ok) {
+                yield { type: 'error', message: `Backend error: ${response.status}` };
+                return;
+            }
+
+            // Read the SSE stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    const lines = buffer.split('\n\n');
+                    buffer = lines.pop() || '';
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const jsonStr = line.slice(6);
+                                const event = JSON.parse(jsonStr);
+                                yield event;
+                            } catch (parseError) {
+                                console.error('Error parsing SSE event:', parseError, line);
+                            }
+                        }
+                    }
+                }
+                
+                if (buffer.startsWith('data: ')) {
+                    try {
+                        const jsonStr = buffer.slice(6);
+                        const event = JSON.parse(jsonStr);
+                        yield event;
+                    } catch (parseError) {
+                        // Incomplete message, ignore
+                    }
+                }
+            } finally {
+                reader.releaseLock();
+            }
+        }
+    }
+
+    /**
      * Retrieves the user's profile information.
      * @param {string} username - User's username
      * @returns {Object} User profile data
      */
     getUserProfile(username) {
-        console.log("Model - Username: ", username);
         return this.user_db_operations.getAgenticPreferences(username);
     }
 
@@ -447,6 +592,36 @@ class Model {
      */
     addFeedback(log_id, feedback, comment) {
         return this.user_db_operations.addFeedback(log_id, feedback, comment);
+    }
+
+    /**
+     * Save chat history for a user (appends to existing history in DB)
+     * @param {string} username - User's username
+     * @param {string} query - User's query
+     * @param {string} response - AI response
+     * @param {number|null} logId - Log ID for feedback tracking
+     * @returns {Promise<Object>} Result of the save operation
+     */
+    saveChatHistory(username, query, response, logId) {
+        return this.user_db_operations.saveChatHistory(username, query, response, logId);
+    }
+
+    /**
+     * Get chat history for a user from database
+     * @param {string} username - User's username
+     * @returns {Promise<Object>} Chat history with queries and responses arrays
+     */
+    getChatHistory(username) {
+        return this.user_db_operations.getChatHistory(username);
+    }
+
+    /**
+     * Clear chat history for a user (reset to empty)
+     * @param {string} username - User's username
+     * @returns {Promise<Object>} Result of the clear operation
+     */
+    clearChatHistory(username) {
+        return this.user_db_operations.clearChatHistory(username);
     }
 
 }

@@ -74,7 +74,6 @@ class Controller {
      * @returns {Object} User profile data
      */
     getUserProfile(username) {
-        console.log("Controller - Username: ", username);
         return this.model.getUserProfile(username);
     }
 
@@ -120,6 +119,20 @@ class Controller {
      */
     async chatQuery(query, username, user_history, ai_chat_history) {
         return await this.model.chatQuery(query, username, user_history, ai_chat_history);
+    }
+
+    /**
+     * Process chat query with streaming responses via SSE
+     * Returns an async generator that yields events as they arrive
+     * 
+     * @param {string} query - User's chat query
+     * @param {string} username - User's username
+     * @param {Array} user_history - History of user queries
+     * @param {Array} ai_chat_history - History of AI responses
+     * @returns {AsyncGenerator} Async generator yielding event objects
+     */
+    chatQueryStream(query, username, user_history, ai_chat_history) {
+        return this.model.chatQueryStream(query, username, user_history, ai_chat_history);
     }
 
     /**
@@ -240,6 +253,36 @@ class Controller {
      */
     deleteSession(state) {
         return this.model.deleteSession(state);
+    }
+
+    /**
+     * Save chat history for a user to database
+     * @param {string} username - User's username
+     * @param {string} query - User's query
+     * @param {string} response - AI response
+     * @param {number|null} logId - Log ID for feedback tracking
+     * @returns {Promise<object>} Success status
+     */
+    saveChatHistory(username, query, response, logId) {
+        return this.model.saveChatHistory(username, query, response, logId);
+    }
+
+    /**
+     * Get chat history for a user from database
+     * @param {string} username - User's username
+     * @returns {Promise<object>} Chat history with queries and responses arrays
+     */
+    getChatHistory(username) {
+        return this.model.getChatHistory(username);
+    }
+
+    /**
+     * Clear chat history for a user
+     * @param {string} username - User's username
+     * @returns {Promise<object>} Success status
+     */
+    clearChatHistory(username) {
+        return this.model.clearChatHistory(username);
     }
 
 }

@@ -392,6 +392,99 @@ class UserDbOperations {
   }
 
   /**
+   * Save chat history for a user (appends query and response to existing history)
+   * @param {string} username
+   * @param {string} query - User's query
+   * @param {string} response - AI response (markdown/HTML)
+   * @param {number|null} log_id - Log ID for feedback tracking
+   * @returns {Promise<object>}
+   */
+  async saveChatHistory(username, query, response, log_id) {
+    // Update the chat_history JSONB column by appending to the arrays
+    // Uses nested jsonb_set to update queries, responses, and log_id in one operation
+    const updateQuery = `
+      UPDATE users.users_staging
+      SET chat_history = jsonb_set(
+        jsonb_set(
+          jsonb_set(
+            COALESCE(chat_history, '{"queries":[],"responses":[],"log_id":null}'::jsonb),
+            '{queries}',
+            COALESCE(chat_history->'queries', '[]'::jsonb) || ?::jsonb
+          ),
+          '{responses}',
+          COALESCE(chat_history->'responses', '[]'::jsonb) || ?::jsonb
+        ),
+        '{log_id}',
+        ?::jsonb
+      )
+      WHERE username = ?
+    `;
+    
+    try {
+      const knex_res = await this.pool;
+      // Wrap query and response as JSON strings for array append
+      await knex_res.raw(updateQuery, [
+        JSON.stringify([query]),
+        JSON.stringify([response]),
+        JSON.stringify(log_id),
+        username
+      ]);
+      return { success: true, return_value: "Chat history saved successfully" };
+    } catch (error) {
+      console.error('Error saving chat history:', error);
+      return { success: false, return_value: error.message };
+    }
+  }
+
+  /**
+   * Get chat history for a user
+   * @param {string} username
+   * @returns {Promise<object>} Object with queries and responses arrays
+   */
+  async getChatHistory(username) {
+    const query = `
+      SELECT chat_history FROM users.users_staging WHERE username = ?
+    `;
+    try {
+      const knex_res = await this.pool;
+      const res = await knex_res.raw(query, [username]);
+      
+      if (res.rows.length === 0 || !res.rows[0].chat_history) {
+        return { 
+          success: true, 
+          return_value: { queries: [], responses: [], log_id: null } 
+        };
+      }
+      
+      return { success: true, return_value: res.rows[0].chat_history };
+    } catch (error) {
+      console.error('Error getting chat history:', error);
+      return { success: false, return_value: error.message };
+    }
+  }
+
+  /**
+   * Clear chat history for a user (reset to empty)
+   * @param {string} username
+   * @returns {Promise<object>}
+   */
+  async clearChatHistory(username) {
+    const query = `
+      UPDATE users.users_staging
+      SET chat_history = '{"queries":[],"responses":[]}'::jsonb
+      WHERE username = ?
+    `;
+    try {
+      const knex_res = await this.pool;
+      await knex_res.raw(query, [username]);
+      return { success: true, return_value: "Chat history cleared" };
+    } catch (error) {
+      console.error('Error clearing chat history:', error);
+      return { success: false, return_value: error.message };
+    }
+  }
+
+  /**
    * Close the Knex connection pool (cleanup)
    * @returns {Promise<void>}
    */

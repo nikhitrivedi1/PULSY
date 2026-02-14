@@ -203,43 +203,9 @@ class AgenticRAG:
         
         TODO: Store API keys more securely (not in message context)
         """
-        # Add current date to context for time-aware responses
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        date_message = f"Today's date is: {current_date}"
-        user_specific_message = "My name and user_key is: "
-
-        # Build message history starting with system prompt
-        message_history = [self.sys_msg, date_message]
-        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
-        
-        # Convert conversation history to LangChain message format
-        message_conversation, chatml_conversation = self.create_message_history(
-            query_history, 
-            response_history
+        message_history, chatml_conversation, user_preferences, query_idx, user_spec = (
+            await self._prepare_context(query, user_id, query_history, response_history)
         )
-        message_history.extend(message_conversation)
-
-        # Retrieve and add user preferences (e.g., preferred metrics, goals)
-        user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
-        if user_preferences is not None:
-            user_preferences = user_preferences[0]
-            user_preferences_message = SystemMessage(
-                content=f"User preferences: {user_preferences}"
-            )
-            message_history.extend([user_preferences_message])
-        else:
-            user_preferences = []
-        
-        # Retrieve user's device API key (needed for tool calls)
-        # TODO: Implement secure key management instead of passing in context
-        user_key = await self.__get_device_api_key(user_id, "Oura Ring")
-        message_history.extend([
-            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
-        ])
-        
-        # Add current query
-        message_history.extend([HumanMessage(content=query)])
-        query_idx = len(message_history) - 1
 
         # Execute the ReAct graph workflow
         start_time = time.time()
@@ -254,13 +220,118 @@ class AgenticRAG:
             query_idx=query_idx, 
             inference_time=inference_time, 
             messages=messages, 
-            user_spec=f"{date_message} {user_specific_message}USER_KEY", 
+            user_spec=user_spec, 
             preferences=user_preferences
         )
 
         # Return final AI response and log ID
         return {
             "response": messages['messages'][-1].content, 
+            "log_id": log_id
+        }
+
+    async def run_stream(self,
+        query: str,
+        user_id: str,
+        query_history: list[str],
+        response_history: list[str]
+        ):
+        """
+        Execute the agent workflow with streaming events
+        
+        This method yields events in real-time as the agent executes:
+        - tool_start: When a tool begins executing
+        - tool_end: When a tool finishes executing
+        - token: Each token of the final response
+        - done: When the workflow completes
+        
+        Args:
+            query: User's current question/request
+            user_id: Username for personalization and data access
+            query_history: List of previous user messages in this session
+            response_history: List of previous AI responses in this session
+        
+        Yields:
+            dict: Event objects with 'type' and relevant data
+        """
+        message_history, chatml_conversation, user_preferences, query_idx, user_spec = (
+            await self._prepare_context(query, user_id, query_history, response_history)
+        )
+
+        # Track state for logging
+        start_time = time.time()
+        final_response_content = ""
+        all_messages = None
+        
+        # Stream events from the ReAct graph
+        async for event in self.react_graph.astream_events(
+            {"messages": message_history},
+            version="v2"
+        ):
+            event_type = event.get("event", "")
+            
+            # Tool execution start
+            if event_type == "on_tool_start":
+                tool_name = event.get("name", "unknown")
+                yield {
+                    "type": "tool_start",
+                    "tool_name": tool_name
+                }
+            
+            # Tool execution end
+            elif event_type == "on_tool_end":
+                tool_name = event.get("name", "unknown")
+                yield {
+                    "type": "tool_end",
+                    "tool_name": tool_name
+                }
+            
+            # Token streaming from the chat model
+            elif event_type == "on_chat_model_stream":
+                chunk = event.get("data", {}).get("chunk")
+                if chunk and hasattr(chunk, "content") and chunk.content:
+                    # Yield string content (including whitespace/newlines for formatting)
+                    # Skip empty strings but preserve newlines and spaces
+                    if isinstance(chunk.content, str) and len(chunk.content) > 0:
+                        final_response_content += chunk.content
+                        yield {
+                            "type": "token",
+                            "content": chunk.content
+                        }
+            
+            # Capture final state for logging
+            elif event_type == "on_chain_end":
+                if event.get("name") == "LangGraph":
+                    # This is the final graph completion
+                    output = event.get("data", {}).get("output", {})
+                    if "messages" in output:
+                        all_messages = output
+
+        # Calculate inference time
+        inference_time = time.time() - start_time
+        
+        # Prepare messages state for logging if we captured it
+        if all_messages is None:
+            # Fallback: create a simple messages structure
+            all_messages = {
+                "messages": message_history + [AIMessage(content=final_response_content)]
+            }
+        
+        # Log the conversation
+        log_id = await self.log_message(
+            query, 
+            response=all_messages['messages'][-1], 
+            message_hist=chatml_conversation, 
+            query_idx=query_idx, 
+            inference_time=inference_time, 
+            messages=all_messages, 
+            user_spec=user_spec, 
+            preferences=user_preferences
+        )
+
+        # Yield completion event with log_id
+        yield {
+            "type": "done",
             "log_id": log_id
         }
 
@@ -307,6 +378,48 @@ class AgenticRAG:
         
         return message_history, chatml_history
 
+    async def _prepare_context(
+        self,
+        query: str,
+        user_id: str,
+        query_history: list[str],
+        response_history: list[str],
+    ) -> tuple[list, list, list, int, str]:
+        """
+        Build execution context shared by run and run_stream.
+        Returns message_history, chatml_conversation, user_preferences, query_idx, user_spec.
+        """
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        date_message = f"Today's date is: {current_date}"
+        user_specific_message = "My name and user_key is: "
+
+        message_history = [self.sys_msg, date_message]
+        message_history.extend([SystemMessage(content=user_specific_message + user_id)])
+
+        message_conversation, chatml_conversation = self.create_message_history(
+            query_history, response_history
+        )
+        message_history.extend(message_conversation)
+
+        user_preferences = await self.user_db_operations.get_agentic_preferences(user_id)
+        if user_preferences is not None:
+            user_preferences = user_preferences[0]
+            message_history.extend([
+                SystemMessage(content=f"User preferences: {user_preferences}")
+            ])
+        else:
+            user_preferences = []
+
+        user_key = await self.__get_device_api_key(user_id, "Oura Ring")
+        message_history.extend([
+            SystemMessage(content=f"{user_specific_message}{user_id} USER_KEY: {user_key}")
+        ])
+
+        message_history.extend([HumanMessage(content=query)])
+        query_idx = len(message_history) - 1
+        user_spec = f"{date_message} {user_specific_message}USER_KEY"
+
+        return message_history, chatml_conversation, user_preferences, query_idx, user_spec
 
     def log_message_test(self):
         messages_with_query =  [HumanMessage(content="Today's date is: 2025-10-25", additional_kwargs={}, response_metadata={}, id='488f9dd2-f869-4074-a83f-c46ebe157dff'), SystemMessage(content='My name and user_id is: Nikhil', additional_kwargs={}, response_metadata={}, id='9ec6c681-ce43-487b-977f-77cb8b5b4dcb'), HumanMessage(content='Can you help me with my sleep scores from last month?', additional_kwargs={}, response_metadata={}, id='e750b85f-b151-45f1-ad43-ea6d5a2b52f1'), AIMessage(content='<p>Here are your sleep scores from the last month:</p>\n<p><strong>Oura Ring</strong> Sleep Scores: <code>&lt;Nikhil, Oura Ring, Sep. 25, 2025 – Oct. 25, 2025&gt;</code></p>\n<ul>\n<li>09.25: 81</li>\n<li>10.02: 85</li>\n<li>10.03: 71</li>\n<li>10.05: 76</li>\n<li>10.06: 81</li>\n<li>10.11: 81</li>\n<li>10.14: 82</li>\n<li>10.16: 89</li>\n<li>10.17: 85</li>\n<li>10.18: 78</li>\n<li>10.19: 74</li>\n<li>10.22: 84</li>\n<li>10.23: 80</li>\n</ul>\n<p>Notable points:</p>\n<ul>\n<li>Several scores are in the optimal range (85+).</li>\n<li>A few lower scores (10.03: 71, 10.05: 76, 10.19: 74) suggest some nights may need attention.</li>\n</ul>\n<p>Scores below 70 are considered &quot;Fair&quot; and those above 85 &quot;Optimal&quot; by Oura standards. Regular variation is normal, but if you&#39;re concerned about consistency, focusing on pre-sleep routines and stress management may help.</p>\n<p>Let me know if you&#39;d like deeper analysis of contributors (deep/REM sleep, latency, etc.) for any specific period!</p>\n', additional_kwargs={}, response_metadata={}, id='f7be94a6-c2ff-4fe8-b76e-838932c96732'), HumanMessage(content='Yeah can you help me figure out what contributors to my sleep score were bad for the 10.03 sleep score?', additional_kwargs={}, response_metadata={}, id='e9f7f3c3-9ed7-47a7-9250-30e90600db7d'), HumanMessage(content='Yeah can you help me figure out what contributors to my sleep score were bad for the 10.03 sleep score?', additional_kwargs={}, response_metadata={}, id='c6b386ce-f918-4939-b6f5-36186560f597')]
