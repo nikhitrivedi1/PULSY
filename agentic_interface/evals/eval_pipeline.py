@@ -1,6 +1,15 @@
 # Eval Pipeline for the Agentic RAG System
 # Base class + subclasses for Tool Traces, Precision@3 (retriever + agent), and full-episode evaluation.
 
+import sys
+from pathlib import Path
+
+# Ensure agentic_interface is on path so Agentic_RAG can be imported
+_evals_dir = Path(__file__).resolve().parent
+_agentic_interface = _evals_dir.parent
+if str(_agentic_interface) not in sys.path:
+    sys.path.insert(0, str(_agentic_interface))
+
 from Agentic_RAG.agent import AgenticRAG
 from Agentic_RAG.tools import get_Andrew_Huberman_Insights
 import json
@@ -362,14 +371,18 @@ User query: {query}
 Passages (one per line, format "Source: ..., Text: ..."):
 {passages}
 
-How many of these passages are relevant to the query? Reply with an integer 0, 1, 2, or 3 (number of relevant passages)."""
+Instructions:
+1. Count how many of these passages (0, 1, 2, or 3) are relevant to the query. Set relevant_count to that integer.
+2. If relevant_count < 3 (i.e. at least one passage is not relevant or no passages are relevant), you MUST provide a brief reason explaining why the retrieved passages were not fully relevant (e.g. which passage(s) are off-topic and why, or how the query was not well addressed).
+3. If all 3 passages are relevant, no need to provide a reason"""
 
 PRECISION_JUDGE_SCHEMA = {
     "type": "object",
     "properties": {
         "relevant_count": {"type": "integer", "minimum": 0, "maximum": 3},
+        "reason": {"type": "string"},
     },
-    "required": ["relevant_count"],
+    "required": ["relevant_count", "reason"],
     "additionalProperties": False,
 }
 
@@ -385,9 +398,7 @@ def _parse_huberman_passages(content: str) -> list[str]:
 class PrecisionAt3RetrieverEval(BaseEvalPipeline):
     """Precision@3 by calling get_Andrew_Huberman_Insights directly; LLM judge relevance."""
     def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
-        super().__init__(eval_data_path, system_instructions_path)
-        if unique_eval_path:
-            self.eval_data_path = unique_eval_path
+        super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
 
     async def one_case_eval(self, input_case: dict) -> dict:
         case_id = input_case["id"]
@@ -403,6 +414,7 @@ class PrecisionAt3RetrieverEval(BaseEvalPipeline):
                 "precision_at_3": None,
                 "correct": 0,
                 "total": 0,
+                "judge_reason": "",
             }
         passages = _parse_huberman_passages(content)
         k = len(passages) or 1
@@ -416,6 +428,7 @@ class PrecisionAt3RetrieverEval(BaseEvalPipeline):
                 "precision_at_3": 0.0,
                 "correct": 0,
                 "total": 1,
+                "judge_reason": "No passages retrieved; judge not invoked.",
             }
         passages_text = "\n".join(passages)
         prompt = PRECISION_JUDGE_PROMPT.format(query=latest_query, passages=passages_text)
@@ -435,8 +448,10 @@ class PrecisionAt3RetrieverEval(BaseEvalPipeline):
             text = judge_response.output[0].content[0].text
             parsed = json.loads(text)
             relevant_count = min(3, max(0, parsed.get("relevant_count", 0)))
+            judge_reason = parsed.get("reason", "")
         except Exception as e:
             relevant_count = 0
+            judge_reason = str(e)
         p3 = relevant_count / k
         return {
             "id": case_id,
@@ -447,6 +462,7 @@ class PrecisionAt3RetrieverEval(BaseEvalPipeline):
             "precision_at_3": p3,
             "correct": relevant_count,
             "total": k,
+            "judge_reason": judge_reason,
         }
 
 
@@ -457,9 +473,7 @@ class PrecisionAt3RetrieverEval(BaseEvalPipeline):
 class PrecisionAt3AgentEval(BaseEvalPipeline):
     """Precision@3 on passages the agent actually received from get_Andrew_Huberman_Insights. Uses response.get('tool_results', [])."""
     def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
-        super().__init__(eval_data_path, system_instructions_path)
-        if unique_eval_path:
-            self.eval_data_path = unique_eval_path
+        super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
 
     async def one_case_eval(self, input_case: dict) -> dict:
         case_id = input_case["id"]
@@ -479,6 +493,7 @@ class PrecisionAt3AgentEval(BaseEvalPipeline):
                 "precision_at_3": None,
                 "correct": 0,
                 "total": 0,
+                "judge_reason": "",
             }
         tool_results = response.get("tool_results", [])
         huberman_contents = [
@@ -494,6 +509,7 @@ class PrecisionAt3AgentEval(BaseEvalPipeline):
                 "precision_at_3": None,
                 "correct": 0,
                 "total": 0,
+                "judge_reason": "",
             }
         content = huberman_contents[0]
         passages = _parse_huberman_passages(content)
@@ -509,6 +525,7 @@ class PrecisionAt3AgentEval(BaseEvalPipeline):
                 "precision_at_3": 0.0,
                 "correct": 0,
                 "total": 1,
+                "judge_reason": "No passages from Huberman tool; judge not invoked.",
             }
         passages_text = "\n".join(passages)
         prompt = PRECISION_JUDGE_PROMPT.format(query=latest_query, passages=passages_text)
@@ -528,8 +545,10 @@ class PrecisionAt3AgentEval(BaseEvalPipeline):
             text = judge_response.output[0].content[0].text
             parsed = json.loads(text)
             relevant_count = min(3, max(0, parsed.get("relevant_count", 0)))
+            judge_reason = parsed.get("reason", "")
         except Exception as e:
             relevant_count = 0
+            judge_reason = str(e)
         p3 = relevant_count / k
         return {
             "id": case_id,
@@ -541,11 +560,205 @@ class PrecisionAt3AgentEval(BaseEvalPipeline):
             "precision_at_3": p3,
             "correct": relevant_count,
             "total": k,
+            "judge_reason": judge_reason,
         }
 
 
 # ---------------------------------------------------------------------------
-# Subclass 4: Full-episode evaluation (PASS/FAIL per case)
+# Subclass 4: Hit@3 — presence of actual answer in top-3 retrieved chunks (LLM judge)
+# ---------------------------------------------------------------------------
+
+HIT_AT_3_JUDGE_PROMPT = """You are an impartial judge. Given a user question and a list of retrieved passages (top 3 from a knowledge base, in rank order), determine whether at least one passage CONTAINS the actual answer or the information needed to correctly answer the question.
+
+User question: {query}
+
+Retrieved passages (top 3, in order):
+{passages}
+
+Instructions:
+1. Decide if ANY of these passages contain the actual answer (or the key information required to answer) the user's question.
+2. Set "hit" to true if at least one passage contains the answer; set "hit" to false if none of the passages contain the answer.
+3. Provide a brief reason (e.g., which passage contained the answer, or why none did)."""
+
+HIT_AT_3_JUDGE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "hit": {"type": "boolean"},
+        "reason": {"type": "string"},
+    },
+    "required": ["hit", "reason"],
+    "additionalProperties": False,
+}
+
+
+class HitAt3RetrieverEval(BaseEvalPipeline):
+    """Hit@3: LLM judge determines if the actual answer is present in the top-3 retrieved chunks."""
+    def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
+        super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
+
+    async def one_case_eval(self, input_case: dict) -> dict:
+        case_id = input_case["id"]
+        latest_query, _, _ = self._parse_case(input_case)
+        try:
+            content = get_Andrew_Huberman_Insights(latest_query)
+        except Exception as e:
+            return {
+                "id": case_id,
+                "category": input_case.get("category"),
+                "source": input_case.get("source"),
+                "error": str(e),
+                "hit": False,
+                "correct": 0,
+                "total": 1,
+                "judge_reason": "",
+            }
+        passages = _parse_huberman_passages(content)
+        if not passages:
+            return {
+                "id": case_id,
+                "category": input_case.get("category"),
+                "source": input_case.get("source"),
+                "passages": [],
+                "hit": False,
+                "correct": 0,
+                "total": 1,
+                "judge_reason": "No passages retrieved; judge not invoked.",
+            }
+        passages_text = "\n".join(f"Rank {i+1}: {p}" for i, p in enumerate(passages))
+        prompt = HIT_AT_3_JUDGE_PROMPT.format(query=latest_query, passages=passages_text)
+        try:
+            judge_response = await self.client.responses.create(
+                model=self.llm_type,
+                input=prompt,
+                text={
+                    "format": {
+                        "type": "json_schema",
+                        "schema": HIT_AT_3_JUDGE_SCHEMA,
+                        "name": "hit_at_3_judge",
+                        "strict": True,
+                    }
+                },
+            )
+            text = judge_response.output[0].content[0].text
+            parsed = json.loads(text)
+            hit = bool(parsed.get("hit", False))
+            judge_reason = parsed.get("reason", "")
+        except Exception as e:
+            hit = False
+            judge_reason = str(e)
+        return {
+            "id": case_id,
+            "category": input_case.get("category"),
+            "source": input_case.get("source"),
+            "passages": passages,
+            "hit": hit,
+            "correct": 1 if hit else 0,
+            "total": 1,
+            "judge_reason": judge_reason,
+        }
+
+
+# ---------------------------------------------------------------------------
+# Subclass 5: MRR (Mean Reciprocal Rank) — score = 1 / rank of first relevant passage
+# ---------------------------------------------------------------------------
+
+MRR_JUDGE_PROMPT = """You are an impartial judge. Given a user question and a list of retrieved passages in rank order (1 = first retrieved, 2 = second, 3 = third), determine at which rank the FIRST passage that contains the actual answer (or the information needed to answer the question) appears.
+
+User question: {query}
+
+Retrieved passages (in rank order):
+{passages}
+
+Instructions:
+1. Consider each passage in order (rank 1, then 2, then 3).
+2. Find the FIRST passage that contains the actual answer or the key information required to answer the question.
+3. Set "rank" to that position: 1, 2, or 3. If none of the passages contain the answer, set "rank" to 0.
+4. Provide a brief reason (e.g., "Passage 2 contains the answer because...")."""
+
+MRR_JUDGE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "rank": {"type": "integer", "minimum": 0, "maximum": 3},
+        "reason": {"type": "string"},
+    },
+    "required": ["rank", "reason"],
+    "additionalProperties": False,
+}
+
+
+class MRRRetrieverEval(BaseEvalPipeline):
+    """MRR: score = 1/rank where rank is the position of the first passage containing the answer (1-indexed)."""
+    def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
+        super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
+
+    async def one_case_eval(self, input_case: dict) -> dict:
+        case_id = input_case["id"]
+        latest_query, _, _ = self._parse_case(input_case)
+        try:
+            content = get_Andrew_Huberman_Insights(latest_query)
+        except Exception as e:
+            return {
+                "id": case_id,
+                "category": input_case.get("category"),
+                "source": input_case.get("source"),
+                "error": str(e),
+                "rank": 0,
+                "mrr_score": 0.0,
+                "correct": 0,
+                "total": 1,
+                "judge_reason": "",
+            }
+        passages = _parse_huberman_passages(content)
+        if not passages:
+            return {
+                "id": case_id,
+                "category": input_case.get("category"),
+                "source": input_case.get("source"),
+                "passages": [],
+                "rank": 0,
+                "mrr_score": 0.0,
+                "correct": 0,
+                "total": 1,
+                "judge_reason": "No passages retrieved; judge not invoked.",
+            }
+        passages_text = "\n".join(f"Rank {i+1}: {p}" for i, p in enumerate(passages))
+        prompt = MRR_JUDGE_PROMPT.format(query=latest_query, passages=passages_text)
+        try:
+            judge_response = await self.client.responses.create(
+                model=self.llm_type,
+                input=prompt,
+                text={
+                    "format": {
+                        "type": "json_schema",
+                        "schema": MRR_JUDGE_SCHEMA,
+                        "name": "mrr_judge",
+                        "strict": True,
+                    }
+                },
+            )
+            text = judge_response.output[0].content[0].text
+            parsed = json.loads(text)
+            rank = min(3, max(0, parsed.get("rank", 0)))
+            judge_reason = parsed.get("reason", "")
+        except Exception as e:
+            rank = 0
+            judge_reason = str(e)
+        mrr_score = (1.0 / rank) if rank > 0 else 0.0
+        return {
+            "id": case_id,
+            "category": input_case.get("category"),
+            "source": input_case.get("source"),
+            "passages": passages,
+            "rank": rank,
+            "mrr_score": mrr_score,
+            "correct": mrr_score,
+            "total": 1,
+            "judge_reason": judge_reason,
+        }
+
+
+# ---------------------------------------------------------------------------
+# Subclass 6: Full-episode evaluation (PASS/FAIL per case)
 # ---------------------------------------------------------------------------
 
 EPISODE_RESPONSE_SCHEMA = {
@@ -640,9 +853,17 @@ class EpisodeEval(BaseEvalPipeline):
 
 if __name__ == "__main__":
     # Example: Precision@3 Retriever
-    # eval_pipeline = PrecisionAt3RetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
-    # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/precision_at_3_retriever_evals_results.jsonl"))
+    precision_at_3_retriever_eval = PrecisionAt3RetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
+    out = asyncio.run(precision_at_3_retriever_eval.run_evals(concurrent_evals=5, output_file_path="evals/precision_at_3_retriever_evals_results.jsonl"))
+
+    # Example: Hit@3 Retriever (answer present in top-3?)
+    # eval_pipeline = HitAt3RetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
+    # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/hit_at_3_retriever_evals_results.jsonl"))
+
+    # Example: MRR Retriever (mean reciprocal rank; reported "Accuracy" = mean MRR)
+    # eval_pipeline = MRRRetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
+    # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/mrr_retriever_evals_results.jsonl"))
 
     # Example: Tool Traces eval
-    eval_pipeline = ToolTracesEval()
-    out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/tool_traces_evals_results.jsonl"))
+    # eval_pipeline = ToolTracesEval()
+    # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/tool_traces_evals_results.jsonl"))

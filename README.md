@@ -26,6 +26,18 @@ Pulsy transforms your Oura Ring data into **personalized, expert-grounded health
   • Huberman Lab
 ---
 
+## Metrics
+
+| Metric | Value | Health |
+|---|---|---|
+| Tool Call Accuracy | 0.90 | 🟢 |
+| Retrieval Precision@3 | 0.79 | 🟡 |
+| Retrieval Hits@3 | 0.79 | 🟡 |
+| Retrieval MRR@3 | 0.79 | 🟡 |
+| p50 Latency (E2E) | 6.26s | 🟢 |
+| p95 Latency (E2E) | 27.05s | 🟡 |
+
+
 ## 🛠 Tech Stack
 
 ![Node.js](https://img.shields.io/badge/Node.js-Web_Framework-orange?style=for-the-badge)
@@ -57,7 +69,6 @@ Pulsy transforms your Oura Ring data into **personalized, expert-grounded health
 ### 🟩 Core Improvements
 - [ ] Optimize Retrieval via evaluating different Chunking/Overlap   
 - [ ] Expand health corpus to training load, circadian, recovery, metabolic health
-- [ ] Create comprehensive Evaluation Framework to quantify performance of Agent
 
 
 ### 🧪 AI / Modeling
