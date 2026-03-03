@@ -29,6 +29,7 @@ class UserDbOperations {
    * @constructor
    */
   constructor() {
+    console.log("LOCAL_MODE: ", process.env.LOCAL_MODE);
     if (process.env.LOCAL_MODE === 'true') {
       console.log("Local mode enabled");
       // Direct connection for local development

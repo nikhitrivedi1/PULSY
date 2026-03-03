@@ -37,6 +37,28 @@ from Agentic_RAG.response_checks import ResponseChecks
 user_db_operations = UserDbOperations()
 response_checks = ResponseChecks()
 
+# ── Embedding mode config (reads from .env via settings) ──────────
+PC_INFERENCE_MODEL = "llama-text-embed-v2"
+PC_INFERENCE_DIMS = 1024
+
+
+def _embed_query(pc: Pinecone, query: str) -> list[float]:
+    """Return a query embedding using whichever backend PINECONE_EMBEDDING_MODE selects."""
+    if settings.PINECONE_EMBEDDING_MODE == "pinecone_inference":
+        result = pc.inference.embed(
+            model=PC_INFERENCE_MODEL,
+            inputs=[query],
+            parameters={
+                "input_type": "query",
+                "truncate": "END",
+                "dimension": PC_INFERENCE_DIMS,
+            },
+        )
+        return result[0].values
+
+    embeddings = HuggingFaceEmbeddings(model_name=settings.PINECONE_EMBEDDING_MODEL)
+    return embeddings.embed_query(query)
+
 
 # ========== Oura Ring Data Tools ==========
 def sleep_analysis(start_date:str, end_date:str, user_key:str) -> str:
@@ -337,30 +359,21 @@ def get_Andrew_Huberman_Insights(query:str) -> str:
     """
 
     try:
-        # Initialize Pinecone client
-        pc = Pinecone(api_key = settings.PINECONE_API_KEY)
-        index = pc.Index(host = settings.PINECONE_HOST)
-        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
-
-       # Convert query to vector space using embeddings model
-        queryVec = embeddings.embed_query(query)
+        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+        index = pc.Index(host=settings.PINECONE_HOST)
+        queryVec = _embed_query(pc, query)
 
         results = index.query(
-            namespace = settings.PINECONE_NAMESPACE_1,
-            vector = queryVec,
-            top_k = 3,
-            include_metadata = True
+            namespace=settings.PINECONE_NAMESPACE_1,
+            vector=queryVec,
+            top_k=3,
+            include_metadata=True,
         )
 
-        # distill the results into a list of messages
         response_messages = [f"Source: {result['metadata']['source']}, Text: {result['metadata']['text']}, Similarity: {result['score']}" for result in results["matches"]]
-
-        # Return the documents and the query - note that this will not be returning any metadata
         return "\n".join(response_messages)
 
     except RuntimeError as r:
-        # This is an internal endpoint - users do not need to provide any information
-        # Build out further exceptions to handle connection errors, etc.
         raise RuntimeError("Pinecone Server Error")
 
 def get_insights(query:str, scope:str = "all") -> str:
@@ -373,31 +386,21 @@ def get_insights(query:str, scope:str = "all") -> str:
     scope: the scope of the insights to search for - options are "Andrew Huberman", "all" (default)
     """
     try:
-        # Initialize Pinecone client
-        pc = Pinecone(api_key = settings.PINECONE_API_KEY)
-        index = pc.Index(host = settings.PINECONE_HOST)
-        embeddings = HuggingFaceEmbeddings(model_name = settings.PINECONE_EMBEDDING_MODEL)
+        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+        index = pc.Index(host=settings.PINECONE_HOST)
+        queryVec = _embed_query(pc, query)
 
-       # Convert query to vector space using embeddings model
-        queryVec = embeddings.embed_query(query)
-
-        # Deteremine the namespace based on the scope
         namespace = settings.PINECONE_NAMESPACE_2 if scope == "Andrew Huberman" else settings.PINECONE_NAMESPACE_1
 
         results = index.query(
-            namespace = namespace,
-            vector = queryVec,
-            top_k = 3,
-            include_metadata = True
+            namespace=namespace,
+            vector=queryVec,
+            top_k=3,
+            include_metadata=True,
         )
 
-        # distill the results into a list of messages
         response_messages = [f"Source: {result['metadata']['source']}, Text: {result['metadata']['text']}, Similarity: {result['score']}" for result in results["matches"]]
-
-        # Return the documents and the query - note that this will not be returning any metadata
         return "\n".join(response_messages)
 
     except RuntimeError as r:
-        # This is an internal endpoint - users do not need to provide any information
-        # Build out further exceptions to handle connection errors, etc.
         raise RuntimeError("Pinecone Server Error")

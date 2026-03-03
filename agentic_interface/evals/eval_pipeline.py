@@ -19,6 +19,7 @@ from openai import OpenAI, AsyncOpenAI
 from datetime import datetime
 from abc import abstractmethod
 from tqdm import tqdm
+from config.settings import settings
 
 # ---------------------------------------------------------------------------
 # Base: shared state, loaders, parse_case, config, run_evals interface
@@ -851,19 +852,206 @@ class EpisodeEval(BaseEvalPipeline):
         return graded
 
 
-if __name__ == "__main__":
-    # Example: Precision@3 Retriever
-    precision_at_3_retriever_eval = PrecisionAt3RetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
-    out = asyncio.run(precision_at_3_retriever_eval.run_evals(concurrent_evals=5, output_file_path="evals/precision_at_3_retriever_evals_results.jsonl"))
+# ---------------------------------------------------------------------------
+# Namespace Grid Search: run existing eval classes across multiple namespaces
+# ---------------------------------------------------------------------------
 
-    # Example: Hit@3 Retriever (answer present in top-3?)
+def _load_jsonl(path: str) -> list[dict]:
+    rows = []
+    with open(path, "r") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
+
+
+async def run_namespace_grid_search(
+    namespace_configs: list[dict],
+    evals_data_path: str = "evals/retriever_evals.jsonl",
+    concurrent_evals: int = 5,
+    output_path: str = "evals/namespace_experiment_results.json",
+) -> dict:
+    """
+    Run Precision@3, Hit@3, and MRR@3 across a list of Pinecone namespace
+    configs using the existing eval classes.  For each namespace the function
+    patches ``settings.PINECONE_NAMESPACE_1`` and ``PINECONE_EMBEDDING_MODE``
+    so that ``get_Andrew_Huberman_Insights`` queries the right index, then
+    creates fresh instances of each eval class and calls ``run_evals()``.
+
+    Each config dict must have:
+        namespace      – Pinecone namespace name
+        embedding_mode – "huggingface" or "pinecone_inference"
+    Extra keys (chunk_size, chunk_overlap, …) are carried into the output.
+
+    Returns the full experiment dict and writes it to *output_path* as JSON.
+    Per-case JSONL files are also written per namespace/metric for drill-down.
+    """
+    original_namespace = settings.PINECONE_NAMESPACE_1
+    original_embedding_mode = settings.PINECONE_EMBEDDING_MODE
+
+    experiment: dict = {
+        "experiment_id": datetime.now().strftime("%Y%m%d_%H%M%S"),
+        "timestamp": datetime.now().isoformat(),
+        "evals_data_path": evals_data_path,
+        "namespace_results": [],
+        "summary": [],
+    }
+
+    try:
+        for ns_config in namespace_configs:
+            namespace = ns_config["namespace"]
+            embedding_mode = ns_config["embedding_mode"]
+
+            settings.PINECONE_NAMESPACE_1 = namespace
+            settings.PINECONE_EMBEDDING_MODE = embedding_mode
+
+            print(f"\n{'=' * 60}")
+            print(f"  Namespace : {namespace}")
+            print(f"  Embedding : {embedding_mode}")
+            for k, v in ns_config.items():
+                if k not in ("namespace", "embedding_mode"):
+                    print(f"  {k:<14}: {v}")
+            print(f"{'=' * 60}")
+
+            ns_metrics: dict = {}
+
+            # ── Precision@3 ──────────────────────────────────────────
+            p3_file = f"evals/{namespace}_precision_at_3.jsonl"
+            p3_eval = PrecisionAt3RetrieverEval(unique_eval_path=evals_data_path)
+            p3_agg = await p3_eval.run_evals(
+                concurrent_evals=concurrent_evals, output_file_path=p3_file,
+            )
+            p3_score = (
+                p3_agg["total_correct"] / p3_agg["total"]
+                if p3_agg["total"] else 0.0
+            )
+            ns_metrics["precision_at_3"] = {
+                "score": round(p3_score, 4),
+                "total_relevant": p3_agg["total_correct"],
+                "total_judged": p3_agg["total"],
+                "details_file": p3_file,
+                "per_case": _load_jsonl(p3_file),
+            }
+
+            # ── Hit@3 ────────────────────────────────────────────────
+            h3_file = f"evals/{namespace}_hit_at_3.jsonl"
+            h3_eval = HitAt3RetrieverEval(unique_eval_path=evals_data_path)
+            h3_agg = await h3_eval.run_evals(
+                concurrent_evals=concurrent_evals, output_file_path=h3_file,
+            )
+            h3_score = (
+                h3_agg["total_correct"] / h3_agg["total"]
+                if h3_agg["total"] else 0.0
+            )
+            ns_metrics["hit_at_3"] = {
+                "score": round(h3_score, 4),
+                "total_hits": h3_agg["total_correct"],
+                "total_cases": h3_agg["total"],
+                "details_file": h3_file,
+                "per_case": _load_jsonl(h3_file),
+            }
+
+            # ── MRR@3 ────────────────────────────────────────────────
+            mrr_file = f"evals/{namespace}_mrr_at_3.jsonl"
+            mrr_eval = MRRRetrieverEval(unique_eval_path=evals_data_path)
+            mrr_agg = await mrr_eval.run_evals(
+                concurrent_evals=concurrent_evals, output_file_path=mrr_file,
+            )
+            mrr_score = (
+                mrr_agg["total_correct"] / mrr_agg["total"]
+                if mrr_agg["total"] else 0.0
+            )
+            ns_metrics["mrr_at_3"] = {
+                "score": round(mrr_score, 4),
+                "total_reciprocal_rank": round(mrr_agg["total_correct"], 4),
+                "total_cases": mrr_agg["total"],
+                "details_file": mrr_file,
+                "per_case": _load_jsonl(mrr_file),
+            }
+
+            experiment["namespace_results"].append({
+                "config": ns_config,
+                "metrics": ns_metrics,
+            })
+            experiment["summary"].append({
+                "namespace": namespace,
+                "embedding_mode": embedding_mode,
+                **{k: v for k, v in ns_config.items() if k not in ("namespace", "embedding_mode")},
+                "precision@3": ns_metrics["precision_at_3"]["score"],
+                "hit@3": ns_metrics["hit_at_3"]["score"],
+                "mrr@3": ns_metrics["mrr_at_3"]["score"],
+            })
+
+            print(
+                f"\n  >> {namespace}:  "
+                f"precision@3={ns_metrics['precision_at_3']['score']:.4f}  "
+                f"hit@3={ns_metrics['hit_at_3']['score']:.4f}  "
+                f"mrr@3={ns_metrics['mrr_at_3']['score']:.4f}"
+            )
+
+    finally:
+        settings.PINECONE_NAMESPACE_1 = original_namespace
+        settings.PINECONE_EMBEDDING_MODE = original_embedding_mode
+
+    # ── Summary table ────────────────────────────────────────────────
+    print(f"\n{'=' * 80}")
+    print("EXPERIMENT SUMMARY")
+    print(f"{'=' * 80}")
+    header = f"  {'Namespace':<30} {'Precision@3':>12} {'Hit@3':>12} {'MRR@3':>12}"
+    print(header)
+    print(f"  {'-' * 66}")
+    for row in experiment["summary"]:
+        print(
+            f"  {row['namespace']:<30} "
+            f"{row['precision@3']:>12.4f} "
+            f"{row['hit@3']:>12.4f} "
+            f"{row['mrr@3']:>12.4f}"
+        )
+    print(f"{'=' * 80}")
+
+    with open(output_path, "w") as f:
+        json.dump(experiment, f, indent=2)
+    print(f"\nExperiment saved -> {output_path}")
+
+    return experiment
+
+
+if __name__ == "__main__":
+    # Example: Precision@3 Retriever (single namespace, uses current settings)
+    # precision_at_3_retriever_eval = PrecisionAt3RetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
+    # out = asyncio.run(precision_at_3_retriever_eval.run_evals(concurrent_evals=5, output_file_path="evals/precision_at_3_retriever_evals_results.jsonl"))
+
+    # Example: Hit@3 Retriever
     # eval_pipeline = HitAt3RetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
     # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/hit_at_3_retriever_evals_results.jsonl"))
 
-    # Example: MRR Retriever (mean reciprocal rank; reported "Accuracy" = mean MRR)
+    # Example: MRR Retriever
     # eval_pipeline = MRRRetrieverEval(unique_eval_path="evals/retriever_evals.jsonl")
     # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/mrr_retriever_evals_results.jsonl"))
 
     # Example: Tool Traces eval
     # eval_pipeline = ToolTracesEval()
     # out = asyncio.run(eval_pipeline.run_evals(concurrent_evals=5, output_file_path="evals/tool_traces_evals_results.jsonl"))
+
+    # ── Namespace Grid Search ────────────────────────────────────────
+    # Same configs used in content_aggregation.py GRID_SEARCH_CONFIGS
+    NAMESPACE_CONFIGS = [
+        {"chunk_size": 1000, "chunk_overlap": 200, "embedding_mode": "huggingface",        "namespace": "hf_cs1000_co200"},
+        {"chunk_size": 750,  "chunk_overlap": 150, "embedding_mode": "huggingface",        "namespace": "hf_cs750_co150"},
+        {"chunk_size": 500,  "chunk_overlap": 100, "embedding_mode": "huggingface",        "namespace": "hf_cs500_co100"},
+        {"chunk_size": 500,  "chunk_overlap": 150, "embedding_mode": "huggingface",        "namespace": "hf_cs500_co150"},
+        {"chunk_size": 300,  "chunk_overlap": 75,  "embedding_mode": "huggingface",        "namespace": "hf_cs300_co75"},
+        # {"chunk_size": 1000, "chunk_overlap": 200, "embedding_mode": "pinecone_inference", "namespace": "llama_cs1000_co200"},
+        # {"chunk_size": 750,  "chunk_overlap": 150, "embedding_mode": "pinecone_inference", "namespace": "llama_cs750_co150"},
+        # {"chunk_size": 500,  "chunk_overlap": 100, "embedding_mode": "pinecone_inference", "namespace": "llama_cs500_co100"},
+        # {"chunk_size": 500,  "chunk_overlap": 150, "embedding_mode": "pinecone_inference", "namespace": "llama_cs500_co150"},
+        # {"chunk_size": 300,  "chunk_overlap": 75,  "embedding_mode": "pinecone_inference", "namespace": "llama_cs300_co75"},
+    ]
+
+    experiment = asyncio.run(run_namespace_grid_search(
+        namespace_configs=NAMESPACE_CONFIGS,
+        evals_data_path="evals/retriever_evals.jsonl",
+        concurrent_evals=5,
+        output_path="evals/namespace_experiment_results.json",
+    ))
