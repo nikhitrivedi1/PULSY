@@ -114,7 +114,7 @@ Pulsy bridges biometric trends with curated scientific micro-insights through st
 ## 🗺 Roadmap / TODO
 
 ### 🟩 Core Improvements
-- [ ] Optimize Retrieval via evaluating different Chunking/Overlap   
+- [x] Optimize Retrieval via evaluating different Chunking/Overlap   
 - [ ] Expand health corpus to training load, circadian, recovery, metabolic health
 - [ ] Create comprehensive Evaluation Framework to quantify performance of Agent
 
