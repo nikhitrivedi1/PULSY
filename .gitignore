@@ -21,6 +21,8 @@ agentic_interface/config/__pycache__/
 agentic_interface/database/__pycache__/user_db_call.cpython-311.pyc
 agentic_interface/evals/__pycache__/eval_pipeline.cpython-311.pyc
 agentic_interface/evals/__pycache__/eval_pipeline.cpython-312.pyc
+agentic_interface/evals/_pycache__/*
+
 # RAG Version
 agentic_interface/main.py
 agentic_interface/RAG/*
