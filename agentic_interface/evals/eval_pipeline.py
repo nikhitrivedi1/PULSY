@@ -32,7 +32,6 @@ class BaseEvalPipeline:
         evals_data_path: str = "evals/pulsy_evals_v1.jsonl",
         system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md",
     ):
-        self.agent = AgenticRAG()
         self.input_arr = self._load_evals_data(evals_data_path)
         self.user_id = "trivedi.nik"
         self.system_instructions = self._load_system_instructions(system_instructions_path)
@@ -213,6 +212,8 @@ class ToolTracesEval(BaseEvalPipeline):
     """Evaluate tool-calling accuracy via LLM-as-judge. Uses response.get('tool_calls', [])."""
     def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
         super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
+        self.agent = AgenticRAG()
+
 
     async def one_case_eval(self, input_case: dict) -> dict:
         case_id = input_case["id"]
@@ -473,6 +474,8 @@ class PrecisionAt3AgentEval(BaseEvalPipeline):
     """Precision@3 on passages the agent actually received from get_Andrew_Huberman_Insights. Uses response.get('tool_results', [])."""
     def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
         super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
+        self.agent = AgenticRAG()
+
 
     async def one_case_eval(self, input_case: dict) -> dict:
         case_id = input_case["id"]
