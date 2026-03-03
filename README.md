@@ -77,21 +77,6 @@ Pulsy bridges biometric trends with curated scientific micro-insights through st
 </table>
 
 
-
-
-
-## Metrics
-
-| Metric | Value | Health |
-|---|---|---|
-| Tool Call Accuracy | 0.90 | 🟢 |
-| Retrieval Precision@3 | 0.35 | needs work |
-| Retrieval Hits@3 | 0.6 | needs work |
-| Retrieval MRR@3 | 0.475 | needs work |
-| p50 Latency (E2E) | 6.26s | 🟢 |
-| p95 Latency (E2E) | 27.05s | 🟡 |
-
-
 ## 🛠 Tech Stack
 
 <p align="center">
