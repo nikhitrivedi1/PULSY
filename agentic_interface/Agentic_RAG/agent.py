@@ -174,6 +174,27 @@ class AgenticRAG:
         # Append response to message history
         return {"messages": prior_messages + [response]}
 
+    def _extract_tool_artifacts(self, state: dict) -> tuple[list[dict], list[dict]]:
+        """
+        Extract tool_calls and tool_results from LangGraph messages state for eval use.
+        Returns (tool_calls, tool_results) where each tool_call is {name, args} and
+        each tool_result is {name, content}.
+        """
+        tool_calls: list[dict] = []
+        tool_results: list[dict] = []
+        messages = state.get("messages", [])
+        for msg in messages:
+            if isinstance(msg, AIMessage) and getattr(msg, "tool_calls", None):
+                for tc in msg.tool_calls:
+                    name = tc.get("name", "") if isinstance(tc, dict) else getattr(tc, "name", "")
+                    args = tc.get("args") if isinstance(tc, dict) else getattr(tc, "args", None)
+                    if args is None:
+                        args = {}
+                    tool_calls.append({"name": name, "args": args})
+            if isinstance(msg, ToolMessage):
+                tool_results.append({"name": msg.name, "content": msg.content})
+        return tool_calls, tool_results
+
     async def run(self,
         query: str,
         user_id: str,
@@ -189,19 +210,24 @@ class AgenticRAG:
         1. Builds context (date, user ID, preferences, conversation history)
         2. Retrieves user's device API key
         3. Invokes the LangGraph ReAct workflow
-        4. Logs the interaction to database
-        5. Returns the AI response and log ID
-        
+        4. When eval_mode is False: logs the interaction to the database
+        5. Returns the AI response and, in production, log_id
+
+        When eval_mode is True (e.g. from the eval pipeline): no DB logging is
+        performed, and the return dict includes 'tool_calls' and 'tool_results'
+        for evaluation metrics.
+
         Args:
             query: User's current question/request
             user_id: Username for personalization and data access
             query_history: List of previous user messages in this session
             response_history: List of previous AI responses in this session
-        
+            eval_mode: If True, skip logging and return tool_calls/tool_results.
+            config: Optional config (e.g. thread_id); reserved for future use.
+
         Returns:
-            dict: Contains 'response' (AI message text) and 'log_id' (for feedback)
-        
-        TODO: Store API keys more securely (not in message context)
+            dict: 'response' (AI text), 'log_id' (None in eval_mode), and when
+            eval_mode is True: 'tool_calls', 'tool_results'.
         """
         message_history, chatml_conversation, user_preferences, query_idx, user_spec = (
             await self._prepare_context(query, user_id, query_history, response_history)
@@ -211,8 +237,17 @@ class AgenticRAG:
         start_time = time.time()
         messages = self.react_graph.invoke({"messages": message_history})
         inference_time = time.time() - start_time
-        
-        # Log conversation to database for monitoring and feedback
+
+        if eval_mode:
+            # Eval mode: no DB logging; return tool_calls and tool_results for evals
+            tool_calls, tool_results = self._extract_tool_artifacts(messages)
+            return {
+                "response": messages["messages"][-1].content,
+                "log_id": None,
+                "tool_calls": tool_calls,
+                "tool_results": tool_results,
+            }
+        # Production: log to database and return response and log_id only
         log_id = await self.log_message(
             query, 
             response=messages['messages'][-1], 
@@ -449,7 +484,7 @@ class AgenticRAG:
             preferred_response=None,
             message_history =message_hist,
         )
-# AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_Rjx0z9VFrSa7vUTf53sJDOqu', 'function': {'arguments': '{"start_date":"2025-10-03","end_date":"2025-10-03","user_id":"Nikhil"}', 'name': 'get_sleep_data'}, 'type': 'function'}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 38, 'prompt_tokens': 2657, 'total_tokens': 2695, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4.1-2025-04-14', 'system_fingerprint': 'fp_144ea3b974', 'id': 'chatcmpl-CUd8sY44epV80pCtSckCaoJ0Epoga', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='run--facd61e2-b189-4c7d-86b3-794a8ca78de2-0', tool_calls=[{'name': 'get_sleep_data', 'args': {'start_date': '2025-10-03', 'end_date': '2025-10-03', 'user_id': 'Nikhil'}, 'id': 'call_Rjx0z9VFrSa7vUTf53sJDOqu', 'type': 'tool_call'}], usage_metadata={'input_tokens': 2657, 'output_tokens': 38, 'total_tokens': 2695, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})
+        # AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_Rjx0z9VFrSa7vUTf53sJDOqu', 'function': {'arguments': '{"start_date":"2025-10-03","end_date":"2025-10-03","user_id":"Nikhil"}', 'name': 'get_sleep_data'}, 'type': 'function'}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 38, 'prompt_tokens': 2657, 'total_tokens': 2695, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0}}, 'model_name': 'gpt-4.1-2025-04-14', 'system_fingerprint': 'fp_144ea3b974', 'id': 'chatcmpl-CUd8sY44epV80pCtSckCaoJ0Epoga', 'service_tier': 'default', 'finish_reason': 'tool_calls', 'logprobs': None}, id='run--facd61e2-b189-4c7d-86b3-794a8ca78de2-0', tool_calls=[{'name': 'get_sleep_data', 'args': {'start_date': '2025-10-03', 'end_date': '2025-10-03', 'user_id': 'Nikhil'}, 'id': 'call_Rjx0z9VFrSa7vUTf53sJDOqu', 'type': 'tool_call'}], usage_metadata={'input_tokens': 2657, 'output_tokens': 38, 'total_tokens': 2695, 'input_token_details': {'audio': 0, 'cache_read': 0}, 'output_token_details': {'audio': 0, 'reasoning': 0}})
         # Match the tool calls by _id -> so let's create a dictionary initially and then store the values only after
 
         logger.message_history.append({

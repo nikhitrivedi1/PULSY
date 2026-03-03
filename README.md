@@ -77,9 +77,6 @@ Pulsy bridges biometric trends with curated scientific micro-insights through st
 </table>
 
 
-
-
-
 ## 🛠 Tech Stack
 
 <p align="center">
@@ -116,7 +113,6 @@ Pulsy bridges biometric trends with curated scientific micro-insights through st
 ### 🟩 Core Improvements
 - [x] Optimize Retrieval via evaluating different Chunking/Overlap   
 - [ ] Expand health corpus to training load, circadian, recovery, metabolic health
-- [ ] Create comprehensive Evaluation Framework to quantify performance of Agent
 
 
 ### 🧪 AI / Modeling

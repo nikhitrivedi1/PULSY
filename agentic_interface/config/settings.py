@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     PINECONE_NAMESPACE_1: str  # Primary namespace (e.g., Huberman content)
     PINECONE_NAMESPACE_2: str  # Secondary namespace (e.g., Goggins content)
     PINECONE_EMBEDDING_MODEL: str  # HuggingFace model for embeddings
+    PINECONE_EMBEDDING_MODE: str  # "huggingface" or "pinecone_inference"
 
     # Database Configuration
     PUBLIC_IP: str  # PostgreSQL host IP (for local mode)
