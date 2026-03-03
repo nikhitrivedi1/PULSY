@@ -212,9 +212,7 @@ Keep in mind that we are evaluating tool calls and arguments not necessarily the
 class ToolTracesEval(BaseEvalPipeline):
     """Evaluate tool-calling accuracy via LLM-as-judge. Uses response.get('tool_calls', [])."""
     def __init__(self, eval_data_path: str = "evals/pulsy_evals_v1.jsonl", system_instructions_path: str = "Agentic_RAG/system_prompts/system_instructions_v2.md", unique_eval_path: str = None):
-        super().__init__(eval_data_path, system_instructions_path)
-        if unique_eval_path:
-            self.eval_data_path = unique_eval_path
+        super().__init__(unique_eval_path or eval_data_path, system_instructions_path)
 
     async def one_case_eval(self, input_case: dict) -> dict:
         case_id = input_case["id"]
@@ -281,7 +279,7 @@ class ToolTracesEval(BaseEvalPipeline):
                 "category": input_case.get("category"),
                 "source": input_case.get("source"),
                 "tool_calls": [],
-                "tool_call_judgments": tool_call_judgment,
+                "tool_call_judgments": [tool_call_judgment],
                 "correct": case_correct,
                 "total": 1,
             }
