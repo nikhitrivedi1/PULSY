@@ -4,7 +4,8 @@ agentic_interface/DataSources/Huberman/
 agentic_interface/DataSources/Goggins/
 agentic_interface/DataSources/recent_papers_sleep_fitness_productivity.json
 agentic_interface/DataSources/content_aggregation.py
-agentic_interface/evals/*
+agentic_interface/evals/eval_tests/*
+agentic_interface/evals/results_reports/*
 metrics/*
 
 # Test Views
